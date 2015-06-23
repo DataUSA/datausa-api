@@ -5,5 +5,5 @@ registered_models = [
     # PUMS
     StateYeg, NationYeg, 
     # IPEDS
-    GradsYucd,
+    GradsYucd, Tuition, Enrollment
 ]

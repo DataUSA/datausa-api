@@ -7,10 +7,12 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property
 from sqlalchemy import select, func
 
-
-class BaseGrads(db.Model):
+class BaseIpeds(db.Model):
     __abstract__ = True
     __table_args__ = {"schema": "ipeds"}
+
+class BaseGrads(BaseIpeds):
+    __abstract__ = True
     total = db.Column(db.Integer())
     total_men =  db.Column(db.Integer())
     total_women =  db.Column(db.Integer())
@@ -30,3 +32,37 @@ class GradsYucd(BaseGrads):
 
     def __repr__(self):
         return '<{}>'.format(self.__class__)
+
+class Enrollment(BaseIpeds):
+    __tablename__ = "enrollment_yu"
+    year = db.Column(db.String(), primary_key=True)
+    university_id = db.Column(db.String(), db.ForeignKey(University.id), primary_key=True)
+    
+    total = db.Column(db.Integer())
+    men =  db.Column(db.Integer())
+    women =  db.Column(db.Integer())
+    black =  db.Column(db.Integer())
+    asian =  db.Column(db.Integer())
+    native =  db.Column(db.Integer())
+    unknown =  db.Column(db.Integer())
+    
+    supported_levels = {
+        "university_id": "all"
+    }
+
+class Tuition(BaseIpeds):
+    __tablename__ = "tuition_yu"
+    year = db.Column(db.String(), primary_key=True)
+    university_id = db.Column(db.String(), db.ForeignKey(University.id), primary_key=True)
+    
+    oos_tuition = db.Column(db.Integer())
+    state_tuition = db.Column(db.Integer())
+    district_tuition = db.Column(db.Integer())
+
+    oos_fee = db.Column(db.Integer())
+    state_fee = db.Column(db.Integer())
+    district_fee = db.Column(db.Integer())
+    
+    supported_levels = {
+        "university_id": "all"
+    }

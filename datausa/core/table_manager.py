@@ -1,6 +1,6 @@
-# registrar.py
 from datausa.core import get_columns
 from datausa.core.registrar import registered_models
+from datausa.core.exceptions import DataUSAException
 
 class TableManager(object):
     possible_variables = [col.key for t in registered_models for col in get_columns(t)]
