@@ -7,13 +7,13 @@ class BaseAttr(db.Model):
     id = db.Column(db.String(10), primary_key=True)
     name =  db.Column(db.String())
 
-
-
     def __repr__(self):
         return '<{}, id: {}, name: {}>'.format(self.__class__, self.id, self.name)
 
 class University(BaseAttr):
     __tablename__ = 'university'
+
+    state = db.Column(db.String)
 
 class Naics(BaseAttr):
     __tablename__ = 'naics'

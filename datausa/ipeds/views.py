@@ -15,4 +15,4 @@ def ipeds():
     filters = [ getattr(GradsYucd, key) == value  for key,value in request.args.items() ]
     cols = GradsYucd.__table__.columns
     data = GradsYucd.query.with_entities(*cols).filter(*filters).all()
-    return api.format(cols, data)
+    return api.simple_format(cols, data)

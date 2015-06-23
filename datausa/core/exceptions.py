@@ -1,0 +1,1 @@
+class DataUSAException(Exception): pass
