@@ -6,8 +6,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property
 from sqlalchemy import select, func
+from datausa.core.models import BaseModel
 
-class BaseIpeds(db.Model):
+class BaseIpeds(db.Model, BaseModel):
     __abstract__ = True
     __table_args__ = {"schema": "ipeds"}
 

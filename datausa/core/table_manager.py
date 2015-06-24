@@ -6,6 +6,10 @@ class TableManager(object):
     possible_variables = [col.key for t in registered_models for col in get_columns(t)]
 
     @classmethod
+    def sort_tables(cls, tables):
+        pass
+
+    @classmethod
     def table_can_show(cls, table, shows_and_levels):
         for show_col, show_level in shows_and_levels.items():
             if not show_col in table.supported_levels:
@@ -25,8 +29,12 @@ class TableManager(object):
 
     @classmethod
     def find_table(cls, vars_needed, shows_and_levels):
+        candidates = []
         for table in registered_models:
             if TableManager.table_has_cols(table, vars_needed):
                 if TableManager.table_can_show(table, shows_and_levels):
-                    return table
-        raise DataUSAException("No tables can match the specified query.")
+                    candidates.append(table)
+        if candidates:
+            return candidates[0] # TODO sort by moe/size
+        else:
+            raise DataUSAException("No tables can match the specified query.")

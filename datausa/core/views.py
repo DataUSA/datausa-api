@@ -20,7 +20,7 @@ def api_view():
 
     shows = show.split(",")
     sumlevels = sumlevel.split(",")
-    values = value.split(",")
+    values = value.split(",") if value else [] 
 
     shows_and_levels = {val:sumlevels[idx] for idx, val in enumerate(shows)}
 
