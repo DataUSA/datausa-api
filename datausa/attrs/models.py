@@ -14,6 +14,11 @@ class University(BaseAttr):
     __tablename__ = 'university'
 
     state = db.Column(db.String)
+    county = db.Column(db.String)
+    msa = db.Column(db.String)
+
+    lat = db.Column(db.Float)
+    lng = db.Column(db.Float)
 
 class Naics(BaseAttr):
     __tablename__ = 'naics'
@@ -26,3 +31,6 @@ class Course(BaseAttr):
             "id": self.id,
             "name" : self.name
         }
+
+class Degree(BaseAttr):
+    __tablename__ = 'degree'
