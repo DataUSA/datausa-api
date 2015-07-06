@@ -18,9 +18,12 @@ API for access US data sets
         mkvirtualenv datausa
 
 3.  Install Prerequisites
+
         sudo apt-get install python-dev
         sudo apt-get install libpq-dev
+
 4.  Install Python modules
+
         pip install -r requirements.txt
 
 5.  Run api
