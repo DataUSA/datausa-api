@@ -26,4 +26,11 @@ API for access US data sets
 
         pip install -r requirements.txt
 
-5.  Run api
+5.  Set environment variables
+        
+        export DATAUSA_DB_NAME=db_name
+        export DATAUSA_DB_USER=postgres_user
+        export DATAUSA_DB_PW=postgres_pw
+        export DATAUSA_DB_HOST=127.0.0.1
+
+6.  Run api
