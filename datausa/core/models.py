@@ -1,3 +1,4 @@
+from datausa.core.exceptions import DataUSAException
 
 class BaseModel(object):
     supported_levels = {}
@@ -20,3 +21,13 @@ class BaseModel(object):
             # "size": cls.size,
             # "median_moe": cls.median_moe
         }
+
+
+class ApiObject(object):
+    def __init__(self, **kwargs):
+        allowed = ["vars_needed", "vars_and_vals", "values", "shows_and_levels"]
+        for keyword, value in kwargs.items():
+            if keyword in allowed:
+                setattr(self, keyword, value)
+            else:
+                raise DataUSAException("Invalid ApiObject attribute")

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from datausa.attrs.models import Course, Naics, University
 from datausa.core import table_manager
 from datausa.core import api
+from datausa.core.models import ApiObject
 
 mod = Blueprint('core', __name__, url_prefix='/api')
 
@@ -27,19 +28,22 @@ def get_prereqs():
     vars_and_vals = {var:request.args.get(var, None) for var in variables}
     vars_and_vals = {k:v for k,v in vars_and_vals.items() if v}
 
+
     vars_needed = vars_and_vals.keys() + [show] + values
-    return vars_needed, shows_and_levels
+    api_obj = ApiObject(vars_needed=vars_needed, vars_and_vals=vars_and_vals,
+                        shows_and_levels=shows_and_levels, values=values)
+    return api_obj
 
 @mod.route("/")
 def api_view():
-    vars_needed, shows_and_levels = get_prereqs()
-    table = manager.find_table(vars_needed, shows_and_levels)
-    data = api.query(table, vars_and_vals, shows_and_levels, values=values)
+    api_obj = get_prereqs()
+    table = manager.find_table(api_obj.vars_needed, api_obj.shows_and_levels)
+    data = api.query(table, api_obj.vars_and_vals, api_obj.shows_and_levels, values=api_obj.values)
 
     return data
 
 @mod.route("/logic/")
 def logic_view():
-    vars_needed, shows_and_levels = get_prereqs()
-    table_list = manager.all_tables(vars_needed, shows_and_levels)
+    api_obj = get_prereqs()
+    table_list = manager.all_tables(api_obj.vars_needed, api_obj.shows_and_levels)
     return jsonify(tables=[table.info() for table in table_list])
