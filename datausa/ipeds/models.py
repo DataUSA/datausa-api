@@ -12,6 +12,7 @@ class BaseIpeds(db.Model, BaseModel):
     __abstract__ = True
     __table_args__ = {"schema": "ipeds"}
 
+
 class BaseGrads(BaseIpeds):
     __abstract__ = True
     total = db.Column(db.Integer())
@@ -24,6 +25,7 @@ class GradsYucd(BaseGrads):
     university_id = db.Column(db.String(), db.ForeignKey(University.id), primary_key=True)
     course_id = db.Column(db.String(), db.ForeignKey(Course.id), primary_key=True)
     degree_id = db.Column(db.String(), primary_key=True)
+    course_id_len = db.Column(db.Integer())
 
     geo_id = column_property(select([University.state]).where(University.id == university_id).label('geo_id'))
     supported_levels = {
@@ -50,6 +52,8 @@ class Enrollment(BaseIpeds):
     supported_levels = {
         "university_id": "all"
     }
+
+
 
 class Tuition(BaseIpeds):
     __tablename__ = "tuition_yu"

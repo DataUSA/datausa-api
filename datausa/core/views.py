@@ -12,8 +12,7 @@ def show_attrs(attr_obj):
     data = [a.serialize() for a in attrs]
     return jsonify(data=data)
 
-@mod.route("/")
-def api_view():
+def get_prereqs():
     show = request.args.get("show", "")
     sumlevel = request.args.get("sumlevel", "")
     value = request.args.get("value", "")
@@ -29,7 +28,18 @@ def api_view():
     vars_and_vals = {k:v for k,v in vars_and_vals.items() if v}
 
     vars_needed = vars_and_vals.keys() + [show] + values
+    return vars_needed, shows_and_levels
+
+@mod.route("/")
+def api_view():
+    vars_needed, shows_and_levels = get_prereqs()
     table = manager.find_table(vars_needed, shows_and_levels)
     data = api.query(table, vars_and_vals, shows_and_levels, values=values)
 
     return data
+
+@mod.route("/logic/")
+def logic_view():
+    vars_needed, shows_and_levels = get_prereqs()
+    table_list = manager.all_tables(vars_needed, shows_and_levels)
+    return jsonify(tables=[table.info() for table in table_list])

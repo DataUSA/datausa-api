@@ -22,19 +22,25 @@ class TableManager(object):
     
     @classmethod
     def table_has_cols(cls, table, vars_needed):
-        cols = set([col.name for col in get_columns(table)])
+        print get_columns(table)
+        cols = set([col.key for col in get_columns(table)])
         # if table.__tablename__ == 'grads_yucd':
             # raise Exception("t")
         return set(vars_needed).issubset(cols)
 
     @classmethod
     def find_table(cls, vars_needed, shows_and_levels):
+        table_list = cls.all_tables(vars_needed, shows_and_levels)
+        # TODO refine ordering strategy
+        return table_list[0]
+
+    @classmethod
+    def all_tables(cls, vars_needed, shows_and_levels):
         candidates = []
         for table in registered_models:
             if TableManager.table_has_cols(table, vars_needed):
                 if TableManager.table_can_show(table, shows_and_levels):
                     candidates.append(table)
-        if candidates:
-            return candidates[0] # TODO sort by moe/size
-        else:
+        if not candidates:
             raise DataUSAException("No tables can match the specified query.")
+        return candidates
