@@ -37,3 +37,6 @@ class Course(BaseAttr):
 
 class Degree(BaseAttr):
     __tablename__ = 'degree'
+
+class Geo(BaseAttr):
+    __tablename__ = 'geo_names'

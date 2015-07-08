@@ -17,7 +17,46 @@ class BaseGrads(BaseIpeds):
     __abstract__ = True
     total = db.Column(db.Integer())
     total_men =  db.Column(db.Integer())
-    total_women =  db.Column(db.Integer())
+    total_women = db.Column(db.Integer())
+    total_native = db.Column(db.Integer())
+    total_native_men = db.Column(db.Integer())
+    total_native_women = db.Column(db.Integer())
+    total_asian = db.Column(db.Integer())
+    total_asian_men = db.Column(db.Integer())
+    total_asian_women = db.Column(db.Integer())
+    total_black = db.Column(db.Integer())
+    total_black_men = db.Column(db.Integer())
+    total_black_women = db.Column(db.Integer())
+    total_hispanic = db.Column(db.Integer())
+    total_hispanic_men = db.Column(db.Integer())
+    total_hispanic_women = db.Column(db.Integer())
+    total_hawaiian = db.Column(db.Integer())
+    total_hawaiian_men = db.Column(db.Integer())
+    total_hawaiian_women = db.Column(db.Integer())
+    total_white = db.Column(db.Integer())
+    total_white_men = db.Column(db.Integer())
+    total_white_women = db.Column(db.Integer())
+    total_multi = db.Column(db.Integer())
+    total_multi_men = db.Column(db.Integer())
+    total_multi_women = db.Column(db.Integer())
+    total_unknown = db.Column(db.Integer())
+    total_unknown_men = db.Column(db.Integer())
+    total_unknown_women = db.Column(db.Integer())
+    total_nonresident = db.Column(db.Integer())
+    total_nonresident_men = db.Column(db.Integer())
+    total_nonresident_women = db.Column(db.Integer())
+
+class GradsYgdState(BaseIpeds):
+    autoload = True
+    __tablename__ = "grads_ygd_state"
+    year = db.Column(db.String(), primary_key=True)
+    geo_id = db.Column(db.String(), primary_key=True)
+    degree_id = db.Column(db.String(), primary_key=True)
+
+    supported_levels = {
+        "geo_id" : [consts.STATE]
+    }
+
 
 class GradsYucd(BaseGrads):
     __tablename__ = "grads_yucd"
@@ -27,7 +66,7 @@ class GradsYucd(BaseGrads):
     degree_id = db.Column(db.String(), primary_key=True)
     course_id_len = db.Column(db.Integer())
 
-    geo_id = column_property(select([University.state]).where(University.id == university_id).label('geo_id'))
+    # geo_id = column_property(select([University.state]).where(University.id == university_id).label('geo_id'))
     supported_levels = {
         "geo_id" : [consts.STATE],
         "university_id" : consts.ALL,

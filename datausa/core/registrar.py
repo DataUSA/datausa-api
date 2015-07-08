@@ -6,5 +6,6 @@ registered_models = [
     StateYeg, NationYeg, 
     NationYegPTax, StateYegPTax, PumaYegPTax,
     # IPEDS
-    GradsYucd, Tuition, Enrollment
+    GradsYucd, Tuition, Enrollment,
+    GradsYgdState,
 ]
