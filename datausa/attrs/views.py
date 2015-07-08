@@ -25,7 +25,7 @@ def attr_id(kind, attr_id):
     if kind in attr_map:
         attr_obj = attr_map[kind]
         aid_obj = attr_obj.query.get(attr_id)
-        return jsonify(aid_obj.serialize())
+        return jsonify(data=aid_obj.serialize())
     raise Exception("Invalid attribute type.")
 
 app.register_blueprint(mod)
