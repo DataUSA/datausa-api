@@ -40,3 +40,6 @@ class Degree(BaseAttr):
 
 class Geo(BaseAttr):
     __tablename__ = 'geo_names'
+
+    display_name = db.Column(db.String)
+    sumlevel = db.Column(db.String)
