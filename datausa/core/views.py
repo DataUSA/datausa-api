@@ -16,11 +16,11 @@ def show_attrs(attr_obj):
 def build_api_obj():
     show = request.args.get("show", "")
     sumlevel = request.args.get("sumlevel", "")
-    value = request.args.get("value", "")
+    required = request.args.get("required", "")
 
     shows = show.split(",")
     sumlevels = sumlevel.split(",")
-    values = value.split(",") if value else [] 
+    values = required.split(",") if required else [] 
 
     shows_and_levels = {val:sumlevels[idx] for idx, val in enumerate(shows)}
 
