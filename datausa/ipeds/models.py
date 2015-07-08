@@ -30,8 +30,18 @@ class GradsYucd(BaseGrads):
     geo_id = column_property(select([University.state]).where(University.id == university_id).label('geo_id'))
     supported_levels = {
         "geo_id" : [consts.STATE],
-        "university_id" : "all"
+        "university_id" : consts.ALL,
+        "course_id": ["2", consts.ALL]
     }
+
+    @classmethod
+    def gen_show_level_filters(cls, shows_and_levels):
+        result = []
+        for col,val in shows_and_levels.items():
+            if val != consts.ALL:
+                if col == "course_id":
+                    result.append( cls.course_id_len == val )
+        return result
 
     def __repr__(self):
         return '<{}>'.format(self.__class__)
