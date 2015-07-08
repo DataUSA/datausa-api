@@ -31,7 +31,7 @@ class GradsYucd(BaseGrads):
     supported_levels = {
         "geo_id" : [consts.STATE],
         "university_id" : consts.ALL,
-        "course_id": ["2", consts.ALL]
+        "course_id": ["2", "6", consts.ALL]
     }
 
     @classmethod
