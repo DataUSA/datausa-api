@@ -7,6 +7,12 @@ class BaseAttr(db.Model):
     id = db.Column(db.String(10), primary_key=True)
     name =  db.Column(db.String())
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name" : self.name
+        }
+
     def __repr__(self):
         return '<{}, id: {}, name: {}>'.format(self.__class__, self.id, self.name)
 
@@ -23,14 +29,12 @@ class University(BaseAttr):
 class Naics(BaseAttr):
     __tablename__ = 'naics'
 
+class Soc(BaseAttr):
+    __tablename__ = 'soc'
+    level = db.Column(db.String)
+
 class Course(BaseAttr):
     __tablename__ = 'course'
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "name" : self.name
-        }
 
 class Degree(BaseAttr):
     __tablename__ = 'degree'
