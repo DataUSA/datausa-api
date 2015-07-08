@@ -8,10 +8,7 @@ class BaseAttr(db.Model):
     name =  db.Column(db.String())
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "name" : self.name
-        }
+        return {k:v for k,v in self.__dict__.items() if not k.startswith("_")}
 
     def __repr__(self):
         return '<{}, id: {}, name: {}>'.format(self.__class__, self.id, self.name)
@@ -25,6 +22,8 @@ class University(BaseAttr):
 
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
+
+    url = db.Column(db.String)
 
 class Naics(BaseAttr):
     __tablename__ = 'naics'
