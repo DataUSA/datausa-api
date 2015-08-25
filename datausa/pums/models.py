@@ -2,9 +2,10 @@ from datausa.database import db
 from sqlalchemy import MetaData
 from datausa.attrs import consts
 from datausa.core.models import BaseModel
-
+from datausa.attrs.models import Geo, PumsDegree
 from datausa.attrs.consts import NATION, STATE, PUMA, ALL
 from datausa.core.exceptions import DataUSAException
+
 
 def geo_sumlevel_filter(table, show_colname, sumlevel):
     sumlevel_codes = {NATION: "010", STATE: "040", PUMA: "795"}
@@ -43,20 +44,24 @@ class Personal(object):
 
     num_ppl_moe =  db.Column(db.Float())
 
-class Geo(object):
-    def process(self, sumlevel):
-        sumlevel_codes = {NATION: "010", STATE: "040", PUMA: "795"}
-        if not sumlevel in sumlevel_codes:
-            raise DataUSAException("Invalid sumlevel", sumlevel)
-        start_code = sumlevel_codes[sumlevel]
-        return self.geo_id.startswith(start_code)
-
 class Yg(BasePums, Personal):
     __tablename__ = "yg"
 
     year = db.Column(db.Integer(), primary_key=True)
-    geo_id = db.Column(db.String(), primary_key=True)
+    geo_id = db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)
     
+    supported_levels = {
+        consts.GEO_ID: [NATION, STATE, PUMA]
+    }
+    median_moe = 1
+
+class Ygd(BasePums, Personal):
+    __tablename__ = "ygd"
+
+    year = db.Column(db.Integer(), primary_key=True)
+    geo_id = db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)
+    degree = db.Column(db.String(), db.ForeignKey(PumsDegree.id), primary_key=True)
+
     supported_levels = {
         consts.GEO_ID: [NATION, STATE, PUMA]
     }

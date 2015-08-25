@@ -21,7 +21,10 @@ def parse_method_and_val(cond):
         return "like", cond
 
 def where_filters(table, where_str):
+    if not where_str:
+        return []
     filts = []
+
     wheres = where_str.split(",")
     for where in wheres:
         colname, cond = where.split(":")

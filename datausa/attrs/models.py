@@ -43,3 +43,7 @@ class Geo(BaseAttr):
 
     display_name = db.Column(db.String)
     sumlevel = db.Column(db.String)
+
+class PumsDegree(BaseAttr):
+    __tablename__ = 'degree'
+    __table_args__ = {"schema": "pums_attrs"}
