@@ -22,7 +22,6 @@ class TableManager(object):
     
     @classmethod
     def table_has_cols(cls, table, vars_needed):
-        print get_columns(table)
         cols = set([col.key for col in get_columns(table)])
         # if table.__tablename__ == 'grads_yucd':
             # raise Exception("t")

@@ -3,8 +3,7 @@ from datausa.ipeds.models import *
 
 registered_models = [
     # PUMS
-    StateYeg, NationYeg, 
-    NationYegPTax, StateYegPTax, PumaYegPTax,
+    Yg,
     # IPEDS
     GradsYucd, Tuition, Enrollment,
     GradsYgdState,

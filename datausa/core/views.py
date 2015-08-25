@@ -17,6 +17,7 @@ def build_api_obj():
     show = request.args.get("show", "")
     sumlevel = request.args.get("sumlevel", "")
     required = request.args.get("required", "")
+    where = request.args.get("where", "")
 
     shows = show.split(",")
     sumlevels = sumlevel.split(",")
@@ -31,14 +32,14 @@ def build_api_obj():
 
     vars_needed = vars_and_vals.keys() + [show] + values
     api_obj = ApiObject(vars_needed=vars_needed, vars_and_vals=vars_and_vals,
-                        shows_and_levels=shows_and_levels, values=values)
+                        shows_and_levels=shows_and_levels, values=values, where=where)
     return api_obj
 
 @mod.route("/")
 def api_view():
     api_obj = build_api_obj()
     table = manager.find_table(api_obj.vars_needed, api_obj.shows_and_levels)
-    data = api.query(table, api_obj.vars_and_vals, api_obj.shows_and_levels, values=api_obj.values)
+    data = api.query(table, api_obj)
 
     return data
 
