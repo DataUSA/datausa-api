@@ -6,5 +6,5 @@ registered_models = [
     Yg, Ygd,
     # IPEDS
     GradsYucd, Tuition, Enrollment,
-    GradsYgdState,
+    # GradsYgdState,
 ]
