@@ -1,7 +1,6 @@
 from datausa.core.exceptions import DataUSAException
 
 class BaseModel(object):
-    supported_levels = {}
     median_moe = None
     size = None
 
@@ -11,13 +10,17 @@ class BaseModel(object):
     #     self.size = size
 
     @classmethod
+    def get_supported_level(cls):
+        return {}
+
+    @classmethod
     def info(cls):
         dataset = cls.__table_args__["schema"]
         return {
             "dataset": dataset,
             "table": cls.__tablename__,
             "api_endpoint": "/api/" + dataset,
-            "supported_levels": cls.supported_levels,
+            "supported_levels": cls.get_supported_levels(),
             # "size": cls.size,
             # "median_moe": cls.median_moe
         }

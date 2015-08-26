@@ -11,20 +11,24 @@ class TableManager(object):
 
     @classmethod
     def table_can_show(cls, table, shows_and_levels):
+        supported_levels = table.get_supported_levels()
         for show_col, show_level in shows_and_levels.items():
-            if not show_col in table.supported_levels:
+            if not show_col in supported_levels:
+                print supported_levels
+                print show_col, table.supported_levels, "SL"
                 return False
             else:
-                print table.supported_levels[show_col]
-                if not show_level in table.supported_levels[show_col]:
+                print supported_levels[show_col]
+                if not show_level in supported_levels[show_col]:
                     return False
         return True
     
     @classmethod
     def table_has_cols(cls, table, vars_needed):
-        cols = set([col.key for col in get_columns(table)])
-        # if table.__tablename__ == 'grads_yucd':
-            # raise Exception("t")
+        table_cols = get_columns(table)
+        cols = set([col.key for col in table_cols])
+        # if table.__tablename__ == 'ygd':
+            # raise Exception(vars_needed, cols, set(vars_needed).issubset(cols))
         return set(vars_needed).issubset(cols)
 
     @classmethod
