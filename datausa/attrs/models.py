@@ -44,6 +44,30 @@ class Geo(BaseAttr):
     display_name = db.Column(db.String)
     sumlevel = db.Column(db.String)
 
+class PumsMajor(BaseAttr):
+    __tablename__ = 'major'
+    __table_args__ = {"schema": "pums_attrs"}
+
 class PumsDegree(BaseAttr):
     __tablename__ = 'degree'
+    __table_args__ = {"schema": "pums_attrs"}
+
+class PumsNaics(BaseAttr):
+    __tablename__ = 'naics'
+    __table_args__ = {"schema": "pums_attrs"}
+
+class PumsSoc(BaseAttr):
+    __tablename__ = 'soc'
+    __table_args__ = {"schema": "pums_attrs"}
+
+class PumsSex(BaseAttr):
+    __tablename__ = 'sex'
+    __table_args__ = {"schema": "pums_attrs"}
+
+class PumsRace(BaseAttr):
+    __tablename__ = 'race'
+    __table_args__ = {"schema": "pums_attrs"}
+
+class PumsBirthplace(BaseAttr):
+    __tablename__ = 'birthplace'
     __table_args__ = {"schema": "pums_attrs"}

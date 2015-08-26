@@ -1,7 +1,7 @@
 from datausa.database import db
 from sqlalchemy import MetaData
 from datausa.core.models import BaseModel
-from datausa.attrs.models import Geo, PumsDegree
+from datausa.attrs.models import *
 from datausa.attrs.consts import NATION, STATE, PUMA, ALL, GEO_ID
 from datausa.core.exceptions import DataUSAException
 from sqlalchemy.ext.declarative import declared_attr
@@ -50,16 +50,40 @@ class Year(object):
         return db.Column(db.Integer(), primary_key=True)
 
 class GeoId(object):
-
     @classmethod
     def get_supported_levels(cls):
         return {GEO_ID: [NATION, STATE, PUMA]}
 
     @declared_attr
     def geo_id(cls):
-        return db.Column(db.String(6), db.ForeignKey(Geo.id), primary_key=True)
+        return db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)
+
+class MajorId(object):
+    @declared_attr
+    def major(cls):
+        return db.Column(db.String(), db.ForeignKey(PumsMajor.id), primary_key=True)
 
 class DegreeId(object):
     @declared_attr
     def degree(cls):
-        return db.Column(db.String(6), db.ForeignKey(PumsDegree.id), primary_key=True)
+        return db.Column(db.String(), db.ForeignKey(PumsDegree.id), primary_key=True)
+
+class NaicsId(object):
+    @declared_attr
+    def naics(cls):
+        return db.Column(db.String(), db.ForeignKey(PumsNaics.id), primary_key=True)
+
+class SocId(object):
+    @declared_attr
+    def soc(cls):
+        return db.Column(db.String(), db.ForeignKey(PumsSoc.id), primary_key=True)
+
+class RaceId(object):
+    @declared_attr
+    def race(cls):
+        return db.Column(db.String(), db.ForeignKey(PumsRace.id), primary_key=True)
+
+class SexId(object):
+    @declared_attr
+    def sex(cls):
+        return db.Column(db.String(), db.ForeignKey(PumsSex.id), primary_key=True)
