@@ -33,6 +33,18 @@ def where_filters(table, where_str):
         filts.append(getattr(col, method)(value))
     return filts
 
+def sumlevel_filtering(table, api_obj):
+    shows_and_levels = api_obj.shows_and_levels
+    filters = []
+    for col, level in shows_and_levels.items():
+        args = (table, "{}_filter".format(col))
+        if hasattr(*args):
+            func = getattr(*args)
+            filters.append(func(level))
+
+    # raise Exception(filters)
+    return filters
+
 def query(table, api_obj): #vars_and_vals, shows_and_levels, values=[]):
     vars_and_vals = api_obj.vars_and_vals
     shows_and_levels = api_obj.shows_and_levels
@@ -40,6 +52,7 @@ def query(table, api_obj): #vars_and_vals, shows_and_levels, values=[]):
 
     filters = [ getattr(table, var) == val for var,val in vars_and_vals.items() ]
     filters += where_filters(table, api_obj.where)
+    filters += sumlevel_filtering(table, api_obj)
     # if values:
     #     pk = [col for col in table.__table__.columns if col.primary_key]
     #     cols = pk + values
