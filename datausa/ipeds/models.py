@@ -1,6 +1,16 @@
 from datausa.ipeds.abstract_models import *
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
 
+class EnrollmentYcu(Enrollment, CipId, UniversityId):
+    __tablename__ = "enrollment_ycu"
+    median_moe = 1
+
+    year = db.Column(db.Integer(), primary_key=True)
+    total_grads = db.Column(db.Integer())
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2", "4", "6"], "university": ["all"]}
 
 class TuitionYc(Tuition, CipId):
     __tablename__ = "tuition_yc"

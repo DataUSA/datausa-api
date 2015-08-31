@@ -12,6 +12,17 @@ class BaseIpeds(db.Model, BaseModel):
     __table_args__ = {"schema": "ipeds_beta"}
     supported_levels = {}
 
+class Enrollment(BaseIpeds):
+    __abstract__ = True
+
+    total = db.Column(db.Integer())
+    men =  db.Column(db.Integer())
+    women =  db.Column(db.Integer())
+    black =  db.Column(db.Integer())
+    asian =  db.Column(db.Integer())
+    native =  db.Column(db.Integer())
+    unknown =  db.Column(db.Integer())
+
 class Tuition(BaseIpeds):
     __abstract__ = True
     
@@ -94,23 +105,6 @@ class Grads(BaseIpeds):
 
 #     def __repr__(self):
 #         return '<{}>'.format(self.__class__)
-
-# class Enrollment(BaseIpeds):
-#     __tablename__ = "enrollment_yu"
-#     year = db.Column(db.String(), primary_key=True)
-#     university_id = db.Column(db.String(), db.ForeignKey(University.id), primary_key=True)
-    
-#     total = db.Column(db.Integer())
-#     men =  db.Column(db.Integer())
-#     women =  db.Column(db.Integer())
-#     black =  db.Column(db.Integer())
-#     asian =  db.Column(db.Integer())
-#     native =  db.Column(db.Integer())
-#     unknown =  db.Column(db.Integer())
-    
-#     supported_levels = {
-#         "university_id": "all"
-#     }
 
 class GeoId(object):
     @declared_attr

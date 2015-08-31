@@ -10,6 +10,7 @@ registered_models = [
 
     # IPEDS
     TuitionYc, TuitionYcu,
+    EnrollmentYcu,
     GradsYcu, GradsYgc,
 ]
 
