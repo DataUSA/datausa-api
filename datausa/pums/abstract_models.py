@@ -58,10 +58,10 @@ class GeoId(object):
     def geo_id(cls):
         return db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)
 
-class MajorId(object):
+class CipId(object):
     @declared_attr
-    def major(cls):
-        return db.Column(db.String(), db.ForeignKey(PumsMajor.id), primary_key=True)
+    def cip(cls):
+        return db.Column(db.String(), db.ForeignKey(Cip.id), primary_key=True)
 
 class DegreeId(object):
     @declared_attr
