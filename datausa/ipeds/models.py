@@ -29,6 +29,17 @@ class TuitionYcu(Tuition, CipId, UniversityId):
     def get_supported_levels(cls):
         return {"cip": ["2", "4", "6"], "university": ["all"]}
 
+class TuitionYcs(Tuition, CipId, SectorId):
+    __tablename__ = "tuition_ycs"
+    median_moe = 1
+
+    year = db.Column(db.Integer(), primary_key=True)
+    num_universities = db.Column(db.Integer())
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2", "4", "6"], "sector": ["all"]}
+
 class GradsYcu(Grads, CipId, UniversityId):
     __tablename__ = "grads_ycu"
     median_moe = 2

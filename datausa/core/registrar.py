@@ -9,7 +9,7 @@ registered_models = [
     Yca,
 
     # IPEDS
-    TuitionYc, TuitionYcu,
+    TuitionYc, TuitionYcu, TuitionYcs,
     EnrollmentYcu,
     GradsYcu, GradsYgc,
 ]

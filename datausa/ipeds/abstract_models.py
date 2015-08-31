@@ -143,3 +143,12 @@ class UniversityId(object):
     def get_supported_levels(cls):
         return {"university": ["all"]}
 
+class SectorId(object):
+    @declared_attr
+    def sector(cls):
+        return db.Column(db.String(), primary_key=True) # TODO add sector attr obj
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"sector": ["all"]}
+
