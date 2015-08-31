@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from datausa.attrs.models import Course, Naics, University
+from datausa.attrs.models import Cip, Naics, University
 from datausa.core import table_manager
 from datausa.core import api
 from datausa.core.models import ApiObject
@@ -30,7 +30,7 @@ def build_api_obj():
     vars_and_vals = {k:v for k,v in vars_and_vals.items() if v}
 
 
-    vars_needed = vars_and_vals.keys() + [show] + values
+    vars_needed = vars_and_vals.keys() + shows + values
     api_obj = ApiObject(vars_needed=vars_needed, vars_and_vals=vars_and_vals,
                         shows_and_levels=shows_and_levels, values=values, where=where)
     return api_obj

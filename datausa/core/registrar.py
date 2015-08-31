@@ -1,12 +1,16 @@
 from datausa.pums.models import *
-# from datausa.ipeds.models import *
+from datausa.ipeds.models import *
 
 registered_models = [
     # PUMS
-    Yg, Ygd, Ygi, Ygio, Ygm, Ygmd, Ygo, Ygor, Ygos,
+    Yg, Ygd, Ygi, Ygio,
+    Ygo, Ygor, Ygos,
+    # Ygc, Ygcd,
+    Yca,
+
     # IPEDS
-    # GradsYucd, Tuition, Enrollment,
-    # GradsYgdState,
+    TuitionYc,
+    GradsYcu, GradsYgc,
 ]
 
 def register(cls):
