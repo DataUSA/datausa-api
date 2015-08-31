@@ -45,7 +45,7 @@ def sumlevel_filtering(table, api_obj):
     # raise Exception(filters)
     return filters
 
-def query(table, api_obj): #vars_and_vals, shows_and_levels, values=[]):
+def query(table, api_obj):
     vars_and_vals = api_obj.vars_and_vals
     shows_and_levels = api_obj.shows_and_levels
     values = api_obj.values if hasattr(api_obj, "values") else []
@@ -64,5 +64,12 @@ def query(table, api_obj): #vars_and_vals, shows_and_levels, values=[]):
     if needs_show_filter and hasattr(table, "gen_show_level_filters"):
         filters += table.gen_show_level_filters(shows_and_levels)
 
-    data = table.query.with_entities(*cols).filter(*filters).all()    
+    qry = table.query.with_entities(*cols).filter(*filters)
+    if api_obj.order:
+        sort = "desc" if api_obj.sort == "desc" else "asc"
+        qry = qry.order_by("{} {}".format(api_obj.order, sort))
+    if api_obj.limit:
+        qry = qry.limit(api_obj.limit)
+
+    data = qry.all()
     return simple_format(cols, data)

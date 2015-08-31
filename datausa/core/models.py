@@ -29,9 +29,11 @@ class BaseModel(object):
 class ApiObject(object):
     def __init__(self, **kwargs):
         allowed = ["vars_needed", "vars_and_vals", "values", "shows_and_levels",
-                   "force", "where"]
+                   "force", "where", "order", "sort", "limit"]
         for keyword, value in kwargs.items():
             if keyword in allowed:
                 setattr(self, keyword, value)
             else:
                 raise DataUSAException("Invalid ApiObject attribute")
+        if self.limit:
+            self.limit = int(self.limit)
