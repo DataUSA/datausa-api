@@ -1,10 +1,11 @@
 from datausa.database import db
 from datausa.attrs import consts
-from datausa.attrs.models import University, Course
+from datausa.attrs.models import University, Cip, Geo
 from sqlalchemy.orm import column_property
 from datausa.core.models import BaseModel
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql import func
+from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, ALL
 
 class BaseIpeds(db.Model, BaseModel):
     __abstract__ = True
@@ -22,22 +23,9 @@ class Tuition(BaseIpeds):
     state_fee = db.Column(db.Integer())
     district_fee = db.Column(db.Integer())
 
-class Cip(object):
-    @declared_attr
-    def cip(cls):
-        return db.Column(db.String(), db.ForeignKey(Course.id), primary_key=True)
-
-    @classmethod
-    def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"]}
-
-    @classmethod
-    def cip_filter(cls, level):
-        return func.length(cls.cip) == level
-
-# class BaseGrads(BaseIpeds):
-#     __abstract__ = True
-#     total = db.Column(db.Integer())
+class Grads(BaseIpeds):
+    __abstract__ = True
+    total = db.Column(db.Integer())
 #     total_men =  db.Column(db.Integer())
 #     total_women = db.Column(db.Integer())
 #     total_native = db.Column(db.Integer())
@@ -123,3 +111,31 @@ class Cip(object):
 #     supported_levels = {
 #         "university_id": "all"
 #     }
+
+class GeoId(object):
+    @declared_attr
+    def geo_id(cls):
+        return db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {GEO_ID: [NATION, STATE, PUMA]}
+
+    @classmethod
+    def geo_id_filter(cls, level):
+        level_map = {NATION: "010", STATE: "040", COUNTY: "050", MSA: "310"}
+        level_code = level_map[level]
+        return cls.geo_id.startswith(level_code)
+
+class CipId(object):
+    @declared_attr
+    def cip(cls):
+        return db.Column(db.String(), db.ForeignKey(Cip.id), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2", "4", "6"]}
+
+    @classmethod
+    def cip_filter(cls, level):
+        return func.length(cls.cip) == level
