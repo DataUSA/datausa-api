@@ -139,3 +139,13 @@ class CipId(object):
     @classmethod
     def cip_filter(cls, level):
         return func.length(cls.cip) == level
+
+class UniversityId(object):
+    @declared_attr
+    def university(cls):
+        return db.Column(db.String(), db.ForeignKey(University.id), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"university": ["all"]}
+

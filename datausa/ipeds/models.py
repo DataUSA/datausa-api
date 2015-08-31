@@ -8,6 +8,16 @@ class TuitionYc(Tuition, CipId):
 
     year = db.Column(db.Integer(), primary_key=True)
 
+class TuitionYcu(Tuition, CipId, UniversityId):
+    __tablename__ = "tuition_ycu"
+    median_moe = 1
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2", "4", "6"], "university": ["all"]}
+
 class GradsYcu(Grads, CipId):
     __tablename__ = "grads_ycu"
     median_moe = 2
