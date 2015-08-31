@@ -10,17 +10,20 @@ class TableManager(object):
         pass
 
     @classmethod
-    def table_can_show(cls, table, shows_and_levels):
+    def table_can_show(cls, table, api_obj):
+        shows_and_levels = api_obj.shows_and_levels
         supported_levels = table.get_supported_levels()
         for show_col, show_level in shows_and_levels.items():
             if not show_col in supported_levels:
-                print supported_levels
                 print show_col, table.supported_levels, "SL"
                 return False
             else:
-                print supported_levels[show_col]
                 if not show_level in supported_levels[show_col]:
                     return False
+
+        if api_obj.force and table.__tablename__ != api_obj.force:
+            return False
+
         return True
     
     @classmethod
@@ -32,17 +35,19 @@ class TableManager(object):
         return set(vars_needed).issubset(cols)
 
     @classmethod
-    def find_table(cls, vars_needed, shows_and_levels):
-        table_list = cls.all_tables(vars_needed, shows_and_levels)
+    def find_table(cls, api_obj):
+        table_list = cls.all_tables(api_obj)
         # TODO refine ordering strategy
         return table_list[0]
 
     @classmethod
-    def all_tables(cls, vars_needed, shows_and_levels):
+    def all_tables(cls, api_obj):
+        vars_needed = api_obj.vars_needed
+        shows_and_levels = api_obj.shows_and_levels
         candidates = []
         for table in registered_models:
             if TableManager.table_has_cols(table, vars_needed):
-                if TableManager.table_can_show(table, shows_and_levels):
+                if TableManager.table_can_show(table, api_obj):
                     candidates.append(table)
         if not candidates:
             raise DataUSAException("No tables can match the specified query.")

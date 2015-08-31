@@ -17,6 +17,7 @@ def build_api_obj():
     show = request.args.get("show", "")
     sumlevel = request.args.get("sumlevel", "")
     required = request.args.get("required", "")
+    force = request.args.get("force", "")
     where = request.args.get("where", "")
 
     shows = show.split(",")
@@ -32,13 +33,14 @@ def build_api_obj():
 
     vars_needed = vars_and_vals.keys() + shows + values
     api_obj = ApiObject(vars_needed=vars_needed, vars_and_vals=vars_and_vals,
-                        shows_and_levels=shows_and_levels, values=values, where=where)
+                        shows_and_levels=shows_and_levels, values=values,
+                        where=where, force=force)
     return api_obj
 
 @mod.route("/")
 def api_view():
     api_obj = build_api_obj()
-    table = manager.find_table(api_obj.vars_needed, api_obj.shows_and_levels)
+    table = manager.find_table(api_obj)
     data = api.query(table, api_obj)
 
     return data
@@ -46,5 +48,5 @@ def api_view():
 @mod.route("/logic/")
 def logic_view():
     api_obj = build_api_obj()
-    table_list = manager.all_tables(api_obj.vars_needed, api_obj.shows_and_levels)
+    table_list = manager.all_tables(api_obj)
     return jsonify(tables=[table.info() for table in table_list])
