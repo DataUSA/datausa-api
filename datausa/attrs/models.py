@@ -32,7 +32,7 @@ class Soc(BaseAttr):
     __tablename__ = 'soc'
     level = db.Column(db.String)
 
-class Course(BaseAttr):
+class Cip(BaseAttr):
     __tablename__ = 'course'
 
 class Degree(BaseAttr):
@@ -43,10 +43,6 @@ class Geo(BaseAttr):
 
     display_name = db.Column(db.String)
     sumlevel = db.Column(db.String)
-
-class PumsMajor(BaseAttr):
-    __tablename__ = 'major'
-    __table_args__ = {"schema": "pums_attrs"}
 
 class PumsDegree(BaseAttr):
     __tablename__ = 'degree'
