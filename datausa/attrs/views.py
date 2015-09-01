@@ -3,11 +3,11 @@ from flask import Blueprint, request, jsonify
 
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
 from datausa.attrs.models import Cip, Naics, University, Soc, Degree
-from datausa.attrs.models import Skill, Geo
+from datausa.attrs.models import Skill, Sector, Geo
 
 attr_map = {"soc": Soc, "naics" : Naics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
-            "skill": Skill}
+            "skill": Skill, "sector": Sector}
 
 def show_attrs(attr_obj):
     attrs = attr_obj.query.all()

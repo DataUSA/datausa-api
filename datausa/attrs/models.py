@@ -68,6 +68,9 @@ class PumsBirthplace(BaseAttr):
     __tablename__ = 'birthplace'
     __table_args__ = {"schema": "pums_attrs"}
 
+class Sector(BaseAttr):
+    __tablename__ = 'sector'
+
 class Skill(BaseAttr):
     __tablename__ = 'skill'
 
