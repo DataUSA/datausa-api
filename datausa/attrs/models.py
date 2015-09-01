@@ -67,3 +67,8 @@ class PumsRace(BaseAttr):
 class PumsBirthplace(BaseAttr):
     __tablename__ = 'birthplace'
     __table_args__ = {"schema": "pums_attrs"}
+
+class Skill(BaseAttr):
+    __tablename__ = 'skill'
+
+    avg_value = db.Column(db.Float)
