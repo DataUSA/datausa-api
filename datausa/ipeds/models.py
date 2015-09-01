@@ -40,6 +40,26 @@ class TuitionYcs(Tuition, CipId, SectorId):
     def get_supported_levels(cls):
         return {"cip": ["2", "4", "6"], "sector": ["all"]}
 
+class GradsYc(Grads, CipId):
+    __tablename__ = "grads_yc"
+    median_moe = 2
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2", "4", "6"]}
+
+class GradsYcd(Grads, CipId, DegreeId):
+    __tablename__ = "grads_ycd"
+    median_moe = 2
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2", "4", "6"], "degree": ["all"]}
+
 class GradsYcu(Grads, CipId, UniversityId):
     __tablename__ = "grads_ycu"
     median_moe = 2
@@ -59,3 +79,13 @@ class GradsYgc(Grads, GeoId, CipId):
     @classmethod
     def get_supported_levels(cls):
         return {"cip": ["2", "4", "6"], "geo_id": [NATION, STATE, COUNTY, MSA]}
+
+class GradsPctYcu(GradsPct, CipId, UniversityId):
+    __tablename__ = "gradspct_ycu"
+    median_moe = 2
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2", "4", "6"], "university": ["all"]}

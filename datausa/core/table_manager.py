@@ -22,6 +22,7 @@ class TableManager(object):
                     return False
 
         if api_obj.force and table.__tablename__ != api_obj.force:
+            print "yessh", table.__tablename__
             return False
 
         return True

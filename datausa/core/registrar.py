@@ -6,12 +6,12 @@ registered_models = [
     Yg, Ygd, Ygi, Ygio,
     Ygo, Ygor, Ygos,
     # Ygc, Ygcd,
-    Yca,
+    Yca, Ycd, Ycb, Yoc, Yic,
 
     # IPEDS
     TuitionYc, TuitionYcu, TuitionYcs,
     EnrollmentYcu,
-    GradsYcu, GradsYgc, GradsYcd,
+    GradsYcu, GradsYgc, GradsYc, GradsYcd,
     GradsPctYcu,
 ]
 

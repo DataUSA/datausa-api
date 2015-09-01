@@ -8,9 +8,29 @@ class Ygd(BasePums, Personal, Year, GeoId, DegreeId):
     __tablename__ = "ygd"
     median_moe = 2
 
+class Ycb(BasePums, Personal, Year, CipId, BirthplaceId):
+    __tablename__ = "ycb"
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2"], "birthplace": "all"} # TODO support in/out of US?
+
+class Ycd(BasePums, Personal, Year, CipId, DegreeId):
+    __tablename__ = "ycd"
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2"], "degree": ["all"]}
+
 class Ygi(BasePums, Personal, Year, GeoId, NaicsId):
     __tablename__ = "ygi"
     median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo_id": ["nation", "state", "puma"], "naics": ["0", "1", "2", "all"]}
 
 class Ygio(BasePums, Personal, Year, GeoId, NaicsId, SocId):
     __tablename__ = "ygio"
@@ -23,6 +43,10 @@ class Ygio(BasePums, Personal, Year, GeoId, NaicsId, SocId):
 class Ygo(BasePums, Personal, Year, GeoId, SocId):
     __tablename__ = "ygo"
     median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo_id": ["nation", "state", "puma"], "soc": ["0", "1", "2", "3", "all"]}
 
 class Ygor(BasePums, Personal, Year, GeoId, RaceId):
     __tablename__ = "ygor"
@@ -41,3 +65,17 @@ class Yca(BasePums, Personal, Year, CipId):
     @classmethod
     def get_supported_levels(cls):
         return {"cip": ["2"]}
+
+class Yoc(BasePums, Personal, Year, SocId, CipId):
+    __tablename__ = "yoc"
+    median_moe = 2
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2"], "soc": ["0", "1", "2", "3", "all"]}
+
+class Yic(BasePums, Personal, Year, NaicsId, CipId):
+    __tablename__ = "yic"
+    median_moe = 2
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2"], "naics": ["0", "1", "2", "all"]}

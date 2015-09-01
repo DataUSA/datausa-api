@@ -69,11 +69,15 @@ class DegreeId(object):
         return db.Column(db.String(), db.ForeignKey(PumsDegree.id), primary_key=True)
 
 class NaicsId(object):
+    naics_level = db.Column(db.Integer())
+
     @declared_attr
     def naics(cls):
         return db.Column(db.String(), db.ForeignKey(PumsNaics.id), primary_key=True)
 
 class SocId(object):
+    soc_level = db.Column(db.Integer())
+
     @declared_attr
     def soc(cls):
         return db.Column(db.String(), db.ForeignKey(PumsSoc.id), primary_key=True)
@@ -87,3 +91,8 @@ class SexId(object):
     @declared_attr
     def sex(cls):
         return db.Column(db.String(), db.ForeignKey(PumsSex.id), primary_key=True)
+
+class BirthplaceId(object):
+    @declared_attr
+    def birthplace(cls):
+        return db.Column(db.String(), db.ForeignKey(PumsBirthplace.id), primary_key=True)
