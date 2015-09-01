@@ -11,7 +11,8 @@ registered_models = [
     # IPEDS
     TuitionYc, TuitionYcu, TuitionYcs,
     EnrollmentYcu,
-    GradsYcu, GradsYgc,
+    GradsYcu, GradsYgc, GradsYcd,
+    GradsPctYcu,
 ]
 
 def register(cls):

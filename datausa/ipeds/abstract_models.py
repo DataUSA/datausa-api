@@ -1,6 +1,7 @@
 from datausa.database import db
 from datausa.attrs import consts
 from datausa.attrs.models import University, Cip, Geo
+from datausa.attrs.models import PumsDegree
 from sqlalchemy.orm import column_property
 from datausa.core.models import BaseModel
 from sqlalchemy.ext.declarative import declared_attr
@@ -34,11 +35,17 @@ class Tuition(BaseIpeds):
     state_fee = db.Column(db.Integer())
     district_fee = db.Column(db.Integer())
 
+class GradsPct(BaseIpeds):
+    __abstract__ = True
+    pct_total = db.Column(db.Float())
+    pct_men = db.Column(db.Float())
+    pct_women = db.Column(db.Float())
+
 class Grads(BaseIpeds):
     __abstract__ = True
     total = db.Column(db.Integer())
-#     total_men =  db.Column(db.Integer())
-#     total_women = db.Column(db.Integer())
+    men =  db.Column(db.Integer())
+    women = db.Column(db.Integer())
 #     total_native = db.Column(db.Integer())
 #     total_native_men = db.Column(db.Integer())
 #     total_native_women = db.Column(db.Integer())
@@ -142,6 +149,11 @@ class UniversityId(object):
     @classmethod
     def get_supported_levels(cls):
         return {"university": ["all"]}
+
+class DegreeId(object):
+    @declared_attr
+    def degree(cls):
+        return db.Column(db.String(), db.ForeignKey(PumsDegree.id), primary_key=True)
 
 class SectorId(object):
     @declared_attr
