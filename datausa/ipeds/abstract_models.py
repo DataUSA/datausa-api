@@ -1,7 +1,7 @@
 from datausa.database import db
 from datausa.attrs import consts
 from datausa.attrs.models import University, Cip, Geo
-from datausa.attrs.models import PumsDegree
+from datausa.attrs.models import Degree, Sector
 from sqlalchemy.orm import column_property
 from datausa.core.models import BaseModel
 from sqlalchemy.ext.declarative import declared_attr
@@ -153,12 +153,12 @@ class UniversityId(object):
 class DegreeId(object):
     @declared_attr
     def degree(cls):
-        return db.Column(db.String(), db.ForeignKey(PumsDegree.id), primary_key=True)
+        return db.Column(db.String(), db.ForeignKey(Degree.id), primary_key=True)
 
 class SectorId(object):
     @declared_attr
     def sector(cls):
-        return db.Column(db.String(), primary_key=True) # TODO add sector attr obj
+        return db.Column(db.String(), db.ForeignKey(Sector.id), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
