@@ -2,4 +2,4 @@ Flask
 flask-sqlalchemy
 SQLAlchemy
 psycopg2
-
+flask-compress

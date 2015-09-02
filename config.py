@@ -26,3 +26,4 @@ if "DATAUSA_PRODUCTION" in os.environ:
     DEBUG = False
     ERROR_EMAIL = True
 
+JSONIFY_PRETTYPRINT_REGULAR = False
