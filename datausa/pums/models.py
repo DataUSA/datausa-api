@@ -79,3 +79,13 @@ class Yic(BasePums, Personal, Year, NaicsId, CipId):
     @classmethod
     def get_supported_levels(cls):
         return {"cip": ["2"], "naics": ["0", "1", "2", "all"]}
+
+class Ygc(BasePums, Personal, Year, GeoId, CipId):
+    __tablename__ = "ygc"
+    median_moe = 2
+
+    num_ppl_rca = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo_id": ["nation", "state", "puma"], "cip": ["2", "all"]}
