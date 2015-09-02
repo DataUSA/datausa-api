@@ -1,5 +1,6 @@
 from datausa.pums.models import *
 from datausa.ipeds.models import *
+from datausa.onet.models import *
 
 registered_models = [
     # PUMS
@@ -13,7 +14,12 @@ registered_models = [
     EnrollmentYcu,
     GradsYcu, GradsYgc, GradsYc, GradsYcd,
     GradsPctYcu,
+
+    #ONET
+    SkillByCip,
 ]
 
 def register(cls):
     registered_models.append(cls)
+
+from datausa.onet.models import *
