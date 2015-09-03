@@ -74,45 +74,6 @@ class Grads(BaseIpeds):
 #     total_nonresident_men = db.Column(db.Integer())
 #     total_nonresident_women = db.Column(db.Integer())
 
-# class GradsYgdState(BaseIpeds):
-#     autoload = True
-#     __tablename__ = "grads_ygd_state"
-#     year = db.Column(db.String(), primary_key=True)
-#     geo_id = db.Column(db.String(), primary_key=True)
-#     degree_id = db.Column(db.String(), primary_key=True)
-
-#     supported_levels = {
-#         "geo_id" : [consts.STATE]
-#     }
-
-
-# class GradsYucd(BaseGrads):
-#     __tablename__ = "grads_yucd"
-#     year = db.Column(db.String(), primary_key=True)
-#     university_id = db.Column(db.String(), db.ForeignKey(University.id), primary_key=True)
-#     course_id = db.Column(db.String(), db.ForeignKey(Course.id), primary_key=True)
-#     degree_id = db.Column(db.String(), primary_key=True)
-#     course_id_len = db.Column(db.Integer())
-
-#     # geo_id = column_property(select([University.state]).where(University.id == university_id).label('geo_id'))
-#     supported_levels = {
-#         "geo_id" : [consts.STATE],
-#         "university_id" : consts.ALL,
-#         "course_id": ["2", "6", consts.ALL]
-#     }
-
-#     @classmethod
-#     def gen_show_level_filters(cls, shows_and_levels):
-#         result = []
-#         for col,val in shows_and_levels.items():
-#             if val != consts.ALL:
-#                 if col == "course_id":
-#                     result.append( cls.course_id_len == val )
-#         return result
-
-#     def __repr__(self):
-#         return '<{}>'.format(self.__class__)
-
 class GeoId(object):
     @declared_attr
     def geo_id(cls):
