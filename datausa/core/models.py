@@ -19,10 +19,7 @@ class BaseModel(object):
         return {
             "dataset": dataset,
             "table": cls.__tablename__,
-            "api_endpoint": "/api/" + dataset,
             "supported_levels": cls.get_supported_levels(),
-            # "size": cls.size,
-            # "median_moe": cls.median_moe
         }
 
 

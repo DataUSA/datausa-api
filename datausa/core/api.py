@@ -9,7 +9,7 @@ def simple_format(table, cols, data):
     data = {
             "headers": list(headers),
             "data": [ list(row) for row in data],
-            "source": table.__tablename__
+            "source": table.info()
     }
     return flask.jsonify(data)
 
