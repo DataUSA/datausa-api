@@ -1,6 +1,7 @@
 from datausa.core import get_columns
 from datausa.core.registrar import registered_models
 from datausa.core.exceptions import DataUSAException
+from operator import attrgetter
 
 class TableManager(object):
     possible_variables = [col.key for t in registered_models for col in get_columns(t)]
@@ -38,7 +39,7 @@ class TableManager(object):
     @classmethod
     def find_table(cls, api_obj):
         table_list = cls.all_tables(api_obj)
-        # TODO refine ordering strategy
+        # Ordering is sorted in all_tables
         return table_list[0]
 
     @classmethod
@@ -50,6 +51,7 @@ class TableManager(object):
             if TableManager.table_has_cols(table, vars_needed):
                 if TableManager.table_can_show(table, api_obj):
                     candidates.append(table)
+        candidates = sorted(candidates, key=attrgetter('median_moe'))
         if not candidates:
             raise DataUSAException("No tables can match the specified query.")
         return candidates
