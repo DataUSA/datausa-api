@@ -46,12 +46,22 @@ def sumlevel_filtering(table, api_obj):
     # raise Exception(filters)
     return filters
 
+def process_value_filters(table, vars_and_vals):
+    filts = []
+    for var, val in vars_and_vals.items():
+        if consts.OR in val:
+            filt = getattr(table, var).in_(val.split(consts.OR))
+        else:
+            filt = getattr(table, var) == val
+        filts.append(filt)
+    return filts
+
 def query(table, api_obj):
     vars_and_vals = api_obj.vars_and_vals
     shows_and_levels = api_obj.shows_and_levels
     values = api_obj.values
 
-    filters = [ getattr(table, var) == val for var,val in vars_and_vals.items() ]
+    filters = process_value_filters(table, vars_and_vals)
     filters += where_filters(table, api_obj.where)
     filters += sumlevel_filtering(table, api_obj)
 

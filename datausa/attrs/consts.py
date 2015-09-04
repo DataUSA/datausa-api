@@ -5,3 +5,4 @@ COUNTY = 'county'
 STATE = 'state'
 NATION = 'nation'
 ALL = 'all'
+OR = "_"
