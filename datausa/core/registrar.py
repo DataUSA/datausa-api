@@ -8,6 +8,7 @@ registered_models = [
     Ygo, Ygor, Ygos,
 
     Yc, Ygc, Yca, Ycd, Ycb, Yoc, Yic,
+    Yio, Yior, Yios,
 
     # IPEDS
     TuitionYc, TuitionYcu, TuitionYcs,

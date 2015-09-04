@@ -52,7 +52,12 @@ class Ygi(BasePums, Personal, Year, GeoId, NaicsId):
 
 class Ygio(BasePums, Personal, Year, GeoId, NaicsId, SocId):
     __tablename__ = "ygio"
-    median_moe = 3
+    median_moe = 5
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo_id": ["nation", "state", "puma"],
+                "soc": ["0", "1", "2", "3", "all"],
+                "naics": ["0", "1", "2", "all"]}
 
 # class Ygmd(BasePums, Personal, Year, GeoId, MajorId, DegreeId):
     # __tablename__ = "ygmd"
@@ -98,3 +103,26 @@ class Yic(BasePums, Personal, Year, NaicsId, CipId):
     def get_supported_levels(cls):
         return {"cip": ["2"], "naics": ["0", "1", "2", "all"]}
 
+class Yio(BasePums, Personal, Year, NaicsId, SocId):
+    __tablename__ = "yio"
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"soc": ["0", "1", "2", "3", "all"], "naics": ["0", "1", "2", "all"]}
+
+class Yior(BasePums, Personal, Year, NaicsId, SocId, RaceId):
+    __tablename__ = "yior"
+    median_moe = 3
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"soc": ["0", "1", "2", "3", "all"], "naics": ["0", "1", "2", "all"], "race": ["all"]}
+
+class Yios(BasePums, Personal, Year, NaicsId, SocId, SexId):
+    __tablename__ = "yios"
+    median_moe = 3
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"soc": ["0", "1", "2", "3", "all"], "naics": ["0", "1", "2", "all"], "sex": ["all"]}

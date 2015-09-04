@@ -1,10 +1,13 @@
-from datausa.database import db
 from sqlalchemy import MetaData
+from sqlalchemy.ext.declarative import declared_attr
+from datausa.core.exceptions import DataUSAException
+
+from datausa.database import db
+from datausa.attrs import consts
 from datausa.core.models import BaseModel
 from datausa.attrs.models import *
 from datausa.attrs.consts import NATION, STATE, PUMA, ALL, GEO_ID
-from datausa.core.exceptions import DataUSAException
-from sqlalchemy.ext.declarative import declared_attr
+
 
 def geo_sumlevel_filter(table, show_colname, sumlevel):
     sumlevel_codes = {NATION: "010", STATE: "040", PUMA: "795"}
@@ -75,12 +78,24 @@ class NaicsId(object):
     def naics(cls):
         return db.Column(db.String(), db.ForeignKey(PumsNaics.id), primary_key=True)
 
+    @classmethod
+    def naics_filter(cls, level):
+        if level == consts.ALL:
+            return True
+        return cls.naics_level == level
+
 class SocId(object):
     soc_level = db.Column(db.Integer())
 
     @declared_attr
     def soc(cls):
         return db.Column(db.String(), db.ForeignKey(PumsSoc.id), primary_key=True)
+
+    @classmethod
+    def soc_filter(cls, level):
+        if level == consts.ALL:
+            return True
+        return cls.soc_level == level
 
 class RaceId(object):
     @declared_attr
