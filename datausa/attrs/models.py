@@ -75,3 +75,15 @@ class Skill(BaseAttr):
     __tablename__ = 'skill'
 
     avg_value = db.Column(db.Float)
+
+class PumsNaicsCrosswalk(db.Model):
+    __tablename__ = 'naics_crosswalk'
+    __table_args__ = {"schema": "pums_attrs"}
+
+    naics = db.Column(db.String, primary_key=True)
+    pums_naics = db.Column(db.String)
+
+    @classmethod
+    def get_mapping(cls):
+        all_objs = cls.query.all()
+        return {obj.naics : obj.pums_naics for obj in all_objs}
