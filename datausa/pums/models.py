@@ -81,7 +81,7 @@ class Ygo(BasePums, Personal, Year, GeoId, SocId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": ["nation", "state", "puma"], "soc": ["0", "1", "2", "3", "all"]}
+        return {"geo_id": ["nation", "state", "puma"], "soc": SocId.LEVELS}
 
 class Ygor(BasePums, Personal, Year, GeoId, RaceId):
     __tablename__ = "ygor"
@@ -96,14 +96,14 @@ class Yoc(BasePums, Personal, Year, SocId, CipId):
     median_moe = 2
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2"], "soc": ["0", "1", "2", "3", "all"]}
+        return {"cip": ["2"], "soc": SocId.LEVELS}
 
 class Yic(BasePums, Personal, Year, NaicsId, CipId):
     __tablename__ = "yic"
     median_moe = 2
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2"], "naics": ["0", "1", "2", "all"]}
+        return {"cip": ["2"], "naics": NaicsId.LEVELS}
 
 class Yio(BasePums, Personal, Year, NaicsId, SocId):
     __tablename__ = "yio"
@@ -111,7 +111,7 @@ class Yio(BasePums, Personal, Year, NaicsId, SocId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"soc": ["0", "1", "2", "3", "all"], "naics": ["0", "1", "2", "all"]}
+        return {"soc": SocId.LEVELS, "naics": NaicsId.LEVELS}
 
 class Yior(BasePums, Personal, Year, NaicsId, SocId, RaceId):
     __tablename__ = "yior"
@@ -119,7 +119,7 @@ class Yior(BasePums, Personal, Year, NaicsId, SocId, RaceId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"soc": ["0", "1", "2", "3", "all"], "naics": ["0", "1", "2", "all"], "race": ["all"]}
+        return {"soc": SocId.LEVELS, "naics": NaicsId.LEVELS, "race": ["all"]}
 
 class Yios(BasePums, Personal, Year, NaicsId, SocId, SexId):
     __tablename__ = "yios"
@@ -127,4 +127,12 @@ class Yios(BasePums, Personal, Year, NaicsId, SocId, SexId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"soc": ["0", "1", "2", "3", "all"], "naics": ["0", "1", "2", "all"], "sex": ["all"]}
+        return {"soc": SocId.LEVELS, "naics": NaicsId.LEVELS, "sex": ["all"]}
+
+class Yocd(BasePums, Personal, Year, SocId, CipId, DegreeId):
+    __tablename__ = "yocd"
+    median_moe = 3
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2"], "soc": SocId.LEVELS, "degree": ["all"]}

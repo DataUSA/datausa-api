@@ -8,7 +8,7 @@ registered_models = [
     Ygo, Ygor, Ygos,
 
     Yc, Ygc, Yca, Ycd, Ycb, Yoc, Yic,
-    Yio, Yior, Yios,
+    Yio, Yior, Yios, Yocd,
 
     # IPEDS
     TuitionYc, TuitionYcu, TuitionYcs,
@@ -22,5 +22,3 @@ registered_models = [
 
 def register(cls):
     registered_models.append(cls)
-
-from datausa.onet.models import *

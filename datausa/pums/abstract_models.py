@@ -72,6 +72,7 @@ class DegreeId(object):
         return db.Column(db.String(), db.ForeignKey(PumsDegree.id), primary_key=True)
 
 class NaicsId(object):
+    LEVELS = ["0", "1", "2", "all"]
     naics_level = db.Column(db.Integer())
 
     @declared_attr
@@ -85,6 +86,7 @@ class NaicsId(object):
         return cls.naics_level == level
 
 class SocId(object):
+    LEVELS = ["0", "1", "2", "3", "all"]
     soc_level = db.Column(db.Integer())
 
     @declared_attr
