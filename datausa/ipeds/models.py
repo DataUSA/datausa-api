@@ -6,7 +6,7 @@ class EnrollmentYcu(Enrollment, CipId, UniversityId):
     median_moe = 1
 
     year = db.Column(db.Integer(), primary_key=True)
-    total_grads = db.Column(db.Integer())
+    grads_total = db.Column(db.Integer())
 
     @classmethod
     def get_supported_levels(cls):
@@ -23,7 +23,7 @@ class TuitionYcu(Tuition, CipId, UniversityId):
     median_moe = 1
 
     year = db.Column(db.Integer(), primary_key=True)
-    total_grads = db.Column(db.Integer())
+    grads_total = db.Column(db.Integer())
 
     @classmethod
     def get_supported_levels(cls):
@@ -45,6 +45,7 @@ class GradsYc(Grads, CipId):
     median_moe = 2
 
     year = db.Column(db.Integer(), primary_key=True)
+    grads_rank = db.Column(db.Integer)
 
     @classmethod
     def get_supported_levels(cls):
@@ -75,7 +76,7 @@ class GradsYgc(Grads, GeoId, CipId):
     median_moe = 2
     
     year = db.Column(db.Integer(), primary_key=True)
-    total_growth = db.Column(db.Float)
+    grads_total_growth = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):

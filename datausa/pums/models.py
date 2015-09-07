@@ -4,6 +4,8 @@ class Yc(BasePums, Personal, Year, CipId):
     __tablename__ = "yc"
     median_moe = 1
 
+    avg_wage_rank = db.Column(db.Integer)
+
     @classmethod
     def get_supported_levels(cls):
         return {"cip": ["2"]}
