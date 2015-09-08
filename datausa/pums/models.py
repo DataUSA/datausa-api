@@ -50,16 +50,16 @@ class Ygi(BasePums, Personal, Year, GeoId, NaicsId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": ["nation", "state", "puma"], "naics": ["0", "1", "2", "all"]}
+        return {"geo_id": GeoId.LEVELS, "naics": NaicsId.LEVELS}
 
 class Ygio(BasePums, Personal, Year, GeoId, NaicsId, SocId):
     __tablename__ = "ygio"
     median_moe = 5
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": ["nation", "state", "puma"],
-                "soc": ["0", "1", "2", "3", "all"],
-                "naics": ["0", "1", "2", "all"]}
+        return {"geo_id": GeoId.LEVELS,
+                "soc": SocId.LEVELS,
+                "naics": NaicsId.LEVELS}
 
 # class Ygmd(BasePums, Personal, Year, GeoId, MajorId, DegreeId):
     # __tablename__ = "ygmd"
@@ -73,7 +73,7 @@ class Ygc(BasePums, Personal, Year, GeoId, CipId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": ["nation", "state", "puma"], "cip": ["2", "all"]}
+        return {"geo_id": GeoId.LEVELS, "cip": ["2", "all"]}
 
 class Ygo(BasePums, Personal, Year, GeoId, SocId):
     __tablename__ = "ygo"
@@ -81,22 +81,32 @@ class Ygo(BasePums, Personal, Year, GeoId, SocId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": ["nation", "state", "puma"], "soc": SocId.LEVELS}
+        return {"geo_id": GeoId.LEVELS, "soc": SocId.LEVELS}
 
 class Ygor(BasePums, Personal, Year, GeoId, RaceId):
     __tablename__ = "ygor"
     median_moe = 3
 
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo_id": GeoId.LEVELS, "soc": SocId.LEVELS,
+                "race": ["all"]}
+
 class Ygos(BasePums, Personal, Year, GeoId, SexId):
     __tablename__ = "ygos"
     median_moe = 3
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo_id": GeoId.LEVELS, "soc": SocId.LEVELS,
+                "sex": ["all"]}
 
 class Yoc(BasePums, Personal, Year, SocId, CipId):
     __tablename__ = "yoc"
     median_moe = 2
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2"], "soc": SocId.LEVELS}
+        return {"cip": ["2", "all"], "soc": SocId.LEVELS}
 
 class Yic(BasePums, Personal, Year, NaicsId, CipId):
     __tablename__ = "yic"
