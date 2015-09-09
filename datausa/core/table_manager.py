@@ -16,14 +16,13 @@ class TableManager(object):
         supported_levels = table.get_supported_levels()
         for show_col, show_level in shows_and_levels.items():
             if not show_col in supported_levels:
-                print show_col, table.supported_levels, "SL"
+                print show_col, table.supported_levels, "Supported Levels"
                 return False
             else:
                 if not show_level in supported_levels[show_col]:
                     return False
 
         if api_obj.force and table.__tablename__ != api_obj.force:
-            print "yessh", table.__tablename__
             return False
 
         return True
