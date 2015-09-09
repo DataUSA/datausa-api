@@ -14,6 +14,7 @@ def show_attrs(attr_obj):
     data = [a.serialize() for a in attrs]
     return jsonify(data=data)
 
+
 @mod.route("/<kind>/")
 def attrs(kind):
 
@@ -31,4 +32,3 @@ def attr_id(kind, attr_id):
         return jsonify(data=aid_obj.serialize())
     raise Exception("Invalid attribute type.")
 
-app.register_blueprint(mod)
