@@ -18,7 +18,7 @@ class Yca(BasePums, Personal, Year, CipId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "all"]}
+        return {"cip": ["2", "all"], "age": ["all"]}
 
 class Ycb(BasePums, Personal, Year, CipId, BirthplaceId):
     __tablename__ = "ycb"
