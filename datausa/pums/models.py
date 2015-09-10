@@ -24,6 +24,8 @@ class Ycb(BasePums, Personal, Year, CipId, BirthplaceId):
     __tablename__ = "ycb"
     median_moe = 2
 
+    num_ppl_rca = db.Column(db.Float)
+
     @classmethod
     def get_supported_levels(cls):
         return {"cip": ["2"], "birthplace": "all"} # TODO support in/out of US?
