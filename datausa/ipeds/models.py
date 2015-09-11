@@ -43,14 +43,14 @@ class TuitionYcs(Tuition, CipId, SectorId):
 
 class GradsYc(Grads, CipId):
     __tablename__ = "grads_yc"
-    median_moe = 2
+    median_moe = 1
 
     year = db.Column(db.Integer(), primary_key=True)
     grads_rank = db.Column(db.Integer)
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"]}
+        return {"cip": ["all", "2", "4", "6"]}
 
 class GradsYcd(Grads, CipId, DegreeId):
     __tablename__ = "grads_ycd"
