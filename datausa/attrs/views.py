@@ -4,10 +4,14 @@ from flask import Blueprint, request, jsonify
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
 from datausa.attrs.models import Cip, Naics, University, Soc, Degree
 from datausa.attrs.models import Skill, Sector, Geo
+from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSex, PumsBirthplace
 
 attr_map = {"soc": Soc, "naics" : Naics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
-            "skill": Skill, "sector": Sector}
+            "skill": Skill, "sector": Sector,
+            "pums_degree": PumsDegree,
+            "race": PumsRace, "sex": PumsSex,
+            "birthplace": PumsBirthplace }
 
 def show_attrs(attr_obj):
     attrs = attr_obj.query.all()
@@ -20,6 +24,13 @@ def show_attrs(attr_obj):
             headers = obj.keys()
     return jsonify(data=data, headers=headers)
 
+@mod.route("/pums/<kind>/")
+def pums_attrs(kind):
+    return attrs("pums_{}".format(kind))
+
+@mod.route("/pums/<kind>/<attr_id>/")
+def pums_attr_id(kind):
+    return attr_id("pums_{}".format(kind), attr_id)
 
 @mod.route("/<kind>/")
 def attrs(kind):
