@@ -16,11 +16,15 @@ def simple_format(table, cols, data, subs):
 
 def parse_method_and_val(cond):
     if cond.startswith("^"):
-        return "startswith", cond[1:]
+        return "startswith", cond[1:], False
+    elif cond.startswith("~^"):
+        return "startswith", cond[2:], True
     elif cond.endswith("$"):
-        return "endswith", cond[:-1]
+        return "endswith", cond[:-1], False
+    elif cond.endswith("~$"):
+        return "endswith", cond[:-2], True
     else:
-        return "like", cond
+        return "like", cond, False
 
 def where_filters(table, where_str):
     if not where_str:
@@ -31,8 +35,11 @@ def where_filters(table, where_str):
     for where in wheres:
         colname, cond = where.split(":")
         col = getattr(table, colname)
-        method, value = parse_method_and_val(cond)
-        filts.append(getattr(col, method)(value))
+        method, value, negate = parse_method_and_val(cond)
+        expr = getattr(col, method)(value)
+        if negate:
+            expr = ~expr
+        filts.append(expr)
     return filts
 
 def sumlevel_filtering(table, api_obj):
