@@ -28,9 +28,9 @@ def show_attrs(attr_obj):
 def pums_attrs(kind):
     return attrs("pums_{}".format(kind))
 
-@mod.route("/pums/<kind>/<attr_id>/")
-def pums_attr_id(kind):
-    return attr_id("pums_{}".format(kind), attr_id)
+@mod.route("/pums/<kind>/<pums_attr_id>/")
+def pums_attr_id(kind, pums_attr_id):
+    return attrs_by_id("pums_{}".format(kind), pums_attr_id)
 
 @mod.route("/<kind>/")
 def attrs(kind):
@@ -41,7 +41,7 @@ def attrs(kind):
     raise Exception("Invalid attribute type.")
 
 @mod.route("/<kind>/<attr_id>/")
-def attr_id(kind, attr_id):
+def attrs_by_id(kind, attr_id):
 
     if kind in attr_map:
         attr_obj = attr_map[kind]
