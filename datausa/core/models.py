@@ -34,3 +34,4 @@ class ApiObject(object):
                 raise DataUSAException("Invalid ApiObject attribute")
         if self.limit:
             self.limit = int(self.limit)
+        self.subs = {}

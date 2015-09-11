@@ -4,12 +4,13 @@ import sqlalchemy
 from datausa.core import get_columns
 from datausa.attrs import consts
 
-def simple_format(table, cols, data):
+def simple_format(table, cols, data, subs):
     headers = [col if isinstance(col, basestring) else col.key for col in cols]
     data = {
             "headers": list(headers),
             "data": [ list(row) for row in data],
-            "source": table.info()
+            "source": table.info(),
+            "subs": subs
     }
     return flask.jsonify(data)
 
@@ -84,4 +85,4 @@ def query(table, api_obj):
         qry = qry.limit(api_obj.limit)
 
     data = qry.all()
-    return simple_format(table, cols, data)
+    return simple_format(table, cols, data, api_obj.subs)

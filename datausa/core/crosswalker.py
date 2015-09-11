@@ -22,5 +22,5 @@ def crosswalk(table, api_obj):
                 new_vals = [mapping(val) for val in curr_vals]
             new_val_str = OR.join(new_vals)
             api_obj.vars_and_vals[column] = new_val_str
-
+            api_obj.subs[column] = new_val_str
     return api_obj
