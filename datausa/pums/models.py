@@ -8,7 +8,7 @@ class Yc(BasePums, Personal, Year, CipId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2"]}
+        return {"cip": ["2", "all"]}
 
 class Yca(BasePums, Personal, Year, CipId):
     __tablename__ = "yca"
@@ -18,7 +18,7 @@ class Yca(BasePums, Personal, Year, CipId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2"]}
+        return {"cip": ["2", "all"], "age": ["all"]}
 
 class Ycb(BasePums, Personal, Year, CipId, BirthplaceId):
     __tablename__ = "ycb"
@@ -28,7 +28,7 @@ class Ycb(BasePums, Personal, Year, CipId, BirthplaceId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2"], "birthplace": "all"} # TODO support in/out of US?
+        return {"cip": ["2", "all"], "birthplace": "all"} # TODO support in/out of US?
 
 class Ycd(BasePums, Personal, Year, CipId, DegreeId):
     __tablename__ = "ycd"
@@ -36,7 +36,7 @@ class Ycd(BasePums, Personal, Year, CipId, DegreeId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2"], "degree": ["all"]}
+        return {"cip": ["2", "all"], "degree": ["all"]}
 
 class Yg(BasePums, Personal, Year, GeoId):
     __tablename__ = "yg"
@@ -147,4 +147,4 @@ class Yocd(BasePums, Personal, Year, SocId, CipId, DegreeId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2"], "soc": SocId.LEVELS, "degree": ["all"]}
+        return {"cip": ["2", "all"], "soc": SocId.LEVELS, "degree": ["all"]}

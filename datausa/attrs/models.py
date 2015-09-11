@@ -71,6 +71,7 @@ class PumsBirthplace(BaseAttr):
 
 class Sector(BaseAttr):
     __tablename__ = 'sector'
+    color = db.Column(db.String)
 
 class Skill(BaseAttr):
     __tablename__ = 'skill'
