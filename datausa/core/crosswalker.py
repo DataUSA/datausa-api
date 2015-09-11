@@ -5,7 +5,8 @@ naics_map = PumsNaicsCrosswalk.get_mapping()
 
 def crosswalk(table, api_obj):
     registered_crosswalks = [
-        {"column": "naics", "schema": "pums_beta", "mapping" : naics_map}
+        {"column": "naics", "schema": "pums_beta", "mapping" : naics_map},
+        {"column": "cip", "schema": "pums_beta", "mapping" : lambda x: x[:2]}
     ]
 
     for rcrosswalk in registered_crosswalks:
@@ -15,7 +16,10 @@ def crosswalk(table, api_obj):
 
         if column in api_obj.vars_and_vals.keys() and table.__table_args__['schema'] == schema:
             curr_vals = api_obj.vars_and_vals[column].split(OR)
-            new_vals = [naics_map[val] if val in naics_map else val for val in curr_vals]
+            if isinstance(mapping, dict):
+                new_vals = [mapping[val] if val in mapping else val for val in curr_vals]
+            else:
+                new_vals = [mapping(val) for val in curr_vals]
             new_val_str = OR.join(new_vals)
             api_obj.vars_and_vals[column] = new_val_str
 
