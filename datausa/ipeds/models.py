@@ -88,6 +88,7 @@ class GradsPctYcu(GradsPct, CipId, UniversityId):
     median_moe = 2
 
     year = db.Column(db.Integer(), primary_key=True)
+    grads_total = db.Column(db.Integer)
 
     @classmethod
     def get_supported_levels(cls):
