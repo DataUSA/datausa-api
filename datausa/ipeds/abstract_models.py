@@ -96,10 +96,12 @@ class CipId(object):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"]}
+        return {"cip": ["all", "2", "4", "6"]}
 
     @classmethod
     def cip_filter(cls, level):
+        if level == 'all':
+            return True
         return func.length(cls.cip) == level
 
 class UniversityId(object):
