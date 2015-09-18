@@ -1,9 +1,13 @@
 from flask import Blueprint, request, jsonify
 from datausa.attrs.models import Cip, Naics, University
+from datausa.core import table_manager
 from datausa.core import api
 from datausa.core.models import ApiObject
+from datausa.core.crosswalker import crosswalk
 
 mod = Blueprint('core', __name__, url_prefix='/api')
+
+manager = table_manager.TableManager()
 
 def show_attrs(attr_obj):
     attrs = attr_obj.query.all()

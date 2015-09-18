@@ -84,8 +84,3 @@ class PumsNaicsCrosswalk(db.Model):
 
     naics = db.Column(db.String, primary_key=True)
     pums_naics = db.Column(db.String)
-
-    @classmethod
-    def get_mapping(cls):
-        all_objs = cls.query.all()
-        return {obj.naics : obj.pums_naics for obj in all_objs}
