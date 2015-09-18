@@ -10,7 +10,7 @@ class EnrollmentYcu(Enrollment, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"], "university": ["all"]}
+        return {"cip": CipId.LEVELS, "university": ["all"]}
 
 class TuitionYc(Tuition, CipId):
     __tablename__ = "tuition_yc"
@@ -28,7 +28,7 @@ class TuitionYcu(Tuition, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"], "university": ["all"]}
+        return {"cip": CipId.LEVELS, "university": ["all"]}
 
 class TuitionYcs(Tuition, CipId, SectorId):
     __tablename__ = "tuition_ycs"
@@ -39,7 +39,7 @@ class TuitionYcs(Tuition, CipId, SectorId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"], "sector": ["all"]}
+        return {"cip": CipId.LEVELS, "sector": ["all"]}
 
 class GradsYc(Grads, CipId):
     __tablename__ = "grads_yc"
@@ -50,7 +50,7 @@ class GradsYc(Grads, CipId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["all", "2", "4", "6"]}
+        return {"cip": CipId.LEVELS}
 
 class GradsYcd(Grads, CipId, DegreeId):
     __tablename__ = "grads_ycd"
@@ -60,7 +60,7 @@ class GradsYcd(Grads, CipId, DegreeId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"], "degree": ["all"]}
+        return {"cip": CipId.LEVELS, "degree": ["all"]}
 
 class GradsYcu(Grads, CipId, UniversityId):
     __tablename__ = "grads_ycu"
@@ -70,7 +70,7 @@ class GradsYcu(Grads, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"], "university": ["all"]}
+        return {"cip": CipId.LEVELS, "university": ["all"]}
 
 class GradsYgc(Grads, GeoId, CipId):
     __tablename__ = "grads_ygc"
@@ -81,7 +81,7 @@ class GradsYgc(Grads, GeoId, CipId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"], "geo_id": [NATION, STATE, COUNTY, MSA]}
+        return {"cip": CipId.LEVELS, "geo_id": [NATION, STATE, COUNTY, MSA]}
 
 class GradsPctYcu(GradsPct, CipId, UniversityId):
     __tablename__ = "gradspct_ycu"
@@ -92,4 +92,4 @@ class GradsPctYcu(GradsPct, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"], "university": ["all"]}
+        return {"cip": CipId.LEVELS, "university": ["all"]}

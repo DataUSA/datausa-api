@@ -90,6 +90,7 @@ class GeoId(object):
         return cls.geo_id.startswith(level_code)
 
 class CipId(object):
+    LEVELS = ["2", "4", "6", "all"]
     @declared_attr
     def cip(cls):
         return db.Column(db.String(), db.ForeignKey(Cip.id), primary_key=True)
