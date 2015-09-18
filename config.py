@@ -27,3 +27,6 @@ if "DATAUSA_PRODUCTION" in os.environ:
     ERROR_EMAIL = True
 
 JSONIFY_PRETTYPRINT_REGULAR = False
+
+CACHE_TYPE = 'filesystem'
+CACHE_DIR = os.path.join(basedir, 'cache/')

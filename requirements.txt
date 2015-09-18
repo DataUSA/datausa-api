@@ -5,3 +5,4 @@ psycopg2
 flask-compress
 simplejson # handles Decimal object json serialization
 flask-cors
+flask-cache

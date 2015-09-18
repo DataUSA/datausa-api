@@ -58,3 +58,6 @@ target/
 
 # OSX stuff
 .DS_STORE
+
+# Ignore cache folder
+cache/

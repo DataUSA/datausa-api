@@ -22,7 +22,6 @@ class BaseModel(object):
             "supported_levels": cls.get_supported_levels(),
         }
 
-
 class ApiObject(object):
     def __init__(self, **kwargs):
         allowed = ["vars_needed", "vars_and_vals", "values", "shows_and_levels",
