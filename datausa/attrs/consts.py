@@ -6,3 +6,6 @@ STATE = 'state'
 NATION = 'nation'
 ALL = 'all'
 OR = "_"
+YEAR = 'year'
+LATEST = 'latest'
+OLDEST = 'oldest'

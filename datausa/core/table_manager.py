@@ -2,7 +2,7 @@ from datausa.core import get_columns
 from datausa.core.registrar import registered_models
 from datausa.core.exceptions import DataUSAException
 from datausa.core import crosswalker
-
+from datausa.attrs import consts
 from operator import attrgetter
 from sqlalchemy.sql import func
 from datausa import cache
@@ -15,20 +15,19 @@ def tbl_years():
         tbl_cols = [col.key for col in get_columns(tbl)]
         if hasattr(tbl, "year"):
             qry = tbl.query.with_entities(
-                func.max(tbl.year).label("max_year"), 
+                func.max(tbl.year).label("max_year"),
                 func.min(tbl.year).label("min_year"),
             )
             res = qry.one()
-            years[tbl_name] = {"max": res.max_year, "min": res.min_year}
+            years[tbl_name] = {consts.LATEST: res.max_year, 
+                               consts.OLDEST: res.min_year}
         else:
             years[tbl_name] = None
     return years
 
 class TableManager(object):
     possible_variables = [col.key for t in registered_models for col in get_columns(t)]
-
-    def __init__(self):
-        self.years = tbl_years()
+    table_years = tbl_years()
 
     @classmethod
     def sort_tables(cls, tables):

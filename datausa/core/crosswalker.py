@@ -4,10 +4,14 @@ from datausa import cache
 
 @cache.memoize()
 def get_mapping():
+    '''Make a dictionary that maps PUMS naics codes to regular
+    NAICS codes'''
     all_objs = PumsNaicsCrosswalk.query.all()
     return {obj.naics : obj.pums_naics for obj in all_objs}
 
 def crosswalk(table, api_obj):
+    '''Given a table and an API object, determine if any crosswalks need
+    to be performed'''
     registered_crosswalks = [
         {"column": "naics", "schema": "pums_beta", "mapping" : naics_map},
         {"column": "cip", "schema": "pums_beta", "mapping" : lambda x: x[:2]}
