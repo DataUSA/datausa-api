@@ -54,8 +54,6 @@ class TableManager(object):
     def table_has_cols(cls, table, vars_needed):
         table_cols = get_columns(table)
         cols = set([col.key for col in table_cols])
-        # if table.__tablename__ == 'ygd':
-            # raise Exception(vars_needed, cols, set(vars_needed).issubset(cols))
         return set(vars_needed).issubset(cols)
 
     @classmethod
