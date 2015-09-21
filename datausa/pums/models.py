@@ -77,6 +77,14 @@ class Ygc(BasePums, Personal, Year, GeoId, CipId):
     def get_supported_levels(cls):
         return {"geo_id": GeoId.LEVELS, "cip": ["2", "all"]}
 
+class Yo(BasePums, Personal, Year, SocId):
+    __tablename__ = "yo"
+    median_moe = 1
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo_id": GeoId.LEVELS, "soc": SocId.LEVELS}
+
 class Ygo(BasePums, Personal, Year, GeoId, SocId):
     __tablename__ = "ygo"
     median_moe = 2
