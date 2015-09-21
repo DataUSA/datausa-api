@@ -100,6 +100,11 @@ class SocId(object):
             return True
         return cls.soc_level == level
 
+class WageId(object):
+    @declared_attr
+    def wage_bin(cls):
+        return db.Column(db.String(), db.ForeignKey(PumsWage.id), primary_key=True)
+
 class RaceId(object):
     @declared_attr
     def race(cls):

@@ -83,7 +83,15 @@ class Yo(BasePums, Personal, Year, SocId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": GeoId.LEVELS, "soc": SocId.LEVELS}
+        return {"soc": SocId.LEVELS}
+
+class Yow(BasePums, Personal, Year, SocId, WageId):
+    __tablename__ = "yow"
+    median_moe = 1
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"soc": SocId.LEVELS, "wage_bin": "all"}
 
 class Ygo(BasePums, Personal, Year, GeoId, SocId):
     __tablename__ = "ygo"
@@ -92,6 +100,14 @@ class Ygo(BasePums, Personal, Year, GeoId, SocId):
     @classmethod
     def get_supported_levels(cls):
         return {"geo_id": GeoId.LEVELS, "soc": SocId.LEVELS}
+
+class Ygw(BasePums, Personal, Year, GeoId, WageId):
+    __tablename__ = "ygw"
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo_id": GeoId.LEVELS, "wage_bin": "all"}
 
 class Ygor(BasePums, Personal, Year, GeoId, RaceId):
     __tablename__ = "ygor"

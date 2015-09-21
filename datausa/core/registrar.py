@@ -5,8 +5,8 @@ from datausa.onet.models import *
 registered_models = [
     # PUMS
     Yg, Ygd, Ygi, Ygio,
-    Yo,
-    Ygo, Ygor, Ygos,
+    Yo, Yow,
+    Ygo, Ygw, Ygor, Ygos,
 
     Yc, Ygc, Yca, Ycd, Ycb, Yoc, Yic,
     Yio, Yior, Yios, Yocd,

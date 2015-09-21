@@ -65,6 +65,10 @@ class PumsRace(BaseAttr):
     __tablename__ = 'race'
     __table_args__ = {"schema": "pums_attrs"}
 
+class PumsWage(BaseAttr):
+    __tablename__ = 'wage_bin'
+    __table_args__ = {"schema": "pums_attrs"}
+
 class PumsBirthplace(BaseAttr):
     __tablename__ = 'birthplace'
     __table_args__ = {"schema": "pums_attrs"}
