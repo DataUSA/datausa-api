@@ -58,6 +58,14 @@ class GeoId(object):
     def get_supported_levels(cls):
         return {GEO_ID: [NATION, STATE, PUMA]}
 
+    @classmethod
+    def geo_id_filter(cls, level):
+        if level == ALL:
+            return True
+        level_map = {NATION: "010", STATE: "040", PUMA: "795"}
+        level_code = level_map[level]
+        return cls.geo_id.startswith(level_code)
+
     @declared_attr
     def geo_id(cls):
         return db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)

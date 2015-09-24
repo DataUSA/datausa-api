@@ -85,6 +85,8 @@ class GeoId(object):
 
     @classmethod
     def geo_id_filter(cls, level):
+        if level == ALL:
+            return True
         level_map = {NATION: "010", STATE: "040", COUNTY: "050", MSA: "310"}
         level_code = level_map[level]
         return cls.geo_id.startswith(level_code)
