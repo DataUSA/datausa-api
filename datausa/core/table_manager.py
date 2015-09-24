@@ -11,7 +11,8 @@ from datausa import cache
 def tbl_years():
     years = {}
     for tbl in registered_models:
-        tbl_name = tbl.__tablename__
+        tbl_name = "{}.{}".format(tbl.__table_args__["schema"],
+            tbl.__tablename__)
         tbl_cols = [col.key for col in get_columns(tbl)]
         if hasattr(tbl, "year"):
             qry = tbl.query.with_entities(
