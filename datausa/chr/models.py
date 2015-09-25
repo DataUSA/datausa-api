@@ -12,7 +12,7 @@ AutomapBase = automap_base(bind=db.engine, metadata=metadata)
 
 
 class HealthYg(AutomapBase, db.Model, BaseModel):
-    __table_args__ = {"schema": "chr", "primary_key": ["geo_id"]}
+    __table_args__ = {"schema": "chr"}
 
     __tablename__ = 'yg'
     median_moe = 1

@@ -1,32 +1,34 @@
 from datausa.database import db
-from datausa.attrs import consts
-from datausa.attrs.models import University
-
+from datausa.attrs.models import Geo, Soc
 from datausa.core.models import BaseModel
-from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, ALL
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy import MetaData
+from datausa.attrs.consts import NATION, STATE, MSA, ALL
 
-metadata = MetaData(schema='chr')
-AutomapBase = automap_base(bind=db.engine, metadata=metadata)
+class OesYgo(db.Model, BaseModel):
+    __table_args__ = {"schema": "bls"}
+    __tablename__ = 'oes_ygo'
+    median_moe = 2
 
+    year = db.Column(db.Integer, primary_key=True)
+    geo_id = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
+    soc = db.Column(db.String, db.ForeignKey(Soc.id), primary_key=True)
 
-class BlsYgo(AutomapBase, db.Model, BaseModel):
-    __table_args__ = {"schema": "chr", "primary_key": ["geo_id"]}
-
-    __tablename__ = 'yg'
-    median_moe = 1
+    tot_emp = db.Column(db.Integer)
+    tot_emp_prse = db.Column(db.Float)
+    avg_wage = db.Column(db.Float)
+    avg_wage_prse = db.Column(db.Float)
+    tot_emp_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": [ALL, STATE, COUNTY]}
+        return {
+            "geo_id": [ALL, NATION, STATE, MSA],
+            "soc": [ALL, "0", "1", "2", "3"]
+        }
 
     @classmethod
     def geo_id_filter(cls, level):
         if level == ALL:
             return True
-        level_map = {STATE: "040", COUNTY: "050"}
+        level_map = {NATION: "010", STATE: "040", MSA: "050"}
         level_code = level_map[level]
         return cls.geo_id.startswith(level_code)
-
-AutomapBase.prepare(db.engine, reflect=True)

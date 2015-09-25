@@ -2,6 +2,7 @@ from datausa.pums.models import *
 from datausa.ipeds.models import *
 from datausa.onet.models import *
 from datausa.chr.models import *
+from datausa.bls.models import *
 
 registered_models = [
     # PUMS
@@ -23,6 +24,9 @@ registered_models = [
 
     # County Health Rankings
     HealthYg,
+
+    # Bureau of Labor Statistics
+    OesYgo,
 ]
 
 def register(cls):
