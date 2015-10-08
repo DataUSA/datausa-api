@@ -6,6 +6,7 @@ from datausa.attrs.models import Cip, Naics, University, Soc, Degree
 from datausa.attrs.models import Skill, Sector, Geo
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
+from datausa.attrs.models import IoCode
 
 attr_map = {"soc": Soc, "naics" : Naics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
@@ -13,7 +14,7 @@ attr_map = {"soc": Soc, "naics" : Naics, "cip": Cip,
             "pums_degree": PumsDegree,
             "race": PumsRace, "sex": PumsSex,
             "birthplace": PumsBirthplace,
-            "wage_bin": PumsWage }
+            "wage_bin": PumsWage, "iocode": IoCode, }
 
 def show_attrs(attr_obj):
     attrs = attr_obj.query.all()

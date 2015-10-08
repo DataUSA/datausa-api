@@ -88,3 +88,6 @@ class PumsNaicsCrosswalk(db.Model):
 
     naics = db.Column(db.String, primary_key=True)
     pums_naics = db.Column(db.String)
+
+class IoCode(BaseAttr):
+    __tablename__ = 'iocode'
