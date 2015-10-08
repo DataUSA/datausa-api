@@ -3,6 +3,7 @@ from datausa.ipeds.models import *
 from datausa.onet.models import *
 from datausa.chr.models import *
 from datausa.bls.models import *
+from datausa.cbp.models import *
 
 registered_models = [
     # PUMS
@@ -27,6 +28,9 @@ registered_models = [
 
     # Bureau of Labor Statistics
     OesYgo,
+
+    # County Business Patterns
+    CbpYgi, CbpYg,
 ]
 
 def register(cls):
