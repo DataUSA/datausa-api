@@ -4,6 +4,7 @@ from datausa.onet.models import *
 from datausa.chr.models import *
 from datausa.bls.models import *
 from datausa.cbp.models import *
+from datausa.bea.models import *
 
 registered_models = [
     # PUMS
@@ -31,6 +32,9 @@ registered_models = [
 
     # County Business Patterns
     CbpYgi, CbpYg,
+
+    # BEA I/O Tables
+    BeaUse,
 ]
 
 def register(cls):
