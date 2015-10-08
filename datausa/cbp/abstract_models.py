@@ -12,8 +12,13 @@ class BaseCbp(db.Model, BaseModel):
     __table_args__ = {"schema": "cbp"}
 
     est = db.Column(db.Integer())
+
     emp = db.Column(db.Integer())
+    emp_nf = db.Column(db.String())
+    empflag = db.Column(db.String())
+
     ap = db.Column(db.Float())
+    ap_nf = db.Column(db.String())
 
     n1_4 = db.Column(db.Integer())
     n5_9 = db.Column(db.Integer())
