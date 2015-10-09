@@ -21,7 +21,7 @@ registered_models = [
     GradsYcu, GradsYgc, GradsYc, GradsYcd,
     GradsPctYcu,
 
-    #ONET
+    # ONET
     SkillByCip,
 
     # County Health Rankings
@@ -36,6 +36,7 @@ registered_models = [
     # BEA I/O Tables
     BeaUse,
 ]
+
 
 def register(cls):
     registered_models.append(cls)

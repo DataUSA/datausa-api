@@ -1,5 +1,6 @@
 from datausa.core.exceptions import DataUSAException
 
+
 class BaseModel(object):
     median_moe = None
     size = None
@@ -22,10 +23,12 @@ class BaseModel(object):
             "supported_levels": cls.get_supported_levels(),
         }
 
+
 class ApiObject(object):
     def __init__(self, **kwargs):
-        allowed = ["vars_needed", "vars_and_vals", "values", "shows_and_levels",
-                   "force", "where", "order", "sort", "limit"]
+        allowed = ["vars_needed", "vars_and_vals", "values",
+                   "shows_and_levels", "force", "where", "order",
+                   "sort", "limit"]
         for keyword, value in kwargs.items():
             if keyword in allowed:
                 setattr(self, keyword, value)
