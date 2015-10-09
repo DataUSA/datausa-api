@@ -8,12 +8,16 @@ from sqlalchemy.sql import func
 from datausa import cache
 
 
+def table_name(tbl):
+    return "{}.{}".format(tbl.__table_args__["schema"],
+                          tbl.__tablename__)
+
+
 @cache.memoize()
 def tbl_years():
     years = {}
     for tbl in registered_models:
-        tbl_name = "{}.{}".format(tbl.__table_args__["schema"],
-                                  tbl.__tablename__)
+        tbl_name = table_name(tbl)
         if hasattr(tbl, "year"):
             qry = tbl.query.with_entities(
                 func.max(tbl.year).label("max_year"),
@@ -27,14 +31,20 @@ def tbl_years():
     return years
 
 
+@cache.memoize()
+def tbl_sizes():
+    sizes = {}
+    for tbl in registered_models:
+        tbl_name = table_name(tbl)
+        sizes[tbl_name] = tbl.query.count()
+    return sizes
+
+
 class TableManager(object):
     possible_variables = [col.key for t in registered_models
                           for col in get_columns(t)]
     table_years = tbl_years()
-
-    @classmethod
-    def sort_tables(cls, tables):
-        pass
+    # table_sizes = tbl_sizes()
 
     @classmethod
     def table_can_show(cls, table, api_obj):
