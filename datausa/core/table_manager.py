@@ -58,8 +58,7 @@ class TableManager(object):
         return set(vars_needed).issubset(cols)
 
     @classmethod
-    def find_table(cls, api_obj):
-        table_list = cls.all_tables(api_obj)
+    def select_best(cls, table_list, api_obj):
         # Ordering is sorted in all_tables
         return table_list[0]
 

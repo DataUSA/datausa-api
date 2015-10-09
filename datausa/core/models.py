@@ -34,3 +34,7 @@ class ApiObject(object):
         if self.limit:
             self.limit = int(self.limit)
         self.subs = {}
+        self.table_list = []
+
+    def capture_logic(self, table_list):
+        self.table_list = table_list

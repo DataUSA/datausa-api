@@ -44,7 +44,9 @@ def build_api_obj():
 @mod.route("/")
 def api_view():
     api_obj = build_api_obj()
-    table = manager.find_table(api_obj)
+    table_list = manager.all_tables(api_obj)
+    table = manager.select_best(table_list, api_obj)
+    api_obj.capture_logic(table_list)
     api_obj = manager.crosswalk(table, api_obj)
     data = api.query(table, api_obj)
 

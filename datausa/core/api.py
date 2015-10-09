@@ -5,13 +5,14 @@ from datausa.core import get_columns
 from datausa.core.table_manager import TableManager
 from datausa.attrs import consts
 
-def simple_format(table, cols, data, subs):
+def simple_format(table, cols, data, api_obj):
     headers = [col if isinstance(col, basestring) else col.key for col in cols]
     data = {
             "headers": list(headers),
             "data": [ list(row) for row in data],
             "source": table.info(),
-            "subs": subs
+            "subs": api_obj.subs,
+            "logic": [table.info() for table in api_obj.table_list]
     }
     return flask.jsonify(data)
 
@@ -96,4 +97,4 @@ def query(table, api_obj):
         qry = qry.limit(api_obj.limit)
 
     data = qry.all()
-    return simple_format(table, cols, data, api_obj.subs)
+    return simple_format(table, cols, data, api_obj)
