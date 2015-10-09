@@ -7,27 +7,29 @@ from operator import attrgetter
 from sqlalchemy.sql import func
 from datausa import cache
 
+
 @cache.memoize()
 def tbl_years():
     years = {}
     for tbl in registered_models:
         tbl_name = "{}.{}".format(tbl.__table_args__["schema"],
-            tbl.__tablename__)
-        tbl_cols = [col.key for col in get_columns(tbl)]
+                                  tbl.__tablename__)
         if hasattr(tbl, "year"):
             qry = tbl.query.with_entities(
                 func.max(tbl.year).label("max_year"),
                 func.min(tbl.year).label("min_year"),
             )
             res = qry.one()
-            years[tbl_name] = {consts.LATEST: res.max_year, 
+            years[tbl_name] = {consts.LATEST: res.max_year,
                                consts.OLDEST: res.min_year}
         else:
             years[tbl_name] = None
     return years
 
+
 class TableManager(object):
-    possible_variables = [col.key for t in registered_models for col in get_columns(t)]
+    possible_variables = [col.key for t in registered_models
+                          for col in get_columns(t)]
     table_years = tbl_years()
 
     @classmethod
@@ -65,7 +67,6 @@ class TableManager(object):
     @classmethod
     def all_tables(cls, api_obj):
         vars_needed = api_obj.vars_needed
-        shows_and_levels = api_obj.shows_and_levels
         candidates = []
         for table in registered_models:
             if TableManager.table_has_cols(table, vars_needed):
@@ -79,4 +80,3 @@ class TableManager(object):
     @classmethod
     def crosswalk(cls, table, api_obj):
         return crosswalker.crosswalk(table, api_obj)
-
