@@ -91,3 +91,11 @@ class PumsNaicsCrosswalk(db.Model):
 
 class IoCode(BaseAttr):
     __tablename__ = 'iocode'
+
+class IoCodeCrosswalk(db.Model):
+    __tablename__ = 'iocode_crosswalk'
+    __table_args__ = {"schema": "attrs"}
+
+    naics = db.Column(db.String, db.ForeignKey(Naics.id), primary_key=True)
+    iocode = db.Column(db.String, db.ForeignKey(IoCode.id), primary_key=True)
+    iocode_parent = db.Column(db.String, db.ForeignKey(IoCode.id))

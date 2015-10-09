@@ -24,5 +24,7 @@ class BeaUse(db.Model, BaseModel):
 
     @classmethod
     def industry_iocode_filter(cls, level):
+        if level == ALL:
+            return True
         target_len = int(level)
         return cls.industry_level == target_len

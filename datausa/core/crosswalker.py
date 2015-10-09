@@ -1,18 +1,25 @@
-from datausa.attrs.models import PumsNaicsCrosswalk
+from datausa.attrs.models import PumsNaicsCrosswalk, IoCodeCrosswalk
 from datausa.attrs.consts import OR
 from datausa import cache
 
 @cache.memoize()
-def get_mapping():
-    '''Make a dictionary that maps PUMS naics codes to regular
+def pums_naics_mapping():
+    '''Make a dictionary that maps naics codes to PUMS
     NAICS codes'''
     all_objs = PumsNaicsCrosswalk.query.all()
     return {obj.naics : obj.pums_naics for obj in all_objs}
+
+@cache.memoize()
+def iocode_mapping():
+    '''Make a dictionary that maps naics codes to iocodes'''
+    all_objs = IoCodeCrosswalk.query.all()
+    return {obj.naics : obj.iocode for obj in all_objs}
 
 def crosswalk(table, api_obj):
     '''Given a table and an API object, determine if any crosswalks need
     to be performed'''
     registered_crosswalks = [
+        {"column": "industry_iocode", "schema": "bea", "mapping" : iocode_map},
         {"column": "naics", "schema": "pums_beta", "mapping" : naics_map},
         {"column": "cip", "schema": "pums_beta", "mapping" : lambda x: x[:2]}
     ]
@@ -33,4 +40,5 @@ def crosswalk(table, api_obj):
             api_obj.subs[column] = new_val_str
     return api_obj
 
-naics_map = get_mapping()
+naics_map = pums_naics_mapping()
+iocode_map = iocode_mapping()

@@ -24,6 +24,8 @@ class CbpYgi(BaseCbp):
 
     @classmethod
     def naics_filter(cls, level):
+        if level == ALL:
+            return True
         target_len = int(level) + 2
         return func.length(cls.naics) == target_len
 
