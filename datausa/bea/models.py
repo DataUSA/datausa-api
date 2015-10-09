@@ -1,8 +1,8 @@
 from datausa.database import db
-from datausa.attrs.models import IoCode, Soc
+from datausa.attrs.models import IoCode
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import ALL
-from sqlalchemy.sql import func
+
 
 class BeaUse(db.Model, BaseModel):
     __table_args__ = {"schema": "bea"}
