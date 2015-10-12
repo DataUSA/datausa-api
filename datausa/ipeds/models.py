@@ -43,7 +43,7 @@ class TuitionYcs(Tuition, CipId, SectorId):
 
 class GradsYc(Grads, CipId):
     __tablename__ = "grads_yc"
-    median_moe = 1
+    median_moe = 0
 
     year = db.Column(db.Integer(), primary_key=True)
     grads_rank = db.Column(db.Integer)
