@@ -18,6 +18,7 @@ class TuitionYc(Tuition, CipId):
 
     year = db.Column(db.Integer(), primary_key=True)
     oos_tuition_rank = db.Column(db.Integer())
+    state_tuition_rank = db.Column(db.Integer())
 
 class TuitionYcu(Tuition, CipId, UniversityId):
     __tablename__ = "tuition_ycu"
