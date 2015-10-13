@@ -30,3 +30,4 @@ JSONIFY_PRETTYPRINT_REGULAR = False
 
 CACHE_TYPE = 'filesystem'
 CACHE_DIR = os.path.join(basedir, 'cache/')
+CACHE_DEFAULT_TIMEOUT = os.environ.get("CACHE_DEFAULT_TIMEOUT", (60 * 60))

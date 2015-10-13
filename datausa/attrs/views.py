@@ -57,3 +57,10 @@ def attrs_by_id(kind, attr_id):
 def attrs_list():
     return jsonify(data=attr_map.keys())
 
+@mod.route("/<kind>/<attr_id>/parents")
+def get_parents(kind, attr_id):
+    if kind in attr_map:
+        attr_obj = attr_map[kind]
+        data, headers = attr_obj.parents(attr_id)
+        return jsonify(data=data, headers=headers)
+    raise Exception("Invalid attribute type.")
