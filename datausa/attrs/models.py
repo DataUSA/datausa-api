@@ -92,6 +92,7 @@ class Soc(BaseAttr):
         socs = Soc.query.filter(*filters).distinct(Soc.id).all()
         return [attr.data_serialize() for attr in socs], Soc.HEADERS
 
+
 class Cip(BaseAttr):
     __tablename__ = 'course'
 
@@ -103,7 +104,13 @@ class Cip(BaseAttr):
         if len(cip_id) == 6:
             cips.append(cip_id[:4])
         cips = Cip.query.filter(Cip.id.in_(cips)).all()
-        return [[attr.id, attr.name] for attr in cips], ["id", "name"]
+        return [attr.data_serialize() for attr in cips], Cip.HEADERS
+
+    @classmethod
+    def children(cls, cip_id):
+        filters = [Cip.id.startswith(cip_id), Cip.id != cip_id]
+        cips = Cip.query.filter(*filters).distinct(Cip.id).all()
+        return [attr.data_serialize() for attr in cips], Cip.HEADERS
 
 
 class Degree(BaseAttr):
