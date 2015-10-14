@@ -53,10 +53,10 @@ class Year(object):
         return db.Column(db.Integer(), primary_key=True)
 
 class GeoId(object):
-    LEVELS = ["nation", "state", "puma"]
+    LEVELS = [NATION, STATE, PUMA, ALL]
     @classmethod
     def get_supported_levels(cls):
-        return {GEO: [NATION, STATE, PUMA]}
+        return {GEO: GeoId.LEVELS}
 
     @classmethod
     def geo_filter(cls, level):
