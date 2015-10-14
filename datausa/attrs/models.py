@@ -83,6 +83,14 @@ class Soc(BaseAttr):
         socs = Soc.query.filter(Soc.id.in_(myparents)).all()
         return [[attr.id, attr.name] for attr in socs], ["id", "name"]
 
+    @classmethod
+    def children(cls, soc_id):
+        # find the prefix Soc ID
+        prefix = soc_id.rstrip("0")
+        # find IDs starting with this prefix not equal to this prefix
+        filters = [Soc.id.startswith(prefix), Soc.id != soc_id]
+        socs = Soc.query.filter(*filters).distinct(Soc.id).all()
+        return [attr.data_serialize() for attr in socs], Soc.HEADERS
 
 class Cip(BaseAttr):
     __tablename__ = 'course'
