@@ -6,7 +6,7 @@ from datausa.database import db
 from datausa.attrs import consts
 from datausa.core.models import BaseModel
 from datausa.attrs.models import *
-from datausa.attrs.consts import NATION, STATE, PUMA, ALL, GEO_ID
+from datausa.attrs.consts import NATION, STATE, PUMA, ALL, GEO
 
 
 def geo_sumlevel_filter(table, show_colname, sumlevel):
@@ -14,7 +14,7 @@ def geo_sumlevel_filter(table, show_colname, sumlevel):
     if not sumlevel in sumlevel_codes:
         raise DataUSAException("Invalid sumlevel", sumlevel)
     start_code = sumlevel_codes[sumlevel]
-    return table.geo_id.startswith(start_code)
+    return table.geo.startswith(start_code)
 
 class BasePums(db.Model, BaseModel):
     __abstract__ = True
@@ -25,7 +25,7 @@ class BasePums(db.Model, BaseModel):
         result = []
         for show_colname, sumlevel in shows_and_levels.items():
             if sumlevel != ALL:
-                if show_colname == "geo_id":
+                if show_colname == "geo":
                     filt = geo_sumlevel_filter(cls, show_colname, sumlevel)
                     result.append(filt)
 
@@ -56,18 +56,18 @@ class GeoId(object):
     LEVELS = ["nation", "state", "puma"]
     @classmethod
     def get_supported_levels(cls):
-        return {GEO_ID: [NATION, STATE, PUMA]}
+        return {GEO: [NATION, STATE, PUMA]}
 
     @classmethod
-    def geo_id_filter(cls, level):
+    def geo_filter(cls, level):
         if level == ALL:
             return True
         level_map = {NATION: "010", STATE: "040", PUMA: "795"}
         level_code = level_map[level]
-        return cls.geo_id.startswith(level_code)
+        return cls.geo.startswith(level_code)
 
     @declared_attr
-    def geo_id(cls):
+    def geo(cls):
         return db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)
 
 class CipId(object):

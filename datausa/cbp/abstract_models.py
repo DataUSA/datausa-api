@@ -34,9 +34,9 @@ class BaseCbp(db.Model, BaseModel):
     n1000_4 = db.Column(db.Integer())
 
     @classmethod
-    def geo_id_filter(cls, level):
+    def geo_filter(cls, level):
         if level == ALL:
             return True
         level_map = {NATION: "010", STATE: "040", MSA: "310", COUNTY: "050"}
         level_code = level_map[level]
-        return cls.geo_id.startswith(level_code)
+        return cls.geo.startswith(level_code)

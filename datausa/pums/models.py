@@ -52,14 +52,14 @@ class Ygi(BasePums, Personal, Year, GeoId, NaicsId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": GeoId.LEVELS, "naics": NaicsId.LEVELS}
+        return {"geo": GeoId.LEVELS, "naics": NaicsId.LEVELS}
 
 class Ygio(BasePums, Personal, Year, GeoId, NaicsId, SocId):
     __tablename__ = "ygio"
     median_moe = 5
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": GeoId.LEVELS,
+        return {"geo": GeoId.LEVELS,
                 "soc": SocId.LEVELS,
                 "naics": NaicsId.LEVELS}
 
@@ -75,7 +75,7 @@ class Ygc(BasePums, Personal, Year, GeoId, CipId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": GeoId.LEVELS, "cip": ["2", "all"]}
+        return {"geo": GeoId.LEVELS, "cip": ["2", "all"]}
 
 class Yo(BasePums, Personal, Year, SocId):
     __tablename__ = "yo"
@@ -99,7 +99,7 @@ class Ygo(BasePums, Personal, Year, GeoId, SocId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": GeoId.LEVELS, "soc": SocId.LEVELS}
+        return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS}
 
 class Ygw(BasePums, Personal, Year, GeoId, WageId):
     __tablename__ = "ygw"
@@ -107,7 +107,7 @@ class Ygw(BasePums, Personal, Year, GeoId, WageId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": GeoId.LEVELS, "wage_bin": "all"}
+        return {"geo": GeoId.LEVELS, "wage_bin": "all"}
 
 class Ygor(BasePums, Personal, Year, GeoId, RaceId):
     __tablename__ = "ygor"
@@ -115,7 +115,7 @@ class Ygor(BasePums, Personal, Year, GeoId, RaceId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": GeoId.LEVELS, "soc": SocId.LEVELS,
+        return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS,
                 "race": ["all"]}
 
 class Ygos(BasePums, Personal, Year, GeoId, SexId):
@@ -124,7 +124,7 @@ class Ygos(BasePums, Personal, Year, GeoId, SexId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": GeoId.LEVELS, "soc": SocId.LEVELS,
+        return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS,
                 "sex": ["all"]}
 
 class Yoc(BasePums, Personal, Year, SocId, CipId):

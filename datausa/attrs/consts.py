@@ -1,4 +1,4 @@
-GEO_ID = 'geo_id'
+GEO = 'geo'
 PUMA = 'puma'
 MSA = 'msa'
 COUNTY = 'county'

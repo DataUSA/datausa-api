@@ -1,5 +1,5 @@
 from datausa.ipeds.abstract_models import *
-from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
+from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, GEO
 
 class EnrollmentYcu(Enrollment, CipId, UniversityId):
     __tablename__ = "enrollment_ycu"
@@ -82,7 +82,7 @@ class GradsYgc(Grads, GeoId, CipId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "geo_id": [NATION, STATE, COUNTY, MSA]}
+        return {"cip": CipId.LEVELS, GEO: [NATION, STATE, COUNTY, MSA]}
 
 class GradsPctYcu(GradsPct, CipId, UniversityId):
     __tablename__ = "gradspct_ycu"

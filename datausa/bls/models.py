@@ -9,7 +9,7 @@ class OesYgo(db.Model, BaseModel):
     median_moe = 2
 
     year = db.Column(db.Integer, primary_key=True)
-    geo_id = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
+    geo = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
     soc = db.Column(db.String, db.ForeignKey(Soc.id), primary_key=True)
 
     tot_emp = db.Column(db.Integer)
@@ -21,14 +21,14 @@ class OesYgo(db.Model, BaseModel):
     @classmethod
     def get_supported_levels(cls):
         return {
-            "geo_id": [ALL, NATION, STATE, MSA],
+            "geo": [ALL, NATION, STATE, MSA],
             "soc": [ALL, "0", "1", "2", "3"]
         }
 
     @classmethod
-    def geo_id_filter(cls, level):
+    def geo_filter(cls, level):
         if level == ALL:
             return True
         level_map = {NATION: "010", STATE: "040", MSA: "050"}
         level_code = level_map[level]
-        return cls.geo_id.startswith(level_code)
+        return cls.geo.startswith(level_code)

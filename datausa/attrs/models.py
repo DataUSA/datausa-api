@@ -92,13 +92,13 @@ class Geo(BaseAttr):
     sumlevel = db.Column(db.String)
 
     @classmethod
-    def parents(cls, geo_id):
-        mysumlevel = geo_id[:3]
-        geos = GeoContainment.query.filter(GeoContainment.child_geoid == geo_id).order_by("percent_covered asc").all()
+    def parents(cls, geo):
+        mysumlevel = geo[:3]
+        geos = GeoContainment.query.filter(GeoContainment.child_geoid == geo).order_by("percent_covered asc").all()
         levels = [[gobj.parent.id, gobj.parent.name] for gobj in geos]
 
         if mysumlevel in ['050', '140', '795']:
-            state_id = "04000US" + geo_id.split("US")[1][:2]
+            state_id = "04000US" + geo.split("US")[1][:2]
             state = Geo.query.filter_by(id=state_id).one()
             levels.insert(0, [state_id, state.name])
         if mysumlevel != '010':

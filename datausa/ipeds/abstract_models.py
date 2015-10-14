@@ -6,7 +6,7 @@ from sqlalchemy.orm import column_property
 from datausa.core.models import BaseModel
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql import func
-from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, ALL
+from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, ALL, GEO
 
 class BaseIpeds(db.Model, BaseModel):
     __abstract__ = True
@@ -26,7 +26,7 @@ class Enrollment(BaseIpeds):
 
 class Tuition(BaseIpeds):
     __abstract__ = True
-    
+
     oos_tuition = db.Column(db.Integer())
     state_tuition = db.Column(db.Integer())
     district_tuition = db.Column(db.Integer())
@@ -76,20 +76,20 @@ class Grads(BaseIpeds):
 
 class GeoId(object):
     @declared_attr
-    def geo_id(cls):
+    def geo(cls):
         return db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
-        return {GEO_ID: [NATION, STATE, PUMA]}
+        return {GEO: [NATION, STATE, PUMA]}
 
     @classmethod
-    def geo_id_filter(cls, level):
+    def geo_filter(cls, level):
         if level == ALL:
             return True
         level_map = {NATION: "010", STATE: "040", COUNTY: "050", MSA: "310"}
         level_code = level_map[level]
-        return cls.geo_id.startswith(level_code)
+        return cls.geo.startswith(level_code)
 
 class CipId(object):
     LEVELS = ["2", "4", "6", "all"]
