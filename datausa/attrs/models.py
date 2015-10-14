@@ -6,14 +6,22 @@ class BaseAttr(db.Model):
     __table_args__ = {"schema": "attrs"}
     id = db.Column(db.String(10), primary_key=True)
     name = db.Column(db.String())
+    HEADERS = ["id", "name"]
 
     @classmethod
     def parents(cls, attr_id):
         raise Exception("Not implemented!")
 
+    @classmethod
+    def children(cls, attr_id):
+        raise Exception("Not implemented!")
+
     def serialize(self):
         return {key: val for key, val in self.__dict__.items()
                 if not key.startswith("_")}
+
+    def data_serialize(self):
+        return [self.id, self.name]
 
     def __repr__(self):
         return '<{}, id: {}, name: {}>'.format(self.__class__,
@@ -42,12 +50,21 @@ class Naics(BaseAttr):
         mylen = len(naics_id)
         if mylen > 2 and "-" not in naics_id:
             ids = [naics_id[:naics_len] for naics_len in range(2, mylen)]
-            if ids[0].startswith("3"):
+            if ids[0][:2] in ["31", "32", "33"]:
                 ids[0] = "31-33"
-            elif ids[0].startswith("4"):
+            elif ids[0][:2] in ["44", "45"]:
                 ids[0] = "44-45"
         naics = Naics.query.filter(Naics.id.in_(ids)).all()
-        return [[attr.id, attr.name] for attr in naics], ["id", "name"]
+        return [attr.data_serialize() for attr in naics], Naics.HEADERS
+
+    @classmethod
+    def children(cls, naics_id):
+        naics_map = {"31-33": ["31", "32", "33"], "44-45": ["44", "45"]}
+        targets = naics_map[naics_id] if naics_id in naics_map else [naics_id]
+        filters = [Naics.id.startswith(target) for target in targets]
+        filters.append(Naics.id != naics_id)
+        naics = Naics.query.filter(*filters).distinct(Naics.id).all()
+        return [attr.data_serialize() for attr in naics], Naics.HEADERS
 
 
 class Soc(BaseAttr):
