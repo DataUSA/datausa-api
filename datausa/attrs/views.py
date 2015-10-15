@@ -69,6 +69,7 @@ def get_parents(kind, attr_id):
 def get_children(kind, attr_id):
     if kind in attr_map:
         attr_obj = attr_map[kind]
-        data, headers = attr_obj.children(attr_id)
+        kwargs = request.args
+        data, headers = attr_obj.children(attr_id, **kwargs)
         return jsonify(data=data, headers=headers)
     raise Exception("Invalid attribute type.")

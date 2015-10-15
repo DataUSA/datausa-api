@@ -1,6 +1,8 @@
 from datausa.database import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from sqlalchemy import or_
+from datausa.attrs.consts import OR
 
 class BaseAttr(db.Model):
     __abstract__ = True
@@ -156,24 +158,28 @@ class Geo(BaseAttr):
         return levels, Geo.HEADERS
 
     @classmethod
-    def children(cls, geo, show_all='040'):
+    def children(cls, geo, **kwargs):
         simple_levels = {
             '010': ['040'],
             '040': ['050', '060', '101', '140', '160'],
             '050': ['140'],
         }
         sumlevel = geo[:3]
-
-        if sumlevel in simple_levels and show_all in simple_levels[sumlevel]:
-            child_prefix = '{}00US{}'.format(show_all, geo.split('US')[1])
+        if 'child_level' not in kwargs:
+            child_level = ''
+        else:
+            child_level = kwargs['child_level'][0].split(OR)
+        if sumlevel in simple_levels and child_level in simple_levels[sumlevel]:
+            child_prefix = '{}00US{}'.format(child_level, geo.split('US')[1])
             filters = [Geo.id.startswith(child_prefix)]
             geos = Geo.query.filter(*filters).all()
             levels = [[gobj.id, gobj.name] for gobj in geos]
         else:
-            # TODO check geo containment table
-            # filters.append(GeoContainment.child_geoid.startswith(show_all))
-            # geos = GeoContainment.query.filter(*filters).all()
-            pass
+            filters = [GeoContainment.parent_geoid == geo]
+            lvls = [GeoContainment.child_geoid.startswith(lvl) for lvl in child_level]
+            filters.append(or_(*lvls))
+            geos = GeoContainment.query.filter(*filters).all()
+            levels = [[gobj.child.id, gobj.child.name] for gobj in geos]
         return levels, Geo.HEADERS
 
 
@@ -252,4 +258,5 @@ class GeoContainment(db.Model):
                              primary_key=True)
     percent_covered = db.Column(db.Float)
     parent = relationship('Geo', foreign_keys='GeoContainment.parent_geoid')
-    child = relationship('Geo', foreign_keys='GeoContainment.child_geoid')
+    child = relationship('Geo', foreign_keys='GeoContainment.child_geoid',
+                         lazy='subquery')
