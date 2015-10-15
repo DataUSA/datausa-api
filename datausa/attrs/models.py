@@ -145,15 +145,36 @@ class Geo(BaseAttr):
     def parents(cls, geo):
         mysumlevel = geo[:3]
         geos = GeoContainment.query.filter(GeoContainment.child_geoid == geo).order_by("percent_covered asc").all()
-        levels = [[gobj.parent.id, gobj.parent.name] for gobj in geos]
 
-        if mysumlevel in ['050', '140', '795']:
+        levels = [[gobj.parent.id, gobj.parent.name] for gobj in geos]
+        if mysumlevel in ['050', '140', '795', '160']:
             state_id = "04000US" + geo.split("US")[1][:2]
             state = Geo.query.filter_by(id=state_id).one()
             levels.insert(0, [state_id, state.name])
         if mysumlevel != '010':
             levels.insert(0, ["01000US", "United States"])
-        return levels, ["id", "name"]
+        return levels, Geo.HEADERS
+
+    @classmethod
+    def children(cls, geo, show_all='040'):
+        simple_levels = {
+            '010': ['040'],
+            '040': ['050', '060', '101', '140', '160'],
+            '050': ['140'],
+        }
+        sumlevel = geo[:3]
+
+        if sumlevel in simple_levels and show_all in simple_levels[sumlevel]:
+            child_prefix = '{}00US{}'.format(show_all, geo.split('US')[1])
+            filters = [Geo.id.startswith(child_prefix)]
+            geos = Geo.query.filter(*filters).all()
+            levels = [[gobj.id, gobj.name] for gobj in geos]
+        else:
+            # TODO check geo containment table
+            # filters.append(GeoContainment.child_geoid.startswith(show_all))
+            # geos = GeoContainment.query.filter(*filters).all()
+            pass
+        return levels, Geo.HEADERS
 
 
 class PumsDegree(BaseAttr):
@@ -231,3 +252,4 @@ class GeoContainment(db.Model):
                              primary_key=True)
     percent_covered = db.Column(db.Float)
     parent = relationship('Geo', foreign_keys='GeoContainment.parent_geoid')
+    child = relationship('Geo', foreign_keys='GeoContainment.child_geoid')
