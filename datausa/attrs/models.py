@@ -164,9 +164,13 @@ class Geo(BaseAttr):
             '040': ['050', '060', '101', '140', '160'],
             '050': ['140'],
         }
+        defaults = {'010': '040',
+                    '040': '050',
+                    '050': '140',
+                    '310': '140,160'}
         sumlevel = geo[:3]
         if 'child_level' not in kwargs:
-            child_level = ''
+            child_level = defaults[sumlevel]
         else:
             child_level = kwargs['child_level'][0].split(OR)
         if sumlevel in simple_levels and child_level in simple_levels[sumlevel]:
@@ -221,6 +225,10 @@ class PumsBirthplace(BaseAttr):
 class Sector(BaseAttr):
     __tablename__ = 'sector'
     color = db.Column(db.String)
+
+
+class Race(BaseAttr):
+    __tablename__ = 'race'
 
 
 class Skill(BaseAttr):
