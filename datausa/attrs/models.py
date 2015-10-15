@@ -1,5 +1,6 @@
 from datausa.database import db
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 class BaseAttr(db.Model):
     __abstract__ = True
@@ -58,11 +59,17 @@ class Naics(BaseAttr):
         return [attr.data_serialize() for attr in naics], Naics.HEADERS
 
     @classmethod
-    def children(cls, naics_id):
+    def children(cls, naics_id, show_all=False):
+        target_level = len(naics_id) + 1
         naics_map = {"31-33": ["31", "32", "33"], "44-45": ["44", "45"]}
-        targets = naics_map[naics_id] if naics_id in naics_map else [naics_id]
+        targets = [naics_id]
+        if naics_id in naics_map:
+            target_level = 3
+            targets = naics_map[naics_id]
         filters = [Naics.id.startswith(target) for target in targets]
         filters.append(Naics.id != naics_id)
+        if not show_all:
+            filters.append(func.length(Naics.id) == target_level)
         naics = Naics.query.filter(*filters).distinct(Naics.id).all()
         return [attr.data_serialize() for attr in naics], Naics.HEADERS
 
@@ -84,11 +91,20 @@ class Soc(BaseAttr):
         return [[attr.id, attr.name] for attr in socs], ["id", "name"]
 
     @classmethod
-    def children(cls, soc_id):
+    def children(cls, soc_id, show_all=False):
         # find the prefix Soc ID
-        prefix = soc_id.rstrip("0")
-        # find IDs starting with this prefix not equal to this prefix
+        if len(soc_id) != 6:
+            raise Exception("Invalid SOC id")
+
+        prefix = soc_id.rstrip("0").rstrip("Y").rstrip("X")
+        transition_map = {"major": "minor", "minor": "broad",
+                          "broad": "detailed", "detailed": "none"}
+        level = Soc.query.filter(Soc.id == soc_id).one().level
+        next_level = transition_map[level]
+        # # find IDs starting with this prefix not equal to this prefix
         filters = [Soc.id.startswith(prefix), Soc.id != soc_id]
+        if not show_all:
+            filters.append(Soc.level == next_level)
         socs = Soc.query.filter(*filters).distinct(Soc.id).all()
         return [attr.data_serialize() for attr in socs], Soc.HEADERS
 
@@ -97,12 +113,14 @@ class Cip(BaseAttr):
     __tablename__ = 'course'
 
     @classmethod
-    def parents(cls, cip_id):
+    def parents(cls, cip_id, show_all=False):
         cips = []
         if len(cip_id) >= 4:
             cips.append(cip_id[:2])
         if len(cip_id) == 6:
             cips.append(cip_id[:4])
+        if not show_all:
+            cips = [cips[-1]]
         cips = Cip.query.filter(Cip.id.in_(cips)).all()
         return [attr.data_serialize() for attr in cips], Cip.HEADERS
 
