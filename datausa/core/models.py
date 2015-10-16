@@ -28,7 +28,7 @@ class ApiObject(object):
     def __init__(self, **kwargs):
         allowed = ["vars_needed", "vars_and_vals", "values",
                    "shows_and_levels", "force", "where", "order",
-                   "sort", "limit"]
+                   "sort", "limit", "exclude"]
         for keyword, value in kwargs.items():
             if keyword in allowed:
                 setattr(self, keyword, value)
@@ -38,6 +38,8 @@ class ApiObject(object):
             self.limit = int(self.limit)
         self.subs = {}
         self.table_list = []
+        if self.exclude:
+            self.exclude = self.exclude.split(",")
 
     def capture_logic(self, table_list):
         self.table_list = table_list

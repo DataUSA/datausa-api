@@ -73,6 +73,7 @@ def query(table, api_obj):
     vars_and_vals = api_obj.vars_and_vals
     shows_and_levels = api_obj.shows_and_levels
     values = api_obj.values
+    exclude = api_obj.exclude
 
     filters = process_value_filters(table, vars_and_vals)
     filters += where_filters(table, api_obj.where)
@@ -83,6 +84,9 @@ def query(table, api_obj):
         cols = pk + values
     else:
         cols = get_columns(table)
+
+    if exclude:
+        cols = [col for col in cols if col.key not in exclude]
 
     needs_show_filter = any([v != consts.ALL for v in shows_and_levels.values()])
 

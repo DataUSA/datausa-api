@@ -23,6 +23,7 @@ def build_api_obj():
     order = request.args.get("order", "")
     sort = request.args.get("sort", "")
     limit = request.args.get("limit", None)
+    exclude = request.args.get("exclude", None)
 
     shows = show.split(",")
     sumlevels = sumlevel.split(",")
@@ -38,7 +39,8 @@ def build_api_obj():
     vars_needed = vars_and_vals.keys() + shows + values
     api_obj = ApiObject(vars_needed=vars_needed, vars_and_vals=vars_and_vals,
                         shows_and_levels=shows_and_levels, values=values,
-                        where=where, force=force, order=order, sort=sort, limit=limit)
+                        where=where, force=force, order=order,
+                        sort=sort, limit=limit, exclude=exclude)
     return api_obj
 
 @mod.route("/")
