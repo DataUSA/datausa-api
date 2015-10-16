@@ -127,8 +127,12 @@ class Cip(BaseAttr):
         return [attr.data_serialize() for attr in cips], Cip.HEADERS
 
     @classmethod
-    def children(cls, cip_id):
+    def children(cls, cip_id, show_all=False):
         filters = [Cip.id.startswith(cip_id), Cip.id != cip_id]
+        if not show_all:
+            # if we are not showing all children, then only display
+            # cip attrs of length (parent length) + 2
+            filters.append(func.length(Cip.id) == len(cip_id) + 2)
         cips = Cip.query.filter(*filters).distinct(Cip.id).all()
         return [attr.data_serialize() for attr in cips], Cip.HEADERS
 
