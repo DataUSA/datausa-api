@@ -4,7 +4,7 @@ from datausa.core.exceptions import DataUSAException
 class BaseModel(object):
     median_moe = None
     size = None
-
+    source_title = ''
     # def __init__(levels, moe, size):
     #     self.supported_levels = levels
     #     self.median_moe = moe
@@ -16,7 +16,7 @@ class BaseModel(object):
 
     @classmethod
     def info(cls):
-        dataset = cls.__table_args__["schema"]
+        dataset = cls.source_title
         return {
             "dataset": dataset,
             "table": cls.__tablename__,

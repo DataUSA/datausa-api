@@ -12,6 +12,7 @@ class BaseIpeds(db.Model, BaseModel):
     __abstract__ = True
     __table_args__ = {"schema": "ipeds_beta"}
     supported_levels = {}
+    source_title = 'NCES IPEDS'
 
 class Enrollment(BaseIpeds):
     __abstract__ = True

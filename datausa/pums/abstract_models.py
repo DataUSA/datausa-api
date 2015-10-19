@@ -19,6 +19,7 @@ def geo_sumlevel_filter(table, show_colname, sumlevel):
 class BasePums(db.Model, BaseModel):
     __abstract__ = True
     __table_args__ = {"schema": "pums_beta"}
+    source_title = 'ACS PUMS 1-year Estimate'
 
     @classmethod
     def gen_show_level_filters(cls, shows_and_levels):

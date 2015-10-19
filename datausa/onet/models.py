@@ -8,6 +8,7 @@ class BaseOnet(db.Model, BaseModel):
     __abstract__ = True
     __table_args__ = {"schema": "onet"}
     supported_levels = {}
+    source_title = 'O*NET'
 
 class SkillId(object):
     @declared_attr

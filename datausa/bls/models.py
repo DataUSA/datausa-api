@@ -6,6 +6,7 @@ from datausa.attrs.consts import NATION, STATE, MSA, ALL
 class OesYgo(db.Model, BaseModel):
     __table_args__ = {"schema": "bls"}
     __tablename__ = 'oes_ygo'
+    source_title = 'Bureau of Labor Statistics'
     median_moe = 2
 
     year = db.Column(db.Integer, primary_key=True)

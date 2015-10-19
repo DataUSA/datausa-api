@@ -7,6 +7,7 @@ from datausa.attrs.consts import ALL
 class BeaUse(db.Model, BaseModel):
     __table_args__ = {"schema": "bea"}
     __tablename__ = 'use'
+    source_title = 'Bureau of Economic Analysis'
     median_moe = 2
 
     year = db.Column(db.Integer, primary_key=True)

@@ -10,7 +10,7 @@ from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, ALL
 class BaseCbp(db.Model, BaseModel):
     __abstract__ = True
     __table_args__ = {"schema": "cbp"}
-
+    source_title = 'County Business Patterns'
     est = db.Column(db.Integer())
 
     emp = db.Column(db.Integer())
