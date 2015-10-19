@@ -19,7 +19,12 @@ attr_map = {"soc": Soc, "naics" : Naics, "cip": Cip,
             "race": Race}
 
 def show_attrs(attr_obj):
-    attrs = attr_obj.query.all()
+    if attr_obj is Geo:
+        # exclude census tracts
+        attrs = attr_obj.query.filter(~Geo.id.startswith("140")).all()
+    else:
+        attrs = attr_obj.query.all()
+
     data = []
     headers = []
     for a in attrs:
