@@ -130,6 +130,8 @@ class Ygos(BasePums, Personal, Year, GeoId, SexId):
 class Yoc(BasePums, Personal, Year, SocId, CipId):
     __tablename__ = "yoc"
     median_moe = 2
+    num_ppl_rca = db.Column(db.Float)
+
     @classmethod
     def get_supported_levels(cls):
         return {"cip": ["2", "all"], "soc": SocId.LEVELS}
@@ -168,6 +170,7 @@ class Yios(BasePums, Personal, Year, NaicsId, SocId, SexId):
 class Yocd(BasePums, Personal, Year, SocId, CipId, DegreeId):
     __tablename__ = "yocd"
     median_moe = 3
+    num_ppl_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
