@@ -16,3 +16,12 @@ class Acs5_Yg(BaseAcs5, GeoId):
     income = db.Column(db.Float)
     income_moe = db.Column(db.Float)
     income_rank = db.Column(db.Integer)
+
+
+class Acs5_Yg_Income(BaseAcs5, GeoId):
+    __tablename__ = "yg_income"
+    median_moe = 1.2
+
+    year = db.Column(db.Integer, primary_key=True)
+    income = db.Column(db.Float)
+    income_moe = db.Column(db.Float)

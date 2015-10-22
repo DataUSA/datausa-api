@@ -38,7 +38,7 @@ registered_models = [
     BeaUse,
 
     # ACS
-    Acs5_Yg,
+    Acs5_Yg, Acs5_Yg_Income,
 ]
 
 
