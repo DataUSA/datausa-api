@@ -8,7 +8,7 @@ from datausa.attrs.consts import PUMA, MSA, ALL, GEO, PLACE
 
 
 class AcsOccId(object):
-    LEVELS = [0, 1, 2]
+    LEVELS = ["0", "1", "2", "all"]
 
     @classmethod
     def get_supported_levels(cls):
