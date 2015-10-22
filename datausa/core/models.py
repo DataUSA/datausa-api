@@ -23,6 +23,12 @@ class BaseModel(object):
             "supported_levels": cls.get_supported_levels(),
         }
 
+    @classmethod
+    def full_name(cls):
+        table_name = cls.__tablename__
+        schema_name = cls.__table_args__["schema"]
+        return "{}.{}".format(schema_name, table_name)
+
 
 class ApiObject(object):
     def __init__(self, **kwargs):

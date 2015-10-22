@@ -58,7 +58,7 @@ class TableManager(object):
                 if show_level not in supported_levels[show_col]:
                     return False
 
-        if api_obj.force and table.__tablename__ != api_obj.force:
+        if api_obj.force and table.full_name() != api_obj.force:
             return False
 
         return True
