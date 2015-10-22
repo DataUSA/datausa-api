@@ -1,7 +1,7 @@
 from datausa.database import db
 from datausa.attrs.models import Geo, Soc
 from datausa.core.models import BaseModel
-from datausa.attrs.consts import NATION, STATE, MSA, ALL
+from datausa.attrs.consts import NATION, STATE, MSA, ALL, GEO
 
 from datausa.cbp.abstract_models import BaseCbp
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
@@ -12,13 +12,13 @@ class CbpYgi(BaseCbp):
     median_moe = 2
 
     year = db.Column(db.Integer(), primary_key=True)
-    geo_id = db.Column(db.String(), primary_key=True)
+    geo = db.Column(db.String(), primary_key=True)
     naics = db.Column(db.String(), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
         return {
-            "geo_id": [ALL, NATION, STATE, MSA, COUNTY],
+            GEO: [ALL, NATION, STATE, MSA, COUNTY],
             "naics": [ALL, "0", "1", "2", "3", "4"]
         }
 
@@ -34,10 +34,10 @@ class CbpYg(BaseCbp):
     median_moe = 1
 
     year = db.Column(db.Integer(), primary_key=True)
-    geo_id = db.Column(db.String(), primary_key=True)
+    geo = db.Column(db.String(), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
         return {
-            "geo_id": [ALL, NATION, STATE, MSA, COUNTY],
+            GEO: [ALL, NATION, STATE, MSA, COUNTY],
         }
