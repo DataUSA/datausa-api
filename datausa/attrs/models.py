@@ -272,3 +272,8 @@ class GeoContainment(db.Model):
     parent = relationship('Geo', foreign_keys='GeoContainment.parent_geoid')
     child = relationship('Geo', foreign_keys='GeoContainment.child_geoid',
                          lazy='subquery')
+
+
+class AcsOcc(BaseAttr):
+    __tablename__ = 'acs_occ'
+    depth = db.Column(db.Integer)
