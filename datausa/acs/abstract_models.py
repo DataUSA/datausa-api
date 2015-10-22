@@ -1,10 +1,28 @@
 from sqlalchemy.ext.declarative import declared_attr
 
 from datausa.database import db
-from datausa.attrs.models import Geo
+from datausa.attrs.models import Geo, AcsOcc
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY
 from datausa.attrs.consts import PUMA, MSA, ALL, GEO, PLACE
+
+
+class AcsOccId(object):
+    LEVELS = [0, 1, 2]
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"acs_occ": AcsOccId.LEVELS}
+
+    @classmethod
+    def acs_occ_filter(cls, level):
+        # TODO fix level filtering
+        return True
+
+    @declared_attr
+    def acs_occ(cls):
+        return db.Column(db.String(), db.ForeignKey(AcsOcc.id),
+                         primary_key=True)
 
 
 class GeoId(object):

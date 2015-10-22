@@ -97,6 +97,8 @@ class Ygo(BasePums, Personal, Year, GeoId, SocId):
     __tablename__ = "ygo"
     median_moe = 2
 
+    num_ppl_rca = db.Column(db.Float)
+
     @classmethod
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS}
