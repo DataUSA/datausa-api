@@ -5,6 +5,7 @@ from datausa.chr.models import *
 from datausa.bls.models import *
 from datausa.cbp.models import *
 from datausa.bea.models import *
+from datausa.acs.models import *
 
 registered_models = [
     # PUMS
@@ -35,6 +36,9 @@ registered_models = [
 
     # BEA I/O Tables
     BeaUse,
+
+    # ACS
+    Acs5_Yg,
 ]
 
 

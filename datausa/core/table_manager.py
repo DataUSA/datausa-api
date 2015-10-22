@@ -52,7 +52,7 @@ class TableManager(object):
         supported_levels = table.get_supported_levels()
         for show_col, show_level in shows_and_levels.items():
             if show_col not in supported_levels:
-                print show_col, table.supported_levels, "Supported Levels"
+                # print show_col, supported_levels, "Supported Levels"
                 return False
             else:
                 if show_level not in supported_levels[show_col]:
