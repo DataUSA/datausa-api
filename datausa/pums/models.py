@@ -130,6 +130,14 @@ class Ygs(BasePums, Personal, Year, GeoId, SexId):
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "sex": [ALL]}
 
+class Ygr(BasePums, Personal, Year, GeoId, RaceId):
+    __tablename__ = "ygr"
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS, "race": [ALL]}
+
 class Ygos(BasePums, Personal, Year, GeoId, SocId, SexId):
     __tablename__ = "ygos"
     median_moe = 3

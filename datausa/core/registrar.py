@@ -9,7 +9,7 @@ from datausa.acs.models import *
 
 registered_models = [
     # PUMS
-    Yg, Ygd, Ygi, Ygio,
+    Yg, Ygd, Ygr, Ygi, Ygio,
     Yo, Yow,
     Ygo, Ygw, Ygor, Ygs, Ygos,
 
