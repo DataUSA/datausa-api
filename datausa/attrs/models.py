@@ -150,9 +150,16 @@ class Geo(BaseAttr):
     @classmethod
     def parents(cls, geo):
         mysumlevel = geo[:3]
-        geos = GeoContainment.query.filter(GeoContainment.child_geoid == geo).order_by("percent_covered asc").all()
-
-        levels = [[gobj.parent.id, gobj.parent.name] for gobj in geos]
+        filters =[GeoContainment.child_geoid == geo]
+        geos = GeoContainment.query.filter(*filters).order_by("percent_covered asc").all()
+        geos2 = []
+        for g in geos:
+            if g.parent_geoid.startswith("795"):
+                if g.percent_covered >= 100:
+                    geos2.append(g)
+            else:
+                geos2.append(g)
+        levels = [[gobj.parent.id, gobj.parent.name] for gobj in geos2]
         if mysumlevel in ['050', '140', '795', '160']:
             state_id = "04000US" + geo.split("US")[1][:2]
             state = Geo.query.filter_by(id=state_id).one()

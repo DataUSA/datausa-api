@@ -32,6 +32,11 @@ def pums_parent_puma(geo_id):
         geo_contain = qry.first()
         if geo_contain:
             return geo_contain.parent_geoid
+        elif not geo_contain and prefix in ["050", "140", "160"]:
+            suffix = geo_id.split("US")[-1][:2]
+            return "04000US" + suffix
+        elif not geo_contain and prefix == "310":
+            raise Exception("Not yet implemented")
     return geo_id
 
 
@@ -51,14 +56,18 @@ def crosswalk(table, api_obj):
         mapping = rcrosswalk['mapping']
 
         if column in api_obj.vars_and_vals.keys() and table.__table_args__['schema'] == schema:
-            curr_vals = api_obj.vars_and_vals[column].split(OR)
+            curr_vals_str = api_obj.vars_and_vals[column]
+            curr_vals = curr_vals_str.split(OR)
             if isinstance(mapping, dict):
                 new_vals = [mapping[val] if val in mapping else val for val in curr_vals]
             else:
                 new_vals = [mapping(val) for val in curr_vals]
             new_val_str = OR.join(new_vals)
             api_obj.vars_and_vals[column] = new_val_str
-            api_obj.subs[column] = new_val_str
+
+            # detect if any changes actually happend
+            if curr_vals_str != new_val_str:
+                api_obj.subs[column] = new_val_str
     return api_obj
 
 naics_map = pums_naics_mapping()
