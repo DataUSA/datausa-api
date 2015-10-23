@@ -1,4 +1,5 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, IoCodeCrosswalk
+from datausa.attrs.models import GeoContainment
 from datausa.attrs.consts import OR
 from datausa import cache
 
@@ -15,13 +16,33 @@ def iocode_mapping():
     all_objs = IoCodeCrosswalk.query.all()
     return {obj.naics : obj.iocode for obj in all_objs}
 
+
+def pums_parent_puma(geo_id):
+    '''Some data is only accessible at the PUMA level
+    so we crosswalk codes to the nearest PUMA'''
+    needs_crosswalk = ["050", "140", "160", "310"]
+    prefix = geo_id[:3]
+    if prefix in needs_crosswalk:
+        filters = [
+            GeoContainment.child_geoid == geo_id,
+            GeoContainment.parent_geoid.startswith("7")
+        ]
+        qry = GeoContainment.query.filter(*filters)
+        qry = qry.order_by(GeoContainment.percent_covered.desc())
+        geo_contain = qry.first()
+        if geo_contain:
+            return geo_contain.parent_geoid
+    return geo_id
+
+
 def crosswalk(table, api_obj):
     '''Given a table and an API object, determine if any crosswalks need
     to be performed'''
     registered_crosswalks = [
-        {"column": "industry_iocode", "schema": "bea", "mapping" : iocode_map},
-        {"column": "naics", "schema": "pums_beta", "mapping" : naics_map},
-        {"column": "cip", "schema": "pums_beta", "mapping" : lambda x: x[:2]}
+        {"column": "industry_iocode", "schema": "bea", "mapping": iocode_map},
+        {"column": "naics", "schema": "pums_beta", "mapping": naics_map},
+        {"column": "cip", "schema": "pums_beta", "mapping": lambda x: x[:2]},
+        {"column": "geo", "schema": "pums_beta", "mapping": pums_parent_puma}
     ]
 
     for rcrosswalk in registered_crosswalks:

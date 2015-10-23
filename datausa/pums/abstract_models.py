@@ -6,11 +6,12 @@ from datausa.database import db
 from datausa.attrs import consts
 from datausa.core.models import BaseModel
 from datausa.attrs.models import *
-from datausa.attrs.consts import NATION, STATE, PUMA, ALL, GEO
+from datausa.attrs.consts import NATION, STATE, PUMA, ALL, GEO, COUNTY
 
 
 def geo_sumlevel_filter(table, show_colname, sumlevel):
-    sumlevel_codes = {NATION: "010", STATE: "040", PUMA: "795"}
+    sumlevel_codes = {NATION: "010", STATE: "040",
+                      PUMA: "795"}
     if not sumlevel in sumlevel_codes:
         raise DataUSAException("Invalid sumlevel", sumlevel)
     start_code = sumlevel_codes[sumlevel]

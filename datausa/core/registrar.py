@@ -11,7 +11,7 @@ registered_models = [
     # PUMS
     Yg, Ygd, Ygi, Ygio,
     Yo, Yow,
-    Ygo, Ygw, Ygor, Ygos,
+    Ygo, Ygw, Ygor, Ygs, Ygos,
 
     Yc, Ygc, Yca, Ycd, Ycb, Yoc, Yic,
     Yio, Yior, Yios, Yocd,
