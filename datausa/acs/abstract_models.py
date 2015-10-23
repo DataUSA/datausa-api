@@ -9,15 +9,13 @@ from datausa.attrs.consts import PUMA, MSA, ALL, GEO, PLACE
 
 class AcsOccId(object):
     LEVELS = ["0", "1", "2", "all"]
+    JOINED_FILTER = {"acs_occ": {"column": AcsOcc.depth,
+                                 "table": AcsOcc,
+                                 "id": AcsOcc.id}}
 
     @classmethod
     def get_supported_levels(cls):
         return {"acs_occ": AcsOccId.LEVELS}
-
-    @classmethod
-    def acs_occ_filter(cls, level):
-        # TODO fix level filtering
-        return True
 
     @declared_attr
     def acs_occ(cls):

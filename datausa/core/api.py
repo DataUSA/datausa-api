@@ -69,6 +69,18 @@ def process_value_filters(table, vars_and_vals):
         filts.append(filt)
     return filts
 
+def handle_join(qry, filters, table, api_obj):
+    joins = []
+    joined_filt = table.JOINED_FILTER
+    for col, level in api_obj.shows_and_levels.items():
+        if col in joined_filt:
+            joins.append(joined_filt[col]["table"])
+            filters.append(joined_filt[col]["column"] == level)
+            filters.append(joined_filt[col]["id"] == getattr(table, col))
+
+    qry=qry.join(*joins)
+    return qry, filters
+
 def query(table, api_obj):
     vars_and_vals = api_obj.vars_and_vals
     shows_and_levels = api_obj.shows_and_levels
@@ -93,7 +105,13 @@ def query(table, api_obj):
     if needs_show_filter and hasattr(table, "gen_show_level_filters"):
         filters += table.gen_show_level_filters(shows_and_levels)
 
-    qry = table.query.with_entities(*cols).filter(*filters)
+    qry = table.query.with_entities(*cols)
+
+    if hasattr(table, "JOINED_FILTER"):
+        qry, filters = handle_join(qry, filters, table, api_obj)
+
+    qry = qry.filter(*filters)
+
     if api_obj.order:
         sort = "desc" if api_obj.sort == "desc" else "asc"
         qry = qry.order_by("{} {}".format(api_obj.order, sort))

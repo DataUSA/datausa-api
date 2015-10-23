@@ -26,6 +26,7 @@ class Acs5_Yg_Income(BaseAcs5, GeoId):
     income = db.Column(db.Float)
     income_moe = db.Column(db.Float)
 
+
 class Acs5_Ygo_Num_Emp(BaseAcs5, GeoId, AcsOccId):
     __tablename__ = "ygo_num_emp"
     median_moe = 2
@@ -35,9 +36,22 @@ class Acs5_Ygo_Num_Emp(BaseAcs5, GeoId, AcsOccId):
     num_emp_moe = db.Column(db.Float)
     num_emp_rca = db.Column(db.Float)
     num_emp_male = db.Column(db.Float)
-    num_emp_male_moe = db.Column(db.Float)
+    num_emp_moe_male = db.Column(db.Float)
     num_emp_female = db.Column(db.Float)
-    num_emp_female_moe = db.Column(db.Float)
+    num_emp_moe_female = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS, "acs_occ": AcsOccId.LEVELS}
+
+
+class Acs5_Ygo_Wage(BaseAcs5, GeoId, AcsOccId):
+    __tablename__ = "ygo_wage"
+    median_moe = 2
+
+    year = db.Column(db.Integer, primary_key=True)
+    wage = db.Column(db.Float)
+    wage_moe = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
