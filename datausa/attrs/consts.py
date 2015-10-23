@@ -10,7 +10,7 @@ PLACE = 'place'
 PUMA = 'puma'
 
 ALL = 'all'
-OR = "_"
+OR = ","
 YEAR = 'year'
 LATEST = 'latest'
 OLDEST = 'oldest'
