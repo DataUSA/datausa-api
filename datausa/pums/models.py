@@ -113,7 +113,7 @@ class Ygw(BasePums, Personal, Year, GeoId, WageId):
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "wage_bin": ALL}
 
-class Ygor(BasePums, Personal, Year, GeoId, RaceId):
+class Ygor(BasePums, Personal, Year, GeoId, SocId, RaceId):
     __tablename__ = "ygor"
     median_moe = 3
 
