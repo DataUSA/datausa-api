@@ -12,6 +12,14 @@ class Yc(BasePums, Personal, Year, CipId):
     def get_supported_levels(cls):
         return {"cip": ["2", ALL]}
 
+class Ycs(BasePums, Personal, Year, CipId, SexId):
+    __tablename__ = "ycs"
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": ["2", ALL], "sex": [ALL]}
+
 class Yca(BasePums, Personal, Year, CipId):
     __tablename__ = "yca"
     median_moe = 2

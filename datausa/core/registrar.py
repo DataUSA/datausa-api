@@ -13,7 +13,7 @@ registered_models = [
     Yo, Yow,
     Ygo, Ygw, Ygor, Ygs, Ygos,
 
-    Yc, Ygc, Yca, Ycd, Ycb, Yoc, Yic,
+    Yc, Ygc, Yca, Ycd, Ycb, Yoc, Yic, Ycs,
     Yio, Yior, Yios, Yocd,
 
     # IPEDS
