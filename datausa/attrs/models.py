@@ -113,6 +113,7 @@ class Soc(BaseAttr):
 
 class Cip(BaseAttr):
     __tablename__ = 'course'
+    level = db.Column(db.Integer)
 
     @classmethod
     def parents(cls, cip_id, show_all=False):
