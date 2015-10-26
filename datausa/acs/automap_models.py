@@ -38,18 +38,18 @@ class Acs5_Yg_Tenure(AutomapBase, BaseAcs5, GeoId):
     median_moe = 1
 
 
-# class Acs5_Yg_Transport(AutomapBase, BaseAcs5, GeoId):
-#     __tablename__ = 'yg_transport'
-#     median_moe = 1
+class Acs5_Yg_Transport(AutomapBase, BaseAcs5, GeoId):
+    __tablename__ = 'yg_transport'
+    median_moe = 1
 
 
-# class Acs5_Yg_TravelTime(AutomapBase, BaseAcs5, GeoId):
-#     __tablename__ = 'yg_travel_time'
-#     median_moe = 1
+class Acs5_Yg_TravelTime(AutomapBase, BaseAcs5, GeoId):
+    __tablename__ = 'yg_travel_time'
+    median_moe = 1
 
 
-# class Acs5_Yg_Vehicles(AutomapBase, BaseAcs5, GeoId):
-#     __tablename__ = 'yg_vehicles'
-#     median_moe = 1
+class Acs5_Yg_Vehicles(AutomapBase, BaseAcs5, GeoId):
+    __tablename__ = 'yg_vehicles'
+    median_moe = 1
 
 AutomapBase.prepare(db.engine, reflect=True)
