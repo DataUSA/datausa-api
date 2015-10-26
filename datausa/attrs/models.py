@@ -230,6 +230,18 @@ class PumsSoc(BaseAttr):
     id = db.Column(db.String(10), primary_key=True)
     level = db.Column(db.Integer, primary_key=True)
 
+    @classmethod
+    def parents(cls, soc_id, show_all=False):
+        soc_hobj = SocHierarchy.query.filter_by(soc=soc_id).first()
+        parents = [soc_hobj.great_grandparent_obj, soc_hobj.grandparent_obj, soc_hobj.parent_obj]
+        data = [[p.id, p.name] for p in parents if p]
+        return data, PumsNaics.HEADERS
+
+    @classmethod
+    def children(cls, soc_id, show_all=False):
+        objs = SocHierarchy.query.filter_by(parent=soc_id).all()
+        data = [[obj.soc_obj.id, obj.soc_obj.name] for obj in objs]
+        return data, PumsSoc.HEADERS
 
 class PumsSex(BaseAttr):
     __tablename__ = 'sex'
@@ -314,10 +326,14 @@ class NaicsHierarchy(db.Model):
     naics_obj = relationship('PumsNaics', foreign_keys='NaicsHierarchy.naics', lazy='subquery')
     grandparent_obj = relationship('PumsNaics', foreign_keys='NaicsHierarchy.grandparent', lazy='subquery')
 
-# class SocHierarchy(db.Model):
-#     __tablename__ = 'pums_soc'
-#     __table_args__ = {"schema": "hierarchies"}
-#     great_grandparent = db.Column(db.String, db.ForeignKey(PumsSoc.id))
-#     grandparent = db.Column(db.String, db.ForeignKey(PumsSoc.id))
-#     parent = db.Column(db.String, db.ForeignKey(PumsSoc.id))
-#     soc = db.Column(db.String, db.ForeignKey(PumsSoc.id))
+class SocHierarchy(db.Model):
+    __tablename__ = 'pums_soc_hierarchy'
+    __table_args__ = {"schema": "hierarchies"}
+    great_grandparent = db.Column(db.String, db.ForeignKey(PumsSoc.id))
+    grandparent = db.Column(db.String, db.ForeignKey(PumsSoc.id))
+    parent = db.Column(db.String, db.ForeignKey(PumsSoc.id))
+    soc = db.Column(db.String, db.ForeignKey(PumsSoc.id), primary_key=True)
+    parent_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.parent', lazy='subquery')
+    grandparent_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.grandparent', lazy='subquery')
+    great_grandparent_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.great_grandparent', lazy='subquery')
+    soc_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.soc', lazy='subquery')
