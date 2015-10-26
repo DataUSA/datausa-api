@@ -78,3 +78,48 @@ class Acs5_Yg_Conflict(BaseAcs5, GeoId):
     @classmethod
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS}
+
+
+class Acs5_Yg_IncDist(BaseAcs5, GeoId):
+    __tablename__ = "yg_income_distribution"
+    median_moe = 2
+
+    year = db.Column(db.Integer, primary_key=True)
+    income100to125 = db.Column(db.Float)
+    income100to125_moe = db.Column(db.Float)
+    income10to15 = db.Column(db.Float)
+    income10to15_moe = db.Column(db.Float)
+    income125to150 = db.Column(db.Float)
+    income125to150_moe = db.Column(db.Float)
+    income150to200 = db.Column(db.Float)
+    income150to200_moe = db.Column(db.Float)
+    income15to20 = db.Column(db.Float)
+    income15to20_moe = db.Column(db.Float)
+    income200more = db.Column(db.Float)
+    income200more_moe = db.Column(db.Float)
+    income20to25 = db.Column(db.Float)
+    income20to25_moe = db.Column(db.Float)
+    income25to30 = db.Column(db.Float)
+    income25to30_moe = db.Column(db.Float)
+    income30to35 = db.Column(db.Float)
+    income30to35_moe = db.Column(db.Float)
+    income35to40 = db.Column(db.Float)
+    income35to40_moe = db.Column(db.Float)
+    income40to45 = db.Column(db.Float)
+    income40to45_moe = db.Column(db.Float)
+    income45to50 = db.Column(db.Float)
+    income45to50_moe = db.Column(db.Float)
+    income50to60 = db.Column(db.Float)
+    income50to60_moe = db.Column(db.Float)
+    income60to75 = db.Column(db.Float)
+    income60to75_moe = db.Column(db.Float)
+    income75to100 = db.Column(db.Float)
+    income75to100_moe = db.Column(db.Float)
+    incomeless10 = db.Column(db.Float)
+    incomeless10_moe = db.Column(db.Float)
+    totalhouseholds = db.Column(db.Float)
+    totalhouseholds_moe = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS}
