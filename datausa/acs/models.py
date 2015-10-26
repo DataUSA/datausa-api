@@ -56,3 +56,25 @@ class Acs5_Ygo_Earnings(BaseAcs5, GeoId, AcsOccId):
     @classmethod
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "acs_occ": AcsOccId.LEVELS}
+
+class Acs5_Yg_Conflict(BaseAcs5, GeoId):
+    __tablename__ = "yg_conflict"
+    median_moe = 2
+
+    year = db.Column(db.Integer, primary_key=True)
+    total_vets = db.Column(db.Float)
+    total_vets_moe = db.Column(db.Float)
+    wwii = db.Column(db.Float)
+    wwii_moe = db.Column(db.Float)
+    korea = db.Column(db.Float)
+    korea_moe = db.Column(db.Float)
+    vietnam = db.Column(db.Float)
+    vietnam_moe = db.Column(db.Float)
+    gulf90s = db.Column(db.Float)
+    gulf90s_moe = db.Column(db.Float)
+    gulf01 = db.Column(db.Float)
+    gulf01_moe = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS}
