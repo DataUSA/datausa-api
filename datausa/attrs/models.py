@@ -210,6 +210,19 @@ class PumsNaics(BaseAttr):
     id = db.Column(db.String(10), primary_key=True)
     level = db.Column(db.Integer, primary_key=True)
 
+    @classmethod
+    def children(cls, naics_id, show_all=False):
+        objs = NaicsHierarchy.query.filter_by(parent=naics_id).all()
+        data = [[obj.naics_obj.id, obj.naics_obj.name] for obj in objs]
+        return data, PumsNaics.HEADERS
+
+    @classmethod
+    def parents(cls, naics_id, show_all=False):
+        naics_hobj = NaicsHierarchy.query.filter_by(naics=naics_id).first()
+        parents = [[naics_hobj.grandparent_obj.id,naics_hobj.grandparent_obj.name],
+                   [naics_hobj.parent_obj.id,naics_hobj.parent_obj.name]]
+        return parents, PumsNaics.HEADERS
+
 
 class PumsSoc(BaseAttr):
     __tablename__ = 'pums_soc'
@@ -289,3 +302,22 @@ class GeoContainment(db.Model):
 class AcsOcc(BaseAttr):
     __tablename__ = 'acs_occ'
     depth = db.Column(db.Integer)
+
+
+class NaicsHierarchy(db.Model):
+    __tablename__ = 'pums_naics_hierarchy'
+    __table_args__ = {"schema": "hierarchies"}
+    grandparent = db.Column(db.String, db.ForeignKey(PumsNaics.id))
+    parent = db.Column(db.String, db.ForeignKey(PumsNaics.id))
+    naics = db.Column(db.String, db.ForeignKey(PumsNaics.id), primary_key=True)
+    parent_obj = relationship('PumsNaics', foreign_keys='NaicsHierarchy.parent', lazy='subquery')
+    naics_obj = relationship('PumsNaics', foreign_keys='NaicsHierarchy.naics', lazy='subquery')
+    grandparent_obj = relationship('PumsNaics', foreign_keys='NaicsHierarchy.grandparent', lazy='subquery')
+
+# class SocHierarchy(db.Model):
+#     __tablename__ = 'pums_soc'
+#     __table_args__ = {"schema": "hierarchies"}
+#     great_grandparent = db.Column(db.String, db.ForeignKey(PumsSoc.id))
+#     grandparent = db.Column(db.String, db.ForeignKey(PumsSoc.id))
+#     parent = db.Column(db.String, db.ForeignKey(PumsSoc.id))
+#     soc = db.Column(db.String, db.ForeignKey(PumsSoc.id))
