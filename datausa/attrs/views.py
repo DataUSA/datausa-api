@@ -5,11 +5,11 @@ mod = Blueprint('attrs', __name__, url_prefix='/attrs')
 from datausa.attrs.models import Cip, Naics, University, Soc, Degree
 from datausa.attrs.models import Race
 from datausa.attrs.models import Skill, Sector, Geo
-from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace
+from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc
 
-attr_map = {"soc": Soc, "naics" : Naics, "cip": Cip,
+attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
             "skill": Skill, "sector": Sector,
             "pums_degree": PumsDegree,

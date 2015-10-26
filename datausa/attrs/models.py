@@ -204,13 +204,17 @@ class PumsDegree(BaseAttr):
 
 
 class PumsNaics(BaseAttr):
-    __tablename__ = 'naics'
+    __tablename__ = 'pums_naics'
     __table_args__ = {"schema": "pums_attrs"}
+    id = db.Column(db.String(10), primary_key=True)
+    level = db.Column(db.Integer, primary_key=True)
 
 
 class PumsSoc(BaseAttr):
-    __tablename__ = 'soc'
+    __tablename__ = 'pums_soc'
     __table_args__ = {"schema": "pums_attrs"}
+    id = db.Column(db.String(10), primary_key=True)
+    level = db.Column(db.Integer, primary_key=True)
 
 
 class PumsSex(BaseAttr):

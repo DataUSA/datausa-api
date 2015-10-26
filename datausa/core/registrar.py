@@ -6,6 +6,7 @@ from datausa.bls.models import *
 from datausa.cbp.models import *
 from datausa.bea.models import *
 from datausa.acs.models import *
+from datausa.acs.automap_models import *
 
 registered_models = [
     # PUMS
@@ -40,6 +41,7 @@ registered_models = [
     # ACS
     Acs5_Yg, Acs5_Yg_Income, Acs5_Yg_Conflict, Acs5_Yg_IncDist,
     Acs5_Ygo_Num_Emp, Acs5_Ygo_Earnings,
+    Acs5_Yg_NatAge,
 ]
 
 
