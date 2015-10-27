@@ -87,8 +87,11 @@ def get_children(kind, attr_id):
 def search():
     q = request.args.get("q")
     q = q.lower()
-    qry = Search.query.filter(Search.name.like(
-            "%{}%".format(q))).order_by(Search.zvalue.desc()).all()
+    kind = request.args.get("kind", None)
+    filters = [Search.name.like("%{}%".format(q))]
+    if kind:
+        filters.append(Search.kind == kind)
+    qry = Search.query.filter(*filters).order_by(Search.zvalue.desc()).all()
     data = [[a.id, a.name, a.zvalue, a.kind] for a in qry]
     headers = ["id", "name", "zvalue", "kind"]
     return jsonify(data=data, headers=headers)
