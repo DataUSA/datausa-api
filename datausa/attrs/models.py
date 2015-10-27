@@ -337,3 +337,7 @@ class SocHierarchy(db.Model):
     grandparent_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.grandparent', lazy='subquery')
     great_grandparent_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.great_grandparent', lazy='subquery')
     soc_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.soc', lazy='subquery')
+
+
+class AcsLanguage(BaseAttr):
+    __tablename__ = 'language'

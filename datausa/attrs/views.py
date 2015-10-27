@@ -7,7 +7,7 @@ from datausa.attrs.models import Race
 from datausa.attrs.models import Skill, Sector, Geo
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
-from datausa.attrs.models import IoCode, AcsOcc
+from datausa.attrs.models import IoCode, AcsOcc, AcsLanguage
 
 attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
@@ -17,7 +17,8 @@ attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "birthplace": PumsBirthplace,
             "wage_bin": PumsWage, "iocode": IoCode,
             "race": Race,
-            "acs_occ": AcsOcc}
+            "acs_occ": AcsOcc,
+            "language": AcsLanguage}
 
 def show_attrs(attr_obj):
     if attr_obj is Geo:
