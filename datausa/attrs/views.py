@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
 from datausa.attrs.models import Cip, Naics, University, Soc, Degree
-from datausa.attrs.models import Race
+from datausa.attrs.models import Race, Search
 from datausa.attrs.models import Skill, Sector, Geo
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
@@ -82,3 +82,13 @@ def get_children(kind, attr_id):
         data, headers = attr_obj.children(attr_id, **kwargs)
         return jsonify(data=data, headers=headers)
     raise Exception("Invalid attribute type.")
+
+@mod.route("/search")
+def search():
+    q = request.args.get("q")
+    q = q.lower()
+    qry = Search.query.filter(Search.name.like(
+            "%{}%".format(q))).order_by(Search.zvalue.desc()).all()
+    data = [[a.id, a.name, a.zvalue, a.kind] for a in qry]
+    headers = ["id", "name", "zvalue", "kind"]
+    return jsonify(data=data, headers=headers)
