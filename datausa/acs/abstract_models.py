@@ -4,7 +4,8 @@ from datausa.database import db
 from datausa.attrs.models import Geo, AcsOcc
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY
-from datausa.attrs.consts import PUMA, MSA, ALL, GEO, PLACE
+from datausa.attrs.consts import PUMA, MSA, ALL, GEO
+from datausa.attrs.consts import PLACE, TRACT
 
 
 class AcsOccId(object):
@@ -24,7 +25,7 @@ class AcsOccId(object):
 
 
 class GeoId(object):
-    LEVELS = [NATION, STATE, COUNTY, MSA, PLACE, ALL]
+    LEVELS = [NATION, STATE, COUNTY, MSA, PLACE, TRACT, ALL]
 
     @classmethod
     def get_supported_levels(cls):
@@ -36,7 +37,7 @@ class GeoId(object):
             return True
         level_map = {NATION: "010", STATE: "040",
                      PUMA: "795", MSA: "310",
-                     COUNTY: "050", PLACE: "160"}
+                     COUNTY: "050", PLACE: "160", TRACT: "140"}
         level_code = level_map[level]
         return cls.geo.startswith(level_code)
 
