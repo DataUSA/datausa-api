@@ -1,6 +1,7 @@
 from datausa.acs.abstract_models import BaseAcs5, GeoId, AcsOccId
 from datausa.acs.abstract_models import db
 from datausa.attrs.models import AcsLanguage
+from datausa.attrs import consts
 
 
 class Acs5_Ygl_Speakers(BaseAcs5, GeoId):
@@ -10,8 +11,12 @@ class Acs5_Ygl_Speakers(BaseAcs5, GeoId):
     year = db.Column(db.Integer, primary_key=True)
     language = db.Column(db.String(), db.ForeignKey(AcsLanguage.id), primary_key=True)
     num_speakers = db.Column(db.Float)
-    num_speakers_more = db.Column(db.Float)
+    num_speakers_moe = db.Column(db.Float)
     num_speakers_rca = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS, "language": [consts.ALL]}
 
 
 class Acs5_Ygo_Num_Emp(BaseAcs5, GeoId, AcsOccId):
