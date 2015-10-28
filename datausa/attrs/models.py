@@ -43,6 +43,7 @@ class University(BaseAttr):
     lng = db.Column(db.Float)
 
     url = db.Column(db.String)
+    is_stem = db.Column(db.Integer)
 
 
 class Naics(BaseAttr):
