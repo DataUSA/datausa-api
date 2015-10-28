@@ -318,6 +318,9 @@ class AcsOcc(BaseAttr):
     __tablename__ = 'acs_occ'
     depth = db.Column(db.Integer)
 
+class AcsInd(BaseAttr):
+    __tablename__ = 'acs_ind'
+    depth = db.Column(db.Integer)
 
 class NaicsHierarchy(db.Model):
     __tablename__ = 'pums_naics_hierarchy'
