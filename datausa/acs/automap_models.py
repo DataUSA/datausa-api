@@ -11,7 +11,7 @@ class Acs5_Yg(AutomapBase, BaseAcs5, GeoId):
     __tablename__ = "yg"
     median_moe = 1
 
-class Acs5_Yg_Conflict(BaseAcs5, GeoId):
+class Acs5_Yg_Conflict(AutomapBase, BaseAcs5, GeoId):
     __tablename__ = "yg_conflict"
     median_moe = 2
 
