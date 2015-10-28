@@ -6,8 +6,8 @@ from datausa.attrs.models import Cip, Naics, University, Soc, Degree
 from datausa.attrs.models import Race, Search
 from datausa.attrs.models import Skill, Sector, Geo
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
-from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
-from datausa.attrs.models import IoCode, AcsOcc, AcsLanguage
+from datausa.attrs.models import PumsWage, PumsSex, PumsRace, PumsBirthplace
+from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage
 
 attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
@@ -16,7 +16,7 @@ attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "pums_race": PumsRace, "sex": PumsSex,
             "birthplace": PumsBirthplace,
             "wage_bin": PumsWage, "iocode": IoCode,
-            "race": Race,
+            "race": Race, "pums_race": PumsRace, "acs_race": AcsRace,
             "acs_occ": AcsOcc,
             "language": AcsLanguage}
 
