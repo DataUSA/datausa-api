@@ -348,6 +348,9 @@ class AcsLanguage(BaseAttr):
 class AcsRace(BaseAttr):
     __tablename__ = 'acs_race'
 
+class Conflict(BaseAttr):
+    __tablename__ = 'conflict'
+
 class Search(BaseAttr):
     __tablename__ = 'search'
     zvalue = db.Column(db.Float)
