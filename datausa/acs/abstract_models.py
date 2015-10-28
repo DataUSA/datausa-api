@@ -1,12 +1,35 @@
 from sqlalchemy.ext.declarative import declared_attr
 
 from datausa.database import db
-from datausa.attrs.models import Geo, AcsOcc
+from datausa.attrs.models import Geo, AcsOcc, AcsInd
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY
 from datausa.attrs.consts import PUMA, MSA, ALL, GEO
 from datausa.attrs.consts import PLACE, TRACT
+from sqlalchemy.sql import func
 
+class AcsIndId(object):
+    LEVELS = ["0", "1", "2", "3" "all"]
+    # JOINED_FILTER = {"acs_occ": {"column": AcsInd.depth,
+    #                              "table": AcsInd,
+    #                              "id": AcsInd.id}}
+    @classmethod
+    def acs_ind_filter(cls, level):
+        if level == ALL:
+            return True
+        else:
+            # tmap = {"0": 2, "1": 4, "2": 6}
+            target = (int(level) * 2) + 2
+            return func.length(cls.acs_ind) == target
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"acs_ind": AcsIndId.LEVELS}
+
+    @declared_attr
+    def acs_ind(cls):
+        return db.Column(db.String(), db.ForeignKey(AcsInd.id),
+                         primary_key=True)
 
 class AcsOccId(object):
     LEVELS = ["0", "1", "2", "all"]

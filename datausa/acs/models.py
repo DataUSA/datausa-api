@@ -1,5 +1,5 @@
 from datausa.acs.abstract_models import BaseAcs5, GeoId, AcsOccId
-from datausa.acs.abstract_models import BaseAcs3, db
+from datausa.acs.abstract_models import BaseAcs3, db, AcsIndId
 from datausa.attrs.models import AcsLanguage
 from datausa.attrs import consts
 
@@ -50,17 +50,15 @@ class Acs5_Ygo_Earnings(BaseAcs5, GeoId, AcsOccId):
         return {"geo": GeoId.LEVELS, "acs_occ": AcsOccId.LEVELS}
 
 
-class Acs3_Ygi_Num_Emp(BaseAcs3, GeoId):
+class Acs3_Ygi_Num_Emp(BaseAcs3, AcsIndId, GeoId):
     __tablename__ = "ygi_num_emp"
     median_moe = 2
 
     year = db.Column(db.Integer, primary_key=True)
-    # todo create AcsIndId
-    acs_ind = db.Column(db.String, primary_key=True)
     num_emp = db.Column(db.Float)
     num_emp_moe = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
         # TODO update acs_ind levels
-        return {"geo": GeoId.LEVELS, "acs_ind": ["0", "1", "all"]}
+        return {"geo": GeoId.LEVELS, "acs_ind": AcsIndId.LEVELS}
