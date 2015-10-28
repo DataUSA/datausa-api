@@ -7,6 +7,10 @@ from sqlalchemy import MetaData
 metadata = MetaData(schema='acs')
 AutomapBase = automap_base(bind=db.engine, metadata=metadata)
 
+class Acs5_Yg(AutomapBase, BaseAcs5, GeoId):
+    __tablename__ = "yg"
+    median_moe = 1
+
 class Acs5_Yg_IncDist(AutomapBase, BaseAcs5, GeoId):
     __tablename__ = "yg_income_distribution"
     median_moe = 2
