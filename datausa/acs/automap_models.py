@@ -11,6 +11,10 @@ class Acs5_Yg(AutomapBase, BaseAcs5, GeoId):
     __tablename__ = "yg"
     median_moe = 1
 
+class Acs5_Yg_Income(BaseAcs5, GeoId):
+    __tablename__ = "yg_income"
+    median_moe = 1.2
+
 class Acs5_Yg_IncDist(AutomapBase, BaseAcs5, GeoId):
     __tablename__ = "yg_income_distribution"
     median_moe = 2

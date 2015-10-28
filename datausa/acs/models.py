@@ -3,16 +3,7 @@ from datausa.acs.abstract_models import db
 from datausa.attrs.models import AcsLanguage
 
 
-class Acs5_Yg_Income(BaseAcs5, GeoId):
-    __tablename__ = "yg_income"
-    median_moe = 1.2
-
-    year = db.Column(db.Integer, primary_key=True)
-    income = db.Column(db.Float)
-    income_moe = db.Column(db.Float)
-
-
-class Acs5_Ygl_Soeakers(BaseAcs5, GeoId):
+class Acs5_Ygl_Speakers(BaseAcs5, GeoId):
     __tablename__ = "ygl_speakers"
     median_moe = 2
 
