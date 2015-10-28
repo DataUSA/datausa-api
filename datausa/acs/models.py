@@ -1,5 +1,6 @@
 from datausa.acs.abstract_models import BaseAcs5, GeoId, AcsOccId
 from datausa.acs.abstract_models import db
+from datausa.attrs.models import AcsLanguage
 
 
 class Acs5_Yg_Income(BaseAcs5, GeoId):
@@ -9,6 +10,17 @@ class Acs5_Yg_Income(BaseAcs5, GeoId):
     year = db.Column(db.Integer, primary_key=True)
     income = db.Column(db.Float)
     income_moe = db.Column(db.Float)
+
+
+class Acs5_Ygl_Soeakers(BaseAcs5, GeoId):
+    __tablename__ = "ygl_speakers"
+    median_moe = 2
+
+    year = db.Column(db.Integer, primary_key=True)
+    language = db.Column(db.String(), db.ForeignKey(AcsLanguage.id), primary_key=True)
+    num_speakers = db.Column(db.Float)
+    num_speakers_more = db.Column(db.Float)
+    num_speakers_rca = db.Column(db.Float)
 
 
 class Acs5_Ygo_Num_Emp(BaseAcs5, GeoId, AcsOccId):
