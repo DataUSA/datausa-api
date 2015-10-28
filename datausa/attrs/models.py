@@ -344,6 +344,9 @@ class SocHierarchy(db.Model):
 class AcsLanguage(BaseAttr):
     __tablename__ = 'language'
 
+class AcsRace(BaseAttr):
+    __tablename__ = 'acs_race'
+
 class Search(BaseAttr):
     __tablename__ = 'search'
     zvalue = db.Column(db.Float)
