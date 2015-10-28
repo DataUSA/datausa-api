@@ -1,5 +1,6 @@
 from datausa.ipeds.abstract_models import *
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, GEO
+from datausa.attrs.consts import PLACE, ALL
 
 class EnrollmentYcu(Enrollment, CipId, UniversityId):
     __tablename__ = "enrollment_ycu"
@@ -10,7 +11,7 @@ class EnrollmentYcu(Enrollment, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "university": ["all"]}
+        return {"cip": CipId.LEVELS, "university": [ALL]}
 
 class TuitionYc(Tuition, CipId):
     __tablename__ = "tuition_yc"
@@ -29,7 +30,7 @@ class TuitionYcu(Tuition, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "university": ["all"]}
+        return {"cip": CipId.LEVELS, "university": [ALL]}
 
 class TuitionYcs(Tuition, CipId, SectorId):
     __tablename__ = "tuition_ycs"
@@ -40,7 +41,7 @@ class TuitionYcs(Tuition, CipId, SectorId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "sector": ["all"]}
+        return {"cip": CipId.LEVELS, "sector": [ALL]}
 
 class GradsYc(Grads, CipId):
     __tablename__ = "grads_yc"
@@ -61,7 +62,7 @@ class GradsYcd(Grads, CipId, DegreeId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "degree": ["all"]}
+        return {"cip": CipId.LEVELS, "degree": [ALL]}
 
 class GradsYcu(Grads, CipId, UniversityId):
     __tablename__ = "grads_ycu"
@@ -71,7 +72,7 @@ class GradsYcu(Grads, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "university": ["all"]}
+        return {"cip": CipId.LEVELS, "university": [ALL]}
 
 class GradsYgc(Grads, GeoId, CipId):
     __tablename__ = "grads_ygc"
@@ -93,4 +94,14 @@ class GradsPctYcu(GradsPct, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "university": ["all"]}
+        return {"cip": CipId.LEVELS, "university": [ALL]}
+
+
+class UnivGeo(BaseIpeds, UniversityId, GeoId):
+    __tablename__ = "university_geo"
+    median_moe = 0
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"university": [ALL],
+                GEO: [STATE, COUNTY, MSA, PLACE, ALL]}

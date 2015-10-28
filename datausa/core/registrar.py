@@ -22,6 +22,7 @@ registered_models = [
     EnrollmentYcu,
     GradsYcu, GradsYgc, GradsYc, GradsYcd,
     GradsPctYcu,
+    UnivGeo,
 
     # ONET
     SkillByCip,
