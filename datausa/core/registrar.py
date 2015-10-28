@@ -44,7 +44,10 @@ registered_models = [
     Acs5_Ygo_Num_Emp, Acs5_Ygo_Earnings,
     Acs5_Yg_NatAge, Acs5_Yg_Race, Acs5_Yg_Tenure, Acs5_Yg_Transport,
     Acs5_Yg_TravelTime, Acs5_Yg_Vehicles, Acs5_Yg_Poverty,
-    Acs5_Yg_PropertyTax, Acs5_Yg_PropertyValue, Acs5_Ygl_Speakers
+    Acs5_Yg_PropertyTax, Acs5_Yg_PropertyValue, Acs5_Ygl_Speakers,
+
+    # ACS 3-year
+    Acs3_Ygi_Num_Emp,
 ]
 
 
