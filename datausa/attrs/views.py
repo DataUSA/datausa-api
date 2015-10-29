@@ -74,6 +74,7 @@ def get_parents(kind, attr_id):
         return jsonify(data=data, headers=headers)
     raise Exception("Invalid attribute type.")
 
+
 @mod.route("/<kind>/<attr_id>/children")
 def get_children(kind, attr_id):
     if kind in attr_map:
@@ -83,15 +84,23 @@ def get_children(kind, attr_id):
         return jsonify(data=data, headers=headers)
     raise Exception("Invalid attribute type.")
 
+
 @mod.route("/search")
 def search():
     q = request.args.get("q")
     q = q.lower()
+    offset = request.args.get("offset", None)
+    limit = request.args.get("limit", None)
     kind = request.args.get("kind", None)
     filters = [Search.name.like("%{}%".format(q))]
     if kind:
         filters.append(Search.kind == kind)
-    qry = Search.query.filter(*filters).order_by(Search.zvalue.desc()).all()
+    qry = Search.query.filter(*filters).order_by(Search.zvalue.desc())
+    if limit:
+        qry = qry.limit(int(limit))
+    if offset:
+        qry = qry.offset(int(offset))
+    qry = qry.all()
     data = [[a.id, a.name, a.zvalue, a.kind] for a in qry]
     headers = ["id", "name", "zvalue", "kind"]
     return jsonify(data=data, headers=headers)
