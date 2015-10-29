@@ -19,7 +19,7 @@ class Acs5_Ygl_Speakers(BaseAcs5, GeoId):
         return {"geo": GeoId.LEVELS, "language": [consts.ALL]}
 
 
-class Acs5_Ygo_Num_Emp(BaseAcs5, GeoId, AcsOccId):
+class Acs3_Ygo_Num_Emp(BaseAcs3, GeoId, AcsOccId):
     __tablename__ = "ygo_num_emp"
     median_moe = 2
 

@@ -1,6 +1,8 @@
 from datausa.ipeds.abstract_models import *
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, GEO
 from datausa.attrs.consts import PLACE, ALL
+from sqlalchemy.orm import relationship
+
 
 class EnrollmentYcu(Enrollment, CipId, UniversityId):
     __tablename__ = "enrollment_ycu"
@@ -12,6 +14,16 @@ class EnrollmentYcu(Enrollment, CipId, UniversityId):
     @classmethod
     def get_supported_levels(cls):
         return {"cip": CipId.LEVELS, "university": [ALL]}
+
+
+class TuitionYgs(Tuition, GeoId, SectorId):
+    __tablename__ = "tuition_ygs"
+    median_moe = 2
+
+    year = db.Column(db.Integer(), primary_key=True)
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS, "sector": [ALL]}
 
 class TuitionYc(Tuition, CipId):
     __tablename__ = "tuition_yc"
@@ -70,13 +82,16 @@ class GradsYcu(Grads, CipId, UniversityId):
 
     year = db.Column(db.Integer(), primary_key=True)
 
+    # parent = relationship('Geo', foreign_keys='GeoContainment.parent_geoid')
+
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "university": [ALL]}
+        return {"cip": CipId.LEVELS, "university": [ALL],
+                GEO: [STATE, COUNTY, MSA, PLACE, ALL]}
 
 class GradsYgc(Grads, GeoId, CipId):
     __tablename__ = "grads_ygc"
-    median_moe = 2
+    median_moe = 1000
     
     year = db.Column(db.Integer(), primary_key=True)
     grads_total_growth = db.Column(db.Float)

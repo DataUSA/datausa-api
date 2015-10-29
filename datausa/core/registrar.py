@@ -18,7 +18,7 @@ registered_models = [
     Yio, Yior, Yios, Yocd,
 
     # IPEDS
-    TuitionYc, TuitionYcu, TuitionYcs,
+    TuitionYc, TuitionYcu, TuitionYcs, TuitionYgs,
     EnrollmentYcu,
     GradsYcu, GradsYgc, GradsYc, GradsYcd,
     GradsPctYcu,
@@ -41,13 +41,13 @@ registered_models = [
 
     # ACS
     Acs5_Yg, Acs5_Yg_Income, Acs5_Yg_Conflict, Acs5_Yg_IncDist,
-    Acs5_Ygo_Num_Emp, Acs5_Ygo_Earnings,
+    Acs5_Ygo_Earnings,
     Acs5_Yg_NatAge, Acs5_Yg_Race, Acs5_Yg_Tenure, Acs5_Yg_Transport,
     Acs5_Yg_TravelTime, Acs5_Yg_Vehicles, Acs5_Yg_Poverty,
     Acs5_Yg_PropertyTax, Acs5_Yg_PropertyValue, Acs5_Ygl_Speakers,
 
     # ACS 3-year
-    Acs3_Ygi_Num_Emp,
+    Acs3_Ygo_Num_Emp, Acs3_Ygi_Num_Emp,
 ]
 
 
