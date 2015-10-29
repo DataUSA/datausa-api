@@ -359,4 +359,4 @@ class Search(BaseAttr):
     zvalue = db.Column(db.Float)
     kind = db.Column(db.String)
     display = db.Column(db.String)
-    level = db.Column(db.String)
+    sumlevel = db.Column(db.String)
