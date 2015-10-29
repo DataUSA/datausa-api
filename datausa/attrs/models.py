@@ -358,3 +358,5 @@ class Search(BaseAttr):
     __tablename__ = 'search'
     zvalue = db.Column(db.Float)
     kind = db.Column(db.String)
+    display = db.Column(db.String)
+    level = db.Column(db.String)
