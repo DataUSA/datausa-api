@@ -87,14 +87,17 @@ def get_children(kind, attr_id):
 
 @mod.route("/search")
 def search():
-    q = request.args.get("q")
+    q = request.args.get("q", '')
     q = q.lower()
     offset = request.args.get("offset", None)
     limit = request.args.get("limit", None)
     kind = request.args.get("kind", None)
+    sumlevel = request.args.get("sumlevel", None)
     filters = [Search.name.like("%{}%".format(q))]
     if kind:
         filters.append(Search.kind == kind)
+    if sumlevel:
+        filters.append(Search.level == sumlevel)
     qry = Search.query.filter(*filters).order_by(Search.zvalue.desc())
     if limit:
         qry = qry.limit(int(limit))
