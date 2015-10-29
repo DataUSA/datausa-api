@@ -91,14 +91,27 @@ class GradsYcu(Grads, CipId, UniversityId):
 
 class GradsYgc(Grads, GeoId, CipId):
     __tablename__ = "grads_ygc"
-    median_moe = 1000
-    
+    median_moe = 2
+
     year = db.Column(db.Integer(), primary_key=True)
     grads_total_growth = db.Column(db.Float)
+    grads_total_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, GEO: [NATION, STATE, COUNTY, MSA]}
+        return {"cip": CipId.LEVELS, GEO: GeoId.LEVELS}
+
+class GradsYgcd(Grads, GeoId, CipId, DegreeId):
+    __tablename__ = "grads_ygcd"
+    median_moe = 3
+
+    year = db.Column(db.Integer(), primary_key=True)
+    grads_total_growth = db.Column(db.Float)
+    grads_total_rca = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"cip": CipId.LEVELS, GEO: GeoId.LEVELS, "degree": [ALL]}
 
 class GradsPctYcu(GradsPct, CipId, UniversityId):
     __tablename__ = "gradspct_ycu"
