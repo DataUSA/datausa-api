@@ -19,10 +19,10 @@ class HealthYg(AutomapBase, db.Model, BaseModel):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo_id": [ALL, STATE, COUNTY]}
+        return {"geo": [ALL, STATE, COUNTY]}
 
     @classmethod
-    def geo_id_filter(cls, level):
+    def geo_filter(cls, level):
         if level == ALL:
             return True
         level_map = {STATE: "040", COUNTY: "050"}
