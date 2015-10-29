@@ -101,6 +101,6 @@ def search():
     if offset:
         qry = qry.offset(int(offset))
     qry = qry.all()
-    data = [[a.id, a.name, a.zvalue, a.kind] for a in qry]
-    headers = ["id", "name", "zvalue", "kind"]
+    data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.level] for a in qry]
+    headers = ["id", "name", "zvalue", "kind", "display", "level"]
     return jsonify(data=data, headers=headers)
