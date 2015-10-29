@@ -97,13 +97,13 @@ def search():
     if kind:
         filters.append(Search.kind == kind)
     if sumlevel:
-        filters.append(Search.level == sumlevel)
+        filters.append(Search.sumlevel == sumlevel)
     qry = Search.query.filter(*filters).order_by(Search.zvalue.desc())
     if limit:
         qry = qry.limit(int(limit))
     if offset:
         qry = qry.offset(int(offset))
     qry = qry.all()
-    data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.level] for a in qry]
-    headers = ["id", "name", "zvalue", "kind", "display", "level"]
+    data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.sumlevel] for a in qry]
+    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
     return jsonify(data=data, headers=headers)
