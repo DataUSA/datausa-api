@@ -73,10 +73,11 @@ def handle_join(qry, filters, table, api_obj):
     joins = []
     joined_filt = table.JOINED_FILTER
     for col, level in api_obj.shows_and_levels.items():
-        if col in joined_filt:
-            joins.append(joined_filt[col]["table"])
-            filters.append(joined_filt[col]["column"] == level)
-            filters.append(joined_filt[col]["id"] == getattr(table, col))
+        if level != consts.ALL:
+            if col in joined_filt:
+                joins.append(joined_filt[col]["table"])
+                filters.append(joined_filt[col]["column"] == level)
+                filters.append(joined_filt[col]["id"] == getattr(table, col))
 
     qry=qry.join(*joins)
     return qry, filters

@@ -38,12 +38,17 @@ class Acs3_Ygo_Num_Emp(BaseAcs3, GeoId, AcsOccId):
 
 
 class Acs5_Ygo_Earnings(BaseAcs5, GeoId, AcsOccId):
-    __tablename__ = "ygo_earnings"
+    __tablename__ = "ygo_med_earnings"
     median_moe = 2
 
     year = db.Column(db.Integer, primary_key=True)
-    earnings = db.Column(db.Float)
-    earnings_moe = db.Column(db.Float)
+    med_earnings = db.Column(db.Float)
+    med_earnings_male = db.Column(db.Float)
+    med_earnings_female = db.Column(db.Float)
+    med_earnings_moe = db.Column(db.Float)
+    med_earnings_moe_female = db.Column(db.Float)
+    med_earnings_moe_male = db.Column(db.Float)
+    med_earnings_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
