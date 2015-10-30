@@ -85,7 +85,7 @@ def get_children(kind, attr_id):
     raise Exception("Invalid attribute type.")
 
 
-@mod.route("/search")
+@mod.route("/search/")
 def search():
     q = request.args.get("q", '')
     q = q.lower()
