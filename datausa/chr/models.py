@@ -17,6 +17,9 @@ class HealthYg(AutomapBase, db.Model, BaseModel):
     __tablename__ = 'yg'
     median_moe = 1
 
+    year = db.Column(db.String(), primary_key=True)
+    geo = db.Column(db.String(), primary_key=True)
+
     @classmethod
     def get_supported_levels(cls):
         return {"geo": [ALL, STATE, COUNTY]}
