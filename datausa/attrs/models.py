@@ -182,10 +182,10 @@ class Geo(BaseAttr):
                     '050': '140',
                     '310': '140,160'}
         sumlevel = geo[:3]
-        if 'child_level' not in kwargs:
+        if 'sumlevel' not in kwargs:
             child_level = defaults[sumlevel]
         else:
-            child_level = kwargs['child_level'][0].split(OR)
+            child_level = kwargs['sumlevel'][0]
         if sumlevel in simple_levels and child_level in simple_levels[sumlevel]:
             child_prefix = '{}00US{}'.format(child_level, geo.split('US')[1])
             filters = [Geo.id.startswith(child_prefix)]
@@ -197,6 +197,7 @@ class Geo(BaseAttr):
             filters.append(or_(*lvls))
             geos = GeoContainment.query.filter(*filters).all()
             levels = [[gobj.child.id, gobj.child.name] for gobj in geos]
+
         return levels, Geo.HEADERS
 
 
