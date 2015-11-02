@@ -30,6 +30,6 @@ class HealthYg(AutomapBase, db.Model, BaseModel):
             return True
         level_map = {STATE: "040", COUNTY: "050"}
         level_code = level_map[level]
-        return cls.geo_id.startswith(level_code)
+        return cls.geo.startswith(level_code)
 
 AutomapBase.prepare(db.engine, reflect=True)
