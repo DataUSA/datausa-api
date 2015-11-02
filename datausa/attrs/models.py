@@ -62,7 +62,7 @@ class Naics(BaseAttr):
         return [attr.data_serialize() for attr in naics], Naics.HEADERS
 
     @classmethod
-    def children(cls, naics_id, show_all=False):
+    def children(cls, naics_id, **kwargs):
         target_level = len(naics_id) + 1
         naics_map = {"31-33": ["31", "32", "33"], "44-45": ["44", "45"]}
         targets = [naics_id]
@@ -71,6 +71,7 @@ class Naics(BaseAttr):
             targets = naics_map[naics_id]
         filters = [Naics.id.startswith(target) for target in targets]
         filters.append(Naics.id != naics_id)
+        show_all = kwargs.get("show_all", False)
         if not show_all:
             filters.append(func.length(Naics.id) == target_level)
         naics = Naics.query.filter(*filters).distinct(Naics.id).all()
@@ -94,11 +95,12 @@ class Soc(BaseAttr):
         return [[attr.id, attr.name] for attr in socs], ["id", "name"]
 
     @classmethod
-    def children(cls, soc_id, show_all=False):
+    def children(cls, soc_id, **kwargs):
         # find the prefix Soc ID
         if len(soc_id) != 6:
             raise Exception("Invalid SOC id")
 
+        show_all = kwargs.get("show_all", False)
         prefix = soc_id.rstrip("0").rstrip("Y").rstrip("X")
         transition_map = {"major": "minor", "minor": "broad",
                           "broad": "detailed", "detailed": "none"}
@@ -117,7 +119,8 @@ class Cip(BaseAttr):
     level = db.Column(db.Integer)
 
     @classmethod
-    def parents(cls, cip_id, show_all=False):
+    def parents(cls, cip_id, **kwargs):
+        show_all = kwargs.get("show_all", False)
         cips = []
         if len(cip_id) >= 4:
             cips.append(cip_id[:2])
@@ -129,12 +132,19 @@ class Cip(BaseAttr):
         return [attr.data_serialize() for attr in cips], Cip.HEADERS
 
     @classmethod
-    def children(cls, cip_id, show_all=False):
+    def children(cls, cip_id, **kwargs):
+        show_all = kwargs.get("show_all", False)
+        sumlevel = kwargs.get("sumlevel", False)
+
         filters = [Cip.id.startswith(cip_id), Cip.id != cip_id]
         if not show_all:
             # if we are not showing all children, then only display
             # cip attrs of length (parent length) + 2
-            filters.append(func.length(Cip.id) == len(cip_id) + 2)
+            t_map = {0: 2, 1: 4, 2: 6}
+            target = len(cip_id) + 2
+            if sumlevel:
+                target = t_map[int(sumlevel[0])]
+            filters.append(func.length(Cip.id) == target)
         cips = Cip.query.filter(*filters).distinct(Cip.id).all()
         return [attr.data_serialize() for attr in cips], Cip.HEADERS
 
@@ -213,13 +223,13 @@ class PumsNaics(BaseAttr):
     level = db.Column(db.Integer, primary_key=True)
 
     @classmethod
-    def children(cls, naics_id, show_all=False):
+    def children(cls, naics_id, **kwargs):
         objs = NaicsHierarchy.query.filter_by(parent=naics_id).all()
         data = [[obj.naics_obj.id, obj.naics_obj.name] for obj in objs]
         return data, PumsNaics.HEADERS
 
     @classmethod
-    def parents(cls, naics_id, show_all=False):
+    def parents(cls, naics_id, **kwargs):
         naics_hobj = NaicsHierarchy.query.filter_by(naics=naics_id).first()
         parents = [[naics_hobj.grandparent_obj.id,naics_hobj.grandparent_obj.name],
                    [naics_hobj.parent_obj.id,naics_hobj.parent_obj.name]]
@@ -233,14 +243,14 @@ class PumsSoc(BaseAttr):
     level = db.Column(db.Integer, primary_key=True)
 
     @classmethod
-    def parents(cls, soc_id, show_all=False):
+    def parents(cls, soc_id, **kwargs):
         soc_hobj = SocHierarchy.query.filter_by(soc=soc_id).first()
         parents = [soc_hobj.great_grandparent_obj, soc_hobj.grandparent_obj, soc_hobj.parent_obj]
         data = [[p.id, p.name] for p in parents if p]
         return data, PumsNaics.HEADERS
 
     @classmethod
-    def children(cls, soc_id, show_all=False):
+    def children(cls, soc_id, **kwargs):
         objs = SocHierarchy.query.filter_by(parent=soc_id).all()
         data = [[obj.soc_obj.id, obj.soc_obj.name] for obj in objs]
         return data, PumsSoc.HEADERS
