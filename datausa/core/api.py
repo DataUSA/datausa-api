@@ -115,7 +115,7 @@ def query(table, api_obj):
 
     if api_obj.order:
         sort = "desc" if api_obj.sort == "desc" else "asc"
-        qry = qry.order_by("{} {}".format(api_obj.order, sort))
+        qry = qry.order_by("{} {} NULLS LAST".format(api_obj.order, sort))
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
 
