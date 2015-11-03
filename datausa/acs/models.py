@@ -62,6 +62,7 @@ class Acs3_Ygi_Num_Emp(BaseAcs3, AcsIndId, GeoId):
     year = db.Column(db.Integer, primary_key=True)
     num_emp = db.Column(db.Float)
     num_emp_moe = db.Column(db.Float)
+    num_emp_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
