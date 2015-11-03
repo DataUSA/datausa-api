@@ -9,7 +9,7 @@ from datausa.attrs.consts import PLACE, TRACT
 from sqlalchemy.sql import func
 
 class AcsIndId(object):
-    LEVELS = ["0", "1", "2", "all"]
+    LEVELS = ["0", "1", "2", ALL]
     # JOINED_FILTER = {"acs_occ": {"column": AcsInd.depth,
     #                              "table": AcsInd,
     #                              "id": AcsInd.id}}
@@ -32,7 +32,7 @@ class AcsIndId(object):
                          primary_key=True)
 
 class AcsOccId(object):
-    LEVELS = ["0", "1", "2", "all"]
+    LEVELS = ["0", "1", "2", "3", "4", ALL]
     JOINED_FILTER = {"acs_occ": {"column": AcsOcc.depth,
                                  "table": AcsOcc,
                                  "id": AcsOcc.id}}
