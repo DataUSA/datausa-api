@@ -2,7 +2,7 @@ import flask
 import sqlalchemy
 
 from datausa.core import get_columns
-from datausa.core.table_manager import TableManager
+from datausa.core.table_manager import TableManager, table_name
 from datausa.attrs import consts
 
 def simple_format(table, cols, data, api_obj):
@@ -60,7 +60,7 @@ def process_value_filters(table, vars_and_vals):
     filts = []
     for var, val in vars_and_vals.items():
         if var == consts.YEAR and val in [consts.LATEST, consts.OLDEST]:
-            years = TableManager.table_years[table.__tablename__]
+            years = TableManager.table_years[table_name(table)]
             filt = table.year == years[val]
         elif consts.OR in val:
             filt = getattr(table, var).in_(val.split(consts.OR))
