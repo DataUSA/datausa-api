@@ -25,6 +25,12 @@ def parse_method_and_val(cond):
         return "endswith", cond[:-1], False
     elif cond.endswith("~$"):
         return "endswith", cond[:-2], True
+    elif cond.startswith("!"):
+        return "ne", int(cond[1:]), False
+    elif cond.startswith(">"):
+        return "gt", int(cond[1:]), False
+    elif cond.startswith("<"):
+        return "lt", int(cond[1:]), False
     else:
         return "like", cond, False
 
@@ -38,7 +44,14 @@ def where_filters(table, where_str):
         colname, cond = where.split(":")
         col = getattr(table, colname)
         method, value, negate = parse_method_and_val(cond)
-        expr = getattr(col, method)(value)
+        if method == "ne":
+            expr = col != value
+        elif method == "gt":
+            expr = col > value
+        elif method == "lt":
+            expr = col < value
+        else:
+            expr = getattr(col, method)(value)
         if negate:
             expr = ~expr
         filts.append(expr)
