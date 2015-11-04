@@ -48,6 +48,11 @@ class Acs5_Yg_Race(AutomapBase, BaseAcs5, GeoId):
     median_moe = 1
 
 
+class Acs5_Yg_PovertyRace(AutomapBase, BaseAcs5, GeoId):
+    __tablename__ = 'yg_poverty_race'
+    median_moe = 2
+
+
 class Acs5_Yg_Tenure(AutomapBase, BaseAcs5, GeoId):
     __tablename__ = 'yg_tenure'
     median_moe = 1
