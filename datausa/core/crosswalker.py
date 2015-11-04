@@ -1,4 +1,4 @@
-from datausa.attrs.models import PumsNaicsCrosswalk, IoCodeCrosswalk
+from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
 from datausa.attrs.models import GeoContainment
 from datausa.attrs.consts import OR
 from datausa import cache
@@ -16,8 +16,8 @@ def pums_naics_mapping():
 @cache.memoize()
 def iocode_mapping():
     '''Make a dictionary that maps naics codes to iocodes'''
-    all_objs = IoCodeCrosswalk.query.all()
-    return {obj.naics: obj.iocode for obj in all_objs}
+    all_objs = PumsIoCrosswalk.query.all()
+    return {obj.pums_naics: obj.iocode for obj in all_objs}
 
 
 def pums_parent_puma(geo_id):

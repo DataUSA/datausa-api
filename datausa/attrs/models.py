@@ -300,6 +300,14 @@ class PumsNaicsCrosswalk(db.Model):
     pums_naics = db.Column(db.String)
 
 
+class PumsIoCrosswalk(db.Model):
+    __tablename__ = 'naics_to_io'
+    __table_args__ = {"schema": "pums_attrs"}
+
+    pums_naics = db.Column(db.String, primary_key=True)
+    iocode = db.Column(db.String)
+
+
 class IoCode(BaseAttr):
     __tablename__ = 'iocode'
 
