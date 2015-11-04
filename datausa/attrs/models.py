@@ -30,6 +30,15 @@ class BaseAttr(db.Model):
         return '<{}, id: {}, name: {}>'.format(self.__class__,
                                                self.id, self.name)
 
+class ImageAttr(db.Model):
+    __abstract__ = True
+    image_link = db.Column(db.String())
+    image_author = db.Column(db.String())
+    HEADERS = ["id", "name", "image_link", "image_author"]
+
+    def data_serialize(self):
+        return [self.id, self.name, self.image_link, self.image_author]
+
 
 class University(BaseAttr):
     __tablename__ = 'university'
@@ -114,9 +123,10 @@ class Soc(BaseAttr):
         return [attr.data_serialize() for attr in socs], Soc.HEADERS
 
 
-class Cip(BaseAttr):
+class Cip(BaseAttr, ImageAttr):
     __tablename__ = 'course'
     level = db.Column(db.Integer)
+    name_long = db.Column(db.String)
 
     @classmethod
     def parents(cls, cip_id, **kwargs):
@@ -153,10 +163,11 @@ class Degree(BaseAttr):
     __tablename__ = 'degree'
 
 
-class Geo(BaseAttr):
+class Geo(BaseAttr, ImageAttr):
     __tablename__ = 'geo_names'
 
     display_name = db.Column(db.String)
+    name_long = db.Column(db.String)
     sumlevel = db.Column(db.String)
 
     @classmethod
