@@ -34,54 +34,55 @@ def read_csv():
         uid = row["id"]
         attr = table.query.get(uid)
 
-        image = row["image_link"]
-        if image and attr.image_link != image:
+        if "image_link" in row:
+            image = row["image_link"]
+            if image and attr.image_link != image:
 
-            if "photolist" in image:
-                image = image.split("/in/photolist")[0]
+                if "photolist" in image:
+                    image = image.split("/in/photolist")[0]
 
-            pid = image.split("/")[-1]
-            if "flic.kr" not in image:
-                image = "http://flic.kr/p/{}".format(short.encode(pid))
+                pid = image.split("/")[-1]
+                if "flic.kr" not in image:
+                    image = "http://flic.kr/p/{}".format(short.encode(pid))
 
-            photo = flickr.Photo(pid)
-            photo._load_properties()
+                photo = flickr.Photo(pid)
+                photo._load_properties()
 
-            image = {"id": uid, "url": image, "license": photo._Photo__license}
+                image = {"id": uid, "url": image, "license": photo._Photo__license}
 
-            if image["license"] in ["0", "7", "8"]:
-                badImages.append(image)
-            else:
+                if image["license"] in ["0", "7", "8"]:
+                    badImages.append(image)
+                else:
 
-                author = photo._Photo__owner
-                author = author.realname if author.realname else author.username
-                image["author"] = author.replace("'", "\\'")
-                download_url = max(photo.getSizes(), key=lambda item: item["width"])["source"]
+                    author = photo._Photo__owner
+                    author = author.realname if author.realname else author.username
+                    image["author"] = author.replace("'", "\\'")
+                    download_url = max(photo.getSizes(), key=lambda item: item["width"])["source"]
 
-                if not os.path.exists(imgdir):
-                    os.makedirs(imgdir)
+                    if not os.path.exists(imgdir):
+                        os.makedirs(imgdir)
 
-                if not os.path.exists(thumbdir):
-                    os.makedirs(thumbdir)
+                    if not os.path.exists(thumbdir):
+                        os.makedirs(thumbdir)
 
-                imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
-                thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
+                    imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
+                    thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
 
-                urllib.urlretrieve(download_url, imgpath)
+                    urllib.urlretrieve(download_url, imgpath)
 
-                img = pillow.open(imgpath).convert("RGB")
+                    img = pillow.open(imgpath).convert("RGB")
 
-                img.thumbnail((1200,1200), pillow.ANTIALIAS)
-                img.save(imgpath, "JPEG", quality=60)
+                    img.thumbnail((1200,1200), pillow.ANTIALIAS)
+                    img.save(imgpath, "JPEG", quality=60)
 
-                img.thumbnail((150,150), pillow.ANTIALIAS)
-                img.save(thumbpath, "JPEG", quality=60)
+                    img.thumbnail((150,150), pillow.ANTIALIAS)
+                    img.save(thumbpath, "JPEG", quality=60)
 
-                goodImages.append(image)
+                    goodImages.append(image)
 
-                attr.image_link = image["url"]
-                attr.image_author = image["author"]
-                update = True
+                    attr.image_link = image["url"]
+                    attr.image_author = image["author"]
+                    update = True
 
         name = row["name"]
         if name and attr.name != name:
