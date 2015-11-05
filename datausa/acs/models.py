@@ -79,4 +79,4 @@ class Acs3_Ygi_MedEarnings(BaseAcs3, AcsIndId, GeoId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": GeoId.LEVELS, "acs_ind": AcsIndId.LEVELS}
+        return {"geo": GeoId.LEVELS, "acs_ind": ["0", "1", "all"]}
