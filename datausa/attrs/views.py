@@ -57,7 +57,10 @@ def attrs_by_id(kind, attr_id):
 
     if kind in attr_map:
         attr_obj = attr_map[kind]
-        aid_obj = attr_obj.query.get(attr_id)
+        if kind in ["naics", "soc"]:
+            aid_obj = attr_obj.query.filter_by(id=attr_id).order_by(attr_obj.level.asc()).first()
+        else:
+            aid_obj = attr_obj.query.get(attr_id)
         tmp = aid_obj.serialize()
         return jsonify(data=[tmp.values()], headers=tmp.keys())
     raise Exception("Invalid attribute type.")

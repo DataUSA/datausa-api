@@ -232,6 +232,8 @@ class PumsNaics(BaseAttr):
     __table_args__ = {"schema": "pums_attrs"}
     id = db.Column(db.String(10), primary_key=True)
     level = db.Column(db.Integer, primary_key=True)
+    parent = db.Column(db.String)
+    grandparent = db.Column(db.String)
 
     @classmethod
     def children(cls, naics_id, **kwargs):
@@ -252,6 +254,9 @@ class PumsSoc(BaseAttr):
     __table_args__ = {"schema": "pums_attrs"}
     id = db.Column(db.String(10), primary_key=True)
     level = db.Column(db.Integer, primary_key=True)
+    parent = db.Column(db.String)
+    grandparent = db.Column(db.String)
+    great_grandparent = db.Column(db.String)
 
     @classmethod
     def parents(cls, soc_id, **kwargs):
