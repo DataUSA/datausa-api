@@ -22,6 +22,8 @@ class BasePums(db.Model, BaseModel):
     __table_args__ = {"schema": "pums_beta"}
     source_title = 'ACS PUMS 1-year Estimate'
 
+    num_records =  db.Column(db.Integer)
+
     @classmethod
     def gen_show_level_filters(cls, shows_and_levels):
         result = []
