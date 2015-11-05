@@ -49,7 +49,7 @@ registered_models = [
     Acs5_Yg_PovertyRace,
 
     # ACS 3-year
-    Acs3_Ygo_Num_Emp, Acs3_Ygi_Num_Emp,
+    Acs3_Ygo_Num_Emp, Acs3_Ygi_Num_Emp, Acs3_Ygi_MedEarnings,
 ]
 
 

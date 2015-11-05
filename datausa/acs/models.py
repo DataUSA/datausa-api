@@ -66,5 +66,17 @@ class Acs3_Ygi_Num_Emp(BaseAcs3, AcsIndId, GeoId):
 
     @classmethod
     def get_supported_levels(cls):
-        # TODO update acs_ind levels
+        return {"geo": GeoId.LEVELS, "acs_ind": AcsIndId.LEVELS}
+
+
+class Acs3_Ygi_MedEarnings(BaseAcs3, AcsIndId, GeoId):
+    __tablename__ = "ygi_med_earnings"
+    median_moe = 2
+
+    year = db.Column(db.Integer, primary_key=True)
+    med_earnings = db.Column(db.Float)
+    med_earnings_moe = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "acs_ind": AcsIndId.LEVELS}
