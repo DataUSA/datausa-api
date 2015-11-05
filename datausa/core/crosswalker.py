@@ -28,7 +28,8 @@ def pums_parent_puma(geo_id):
     if prefix in needs_crosswalk:
         filters = [
             GeoContainment.child_geoid == geo_id,
-            GeoContainment.parent_geoid.startswith("7")
+            GeoContainment.parent_geoid.startswith("7"),
+            GeoContainment.percent_covered >= 90
         ]
         qry = GeoContainment.query.filter(*filters)
         qry = qry.order_by(GeoContainment.percent_covered.desc())
