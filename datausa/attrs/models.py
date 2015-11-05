@@ -130,7 +130,7 @@ class Cip(BaseAttr, ImageAttr):
 
     @classmethod
     def parents(cls, cip_id, **kwargs):
-        show_all = kwargs.get("show_all", False)
+        show_all = kwargs.get("show_all", True)
         cips = []
         if len(cip_id) >= 4:
             cips.append(cip_id[:2])
