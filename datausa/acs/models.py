@@ -2,7 +2,7 @@ from datausa.acs.abstract_models import BaseAcs5, GeoId, AcsOccId
 from datausa.acs.abstract_models import BaseAcs3, db, AcsIndId
 from datausa.attrs.models import AcsLanguage
 from datausa.attrs import consts
-from datausa.attrs.consts import NATION, STATE, MSA, ALL
+from datausa.attrs.consts import NATION, STATE, MSA, PLACE, PUMA, COUNTY, ALL
 
 
 class Acs5_Ygl_Speakers(BaseAcs5, GeoId):
@@ -53,7 +53,7 @@ class Acs5_Ygo_Num_Emp(BaseAcs5, GeoId, AcsOccId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": GeoId.LEVELS, "acs_occ": AcsOccId.LEVELS}
+        return {"geo": [NATION, COUNTY, MSA, PLACE, PUMA, ALL], "acs_occ": AcsOccId.LEVELS}
 
 
 class Acs5_Ygo_Earnings(BaseAcs5, GeoId, AcsOccId):
@@ -71,7 +71,7 @@ class Acs5_Ygo_Earnings(BaseAcs5, GeoId, AcsOccId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": GeoId.LEVELS, "acs_occ": AcsOccId.LEVELS}
+        return {"geo": [NATION, COUNTY, MSA, PLACE, PUMA, ALL], "acs_occ": AcsOccId.LEVELS}
 
 
 class Acs3_Ygi_Num_Emp(BaseAcs3, AcsIndId, GeoId):
