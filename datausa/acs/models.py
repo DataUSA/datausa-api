@@ -99,7 +99,7 @@ class Acs5_Ygi_Num_Emp(BaseAcs5, AcsIndId, GeoId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": [NATION, STATE, COUNTY, ALL],
+        return {"geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
                 "acs_ind": ["0", "1", ALL]}
 
 
