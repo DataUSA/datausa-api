@@ -93,6 +93,10 @@ class Yo(BasePums, Personal, Year, SocId):
     __tablename__ = "yo"
     median_moe = 1
 
+    avg_wage_rank = db.Column(db.Integer)
+    num_ppl_rank = db.Column(db.Integer)
+    avg_age_rank = db.Column(db.Integer)
+
     @classmethod
     def get_supported_levels(cls):
         return {"soc": SocId.LEVELS}
