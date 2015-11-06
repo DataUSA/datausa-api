@@ -46,6 +46,13 @@ class ApiObject(object):
         self.table_list = []
         if self.exclude:
             self.exclude = self.exclude.split(",")
+        if not "geo" in self.shows_and_levels and "geo" in self.vars_and_vals:
+            if self.vars_and_vals["geo"]:
+                prefix = self.vars_and_vals["geo"][:3]
+                lookup = {"010": "nation", "040": "state", "050": "county", "310":"msa", "795":"puma", "160":"place"}
+                if prefix in lookup:
+                    self.shows_and_levels["geo"] = lookup[prefix]
+
 
     def capture_logic(self, table_list):
         self.table_list = table_list
