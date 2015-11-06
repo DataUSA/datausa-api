@@ -1,12 +1,24 @@
 from datausa.database import db
-from datausa.attrs.models import Geo, Soc, Naics
+from datausa.attrs.models import Geo, Soc, Naics, PumsNaics
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, MSA, ALL
 
-class OesYgo(db.Model, BaseModel):
-    __table_args__ = {"schema": "bls"}
-    __tablename__ = 'oes_ygo'
+
+class Bls(BaseModel):
     source_title = 'Bureau of Labor Statistics'
+    __table_args__ = {"schema": "bls"}
+
+
+class BlsCrosswalk(db.Model, Bls):
+    __tablename__ = 'bls_crosswalk'
+    pums_naics = db.Column(db.String, db.ForeignKey(PumsNaics.id),
+                           primary_key=True)
+    bls_naics = db.Column(db.String, primary_key=True)
+
+
+class OesYgo(db.Model, Bls):
+    __tablename__ = 'oes_ygo'
+
     median_moe = 2
 
     year = db.Column(db.Integer, primary_key=True)
@@ -34,10 +46,9 @@ class OesYgo(db.Model, BaseModel):
         level_code = level_map[level]
         return cls.geo.startswith(level_code)
 
-class QcewYgi(db.Model, BaseModel):
-    __table_args__ = {"schema": "bls"}
+
+class QcewYgi(db.Model, Bls):
     __tablename__ = 'qcew_ygi'
-    source_title = 'Bureau of Labor Statistics'
     median_moe = 2
 
     year = db.Column(db.Integer, primary_key=True)

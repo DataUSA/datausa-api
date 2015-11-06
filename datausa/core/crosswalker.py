@@ -1,8 +1,15 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
 from datausa.attrs.models import GeoContainment
+from datausa.bls.models import BlsCrosswalk
 from datausa.attrs.consts import OR
 from datausa import cache
 from sqlalchemy import or_
+
+
+@cache.memoize()
+def pums_to_bls_naics():
+    all_objs = BlsCrosswalk.query.all()
+    return {obj.pums_naics: obj.bls_naics for obj in all_objs}
 
 
 @cache.memoize()
@@ -65,6 +72,9 @@ def crosswalk(table, api_obj):
     to be performed'''
     registered_crosswalks = [
         {"column": "industry_iocode", "schema": "bea", "mapping": iocode_map},
+        {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
+        # cbp uses same naics coding as bls
+        {"column": "naics", "schema": "cbp", "mapping": pums_to_bls_naics_map},
         {"column": "naics", "schema": "pums_beta", "mapping": naics_map},
         {"column": "cip", "schema": "pums_beta", "mapping": lambda x: x[:2]},
         {"column": "geo", "schema": "pums_beta", "mapping": pums_parent_puma},
@@ -94,3 +104,4 @@ def crosswalk(table, api_obj):
 
 naics_map = pums_naics_mapping()
 iocode_map = iocode_mapping()
+pums_to_bls_naics_map = pums_to_bls_naics()
