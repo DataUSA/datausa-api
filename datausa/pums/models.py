@@ -96,6 +96,7 @@ class Yo(BasePums, Personal, Year, SocId):
     avg_wage_rank = db.Column(db.Integer)
     num_ppl_rank = db.Column(db.Integer)
     avg_age_rank = db.Column(db.Integer)
+    gini = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
