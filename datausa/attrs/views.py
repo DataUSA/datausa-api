@@ -8,6 +8,8 @@ from datausa.attrs.models import Skill, Sector, Geo, AcsInd
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
+from datausa.attrs.consts import ALL
+
 
 attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
@@ -110,3 +112,19 @@ def search():
     data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.sumlevel] for a in qry]
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
     return jsonify(data=data, headers=headers)
+
+
+@mod.route("/ranks/")
+def ranks():
+    attr_sumlvls = {
+        "soc": {"0": 6, "1": 17, "2": 24, "3": 478},
+        "naics": {"0": 14, "1": 21, "2": 266},
+        "cip": {"2": 38, "4": 368, "6": 1416},
+        "geo": {"nation": 1,
+                "state": 52,
+                "county": 3221,
+                "msa": 929,
+                "place": 29509,
+                "puma": 2378}
+    }
+    return jsonify(data=attr_sumlvls)
