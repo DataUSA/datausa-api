@@ -99,10 +99,21 @@ def get_children(kind, attr_id):
 
 @mod.route("/search2/")
 def search2():
+    offset = request.args.get("offset", None)
+    limit = request.args.get("limit", 100)
+    kind = request.args.get("kind", None)
+    sumlevel = request.args.get("sumlevel", None)
     txt = request.args.get("q", '')
     if not txt:
         return search()
+
+    if kind:
+        txt += " AND kind:{}".format(kind)
+    if sumlevel:
+        txt += " AND sumlevel:{}".format(sumlevel)
+
     q = qp.parse(txt)
+
     with ix.searcher() as s:
         results = s.search(q, sortedby=facet)
         data = [[r["id"], r["name"], r["zvalue"],
