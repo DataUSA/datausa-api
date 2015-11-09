@@ -10,6 +10,14 @@ from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
 from datausa.attrs.consts import ALL
 
+from whoosh.qparser import QueryParser
+from whoosh import index, sorting, qparser
+from config import SEARCH_INDEX_DIR
+
+ix = index.open_dir(SEARCH_INDEX_DIR)
+qp = QueryParser("name", schema=ix.schema, group=qparser.OrGroup)
+facet = sorting.FieldFacet("zvalue", reverse=True)
+
 
 attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
@@ -89,13 +97,27 @@ def get_children(kind, attr_id):
         return jsonify(data=data, headers=headers)
     raise Exception("Invalid attribute type.")
 
+@mod.route("/search2/")
+def search2():
+    txt = request.args.get("q", '')
+    if not txt:
+        return search()
+    q = qp.parse(txt)
+    with ix.searcher() as s:
+        results = s.search(q, sortedby=facet)
+        data = [[r["id"], r["name"], r["zvalue"],
+                 r["kind"], r["display"], r["sumlevel"]]
+                for r in results]
+        # data.sort(key=lambda x: x[2], reverse=True)  # sort by zvalue
+        headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
+        return jsonify(data=data, headers=headers)
 
 @mod.route("/search/")
 def search():
     q = request.args.get("q", '')
     q = q.lower()
     offset = request.args.get("offset", None)
-    limit = request.args.get("limit", None)
+    limit = request.args.get("limit", 100)
     kind = request.args.get("kind", None)
     sumlevel = request.args.get("sumlevel", None)
     filters = [Search.name.like("%{}%".format(q))]

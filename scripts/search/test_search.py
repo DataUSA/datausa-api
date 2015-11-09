@@ -1,16 +1,18 @@
 from whoosh.qparser import QueryParser
-from whoosh import index
+from whoosh import index, sorting
 from whoosh import qparser
 from config import SEARCH_INDEX_DIR
 
 ix = index.open_dir(SEARCH_INDEX_DIR)
 qp = QueryParser("name", schema=ix.schema, group=qparser.OrGroup)
 
+facet = sorting.FieldFacet("zvalue", reverse=True)
+
 
 def whoosh_search(txt):
     q = qp.parse(txt)
     with ix.searcher() as s:
-        results = s.search(q)
+        results = s.search(q, sortedby=facet)
         data = [[r["id"], r["name"], r["zvalue"],
                  r["kind"], r["display"], r["sumlevel"]]
                 for r in results]

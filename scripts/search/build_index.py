@@ -6,7 +6,7 @@ from config import SEARCH_INDEX_DIR
 
 def get_schema():
     return Schema(id=ID(unique=True, stored=True),
-                  name=NGRAM(phrase=True, stored=True, minsize=3),
+                  name=NGRAM(phrase=True, stored=True, minsize=2),
                   display=TEXT(stored=True),
                   zvalue=NUMERIC(stored=True),
                   kind=KEYWORD(stored=True),
