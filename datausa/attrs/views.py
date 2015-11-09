@@ -97,34 +97,42 @@ def get_children(kind, attr_id):
         return jsonify(data=data, headers=headers)
     raise Exception("Invalid attribute type.")
 
-@mod.route("/search2/")
-def search2():
+def do_search(txt, sumlevel=None, kind=None, tries=0):
+    if kind:
+        txt += " AND kind:{}".format(kind)
+    if sumlevel:
+        txt += " AND sumlevel:{}".format(sumlevel)
+    if tries > 2:
+        return [],[]
+    q = qp.parse(txt)
+
+    with ix.searcher() as s:
+        corrector = s.corrector("display")
+        suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
+        results = s.search(q, sortedby=facet)
+        data = [[r["id"], r["name"], r["zvalue"],
+                 r["kind"], r["display"], r["sumlevel"]]
+                for r in results]
+        if not data and suggs:
+            return do_search(suggs[0], sumlevel, kind, tries=tries+1)
+        return data, suggs
+
+@mod.route("/search/")
+def search():
     offset = request.args.get("offset", None)
     limit = request.args.get("limit", 100)
     kind = request.args.get("kind", None)
     sumlevel = request.args.get("sumlevel", None)
     txt = request.args.get("q", '')
     if not txt:
-        return search()
+        return search_old()
 
-    if kind:
-        txt += " AND kind:{}".format(kind)
-    if sumlevel:
-        txt += " AND sumlevel:{}".format(sumlevel)
+    data, suggs = do_search(txt, sumlevel, kind)
+    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
+    return jsonify(data=data, headers=headers, suggestions=suggs)
 
-    q = qp.parse(txt)
-
-    with ix.searcher() as s:
-        results = s.search(q, sortedby=facet)
-        data = [[r["id"], r["name"], r["zvalue"],
-                 r["kind"], r["display"], r["sumlevel"]]
-                for r in results]
-        # data.sort(key=lambda x: x[2], reverse=True)  # sort by zvalue
-        headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
-        return jsonify(data=data, headers=headers)
-
-@mod.route("/search/")
-def search():
+@mod.route("/search_old/")
+def search_old():
     q = request.args.get("q", '')
     q = q.lower()
     offset = request.args.get("offset", None)
