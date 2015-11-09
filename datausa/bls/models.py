@@ -9,6 +9,27 @@ class Bls(BaseModel):
     __table_args__ = {"schema": "bls"}
 
 
+class GrowthI(db.Model, Bls):
+    __tablename__ = 'growth_i'
+    median_moe = 2
+
+    naics = db.Column(db.String, primary_key=True)
+    title = db.Column(db.String)
+    emp_2002_thousands = db.Column(db.Float)
+    emp_2012_thousands = db.Column(db.Float)
+    emp_2022_thousands = db.Column(db.Float)
+    emp_change_2002_2022 = db.Column(db.Float)
+    emp_pct_change_2002_2022 = db.Column(db.Float)
+    output_2002 = db.Column(db.Float)
+    output_2012 = db.Column(db.Float)
+    output_2022 = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "naics": [ALL, "0", "1", "2", "3", "4"]
+        }
+
 class BlsCrosswalk(db.Model, Bls):
     __tablename__ = 'bls_crosswalk'
     pums_naics = db.Column(db.String, db.ForeignKey(PumsNaics.id),
