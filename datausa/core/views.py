@@ -16,7 +16,7 @@ def show_attrs(attr_obj):
 
 def build_api_obj():
     show = request.args.get("show", "")
-    sumlevel = request.args.get("sumlevel", "")
+    sumlevel = request.args.get("sumlevel", "").lower()
     required = request.args.get("required", "")
     force = request.args.get("force", "")
     where = request.args.get("where", "")
