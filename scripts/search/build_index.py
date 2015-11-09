@@ -1,12 +1,12 @@
 import os
 import os.path
 from whoosh import index
-from whoosh.fields import Schema, ID, TEXT, NUMERIC, KEYWORD
+from whoosh.fields import Schema, ID, TEXT, NUMERIC, KEYWORD, NGRAM
 from config import SEARCH_INDEX_DIR
 
 def get_schema():
     return Schema(id=ID(unique=True, stored=True),
-                  name=TEXT(phrase=True, stored=True),
+                  name=NGRAM(phrase=True, stored=True, minsize=3),
                   display=TEXT(stored=True),
                   zvalue=NUMERIC(stored=True),
                   kind=KEYWORD(stored=True),
