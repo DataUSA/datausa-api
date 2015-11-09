@@ -115,7 +115,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0):
                 for r in results]
         if not data and suggs:
             return do_search(suggs[0], sumlevel, kind, tries=tries+1)
-        return data, suggs
+        return data, suggs, tries
 
 @mod.route("/search/")
 def search():
@@ -123,13 +123,15 @@ def search():
     limit = request.args.get("limit", 100)
     kind = request.args.get("kind", None)
     sumlevel = request.args.get("sumlevel", None)
-    txt = request.args.get("q", '')
+    txt = request.args.get("q", '').lower()
     if not txt:
         return search_old()
 
-    data, suggs = do_search(txt, sumlevel, kind)
+    data, suggs, tries = do_search(txt, sumlevel, kind)
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
-    return jsonify(data=data, headers=headers, suggestions=suggs)
+    autocorrected = tries > 0
+    suggs = [x for x in suggs if x != txt]
+    return jsonify(data=data, headers=headers, suggestions=suggs, autocorrected=autocorrected)
 
 @mod.route("/search_old/")
 def search_old():
