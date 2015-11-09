@@ -3,7 +3,7 @@ from datausa.attrs.models import GeoContainment
 from datausa.bls.models import BlsCrosswalk
 from datausa.attrs.consts import OR
 from datausa import cache
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 
 
 @cache.memoize()
@@ -33,14 +33,34 @@ def pums_parent_puma(geo_id):
     needs_crosswalk = ["050", "140", "160", "310"]
     prefix = geo_id[:3]
     if prefix in needs_crosswalk:
+        puma_cond = and_(GeoContainment.parent_geoid.startswith("7"),
+                         GeoContainment.percent_covered >= 90)
+        state_cond = and_(GeoContainment.parent_geoid.startswith("040"),
+                          GeoContainment.percent_covered >= 10)
+        puma_or_state = or_(puma_cond, state_cond)
         filters = [
-            GeoContainment.child_geoid == geo_id,
-            GeoContainment.parent_geoid.startswith("7"),
-            GeoContainment.percent_covered >= 90
+            and_(GeoContainment.child_geoid == geo_id,
+                 puma_or_state)
         ]
         qry = GeoContainment.query.filter(*filters)
         qry = qry.order_by(GeoContainment.percent_covered.desc())
-        geo_contain = qry.first()
+        geos = list(qry.all())
+        geo_contain = None
+        puma_winner = None
+        state_winner = None
+        # first find the best fitting puma if it exists
+        for geo in geos:
+            if geo.parent_geoid[:1] == '7' and (not puma_winner or (geo.percent_covered > puma_winner.percent_covered)):
+                puma_winner = geo
+        # if there are no pumas to match with, fallback to states
+        if not puma_winner:
+            for geo in geos:
+                if geo.parent_geoid[:3] == '040' and (not state_winner or (geo.percent_covered > state_winner.percent_covered)):
+                    state_winner = geo
+            geo_contain = state_winner
+        else:
+            geo_contain = puma_winner
+
         if geo_contain:
             return geo_contain.parent_geoid
         elif not geo_contain and prefix in ["050", "140", "160"]:
