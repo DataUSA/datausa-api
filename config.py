@@ -33,3 +33,4 @@ CACHE_DIR = os.path.join(basedir, 'cache/')
 CACHE_DEFAULT_TIMEOUT = os.environ.get("CACHE_DEFAULT_TIMEOUT", (60 * 60))
 
 FLICKR_DIR = os.environ.get("DATAUSA_FLICKR_DIR", os.path.join(basedir, '../datausa-site/datausa/static/img/splash'))
+SEARCH_INDEX_DIR = os.path.join(basedir, 'search_index/')
