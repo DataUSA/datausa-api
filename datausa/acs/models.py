@@ -74,7 +74,7 @@ class Acs5_Ygo_Earnings(BaseAcs5, GeoId, AcsOccId):
         return {"geo": [NATION, STATE, COUNTY, MSA, PLACE, PUMA, ALL], "acs_occ": AcsOccId.LEVELS}
 
 
-class Acs3_Ygi_Num_Emp(BaseAcs3, AcsIndId, GeoId):
+class Acs3_Ygo_Num_Emp(BaseAcs3, AcsIndId, GeoId):
     __tablename__ = "ygi_num_emp"
     median_moe = 2
 
@@ -113,4 +113,4 @@ class Acs3_Ygi_MedEarnings(BaseAcs3, AcsIndId, GeoId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": [NATION, STATE, COUNTY, MSA, ALL], "acs_ind": ["0", "1", "all"]}
+        return {"geo": [NATION, STATE, COUNTY, MSA, PUMA, ALL], "acs_ind": ["0", "1", "all"]}
