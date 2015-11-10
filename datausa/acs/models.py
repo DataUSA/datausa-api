@@ -74,7 +74,7 @@ class Acs5_Ygo_Earnings(BaseAcs5, GeoId, AcsOccId):
         return {"geo": [NATION, STATE, COUNTY, MSA, PLACE, PUMA, ALL], "acs_occ": AcsOccId.LEVELS}
 
 
-class Acs3_Ygo_Num_Emp(BaseAcs3, AcsIndId, GeoId):
+class Acs3_Ygi_Num_Emp(BaseAcs3, AcsIndId, GeoId):
     __tablename__ = "ygi_num_emp"
     median_moe = 2
 
