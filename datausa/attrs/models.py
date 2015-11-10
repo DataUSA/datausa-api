@@ -384,11 +384,14 @@ class SocHierarchy(db.Model):
 class AcsLanguage(BaseAttr):
     __tablename__ = 'language'
 
+
 class AcsRace(BaseAttr):
     __tablename__ = 'acs_race'
 
+
 class Conflict(BaseAttr):
     __tablename__ = 'conflict'
+
 
 class Search(BaseAttr):
     __tablename__ = 'search'
@@ -396,3 +399,13 @@ class Search(BaseAttr):
     kind = db.Column(db.String)
     display = db.Column(db.String)
     sumlevel = db.Column(db.String)
+
+
+class ZipLookup(db.Model):
+    __tablename__ = 'zip_lookup'
+    __table_args__ = {"schema": "attrs"}
+    child_geoid = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
+    parent_geoid = db.Column(db.String, db.ForeignKey(Search.id),
+                             primary_key=True)
+    percent_covered = db.Column(db.Float)
+    parent_area = db.Column(db.Float)

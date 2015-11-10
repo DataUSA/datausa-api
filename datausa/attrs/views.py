@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
 from datausa.attrs.models import Cip, Naics, University, Soc, Degree
-from datausa.attrs.models import Race, Search
+from datausa.attrs.models import Race, Search, ZipLookup
 from datausa.attrs.models import Skill, Sector, Geo, AcsInd
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
@@ -13,6 +13,8 @@ from datausa.attrs.consts import ALL
 from whoosh.qparser import QueryParser
 from whoosh import index, sorting, qparser
 from config import SEARCH_INDEX_DIR
+
+import re
 
 ix = index.open_dir(SEARCH_INDEX_DIR)
 qp = QueryParser("name", schema=ix.schema, group=qparser.OrGroup)
@@ -126,6 +128,8 @@ def search():
     txt = request.args.get("q", '').lower()
     if not txt:
         return search_old()
+    elif re.match('\d{5}$', txt):
+        return zip_search(txt)
 
     data, suggs, tries = do_search(txt, sumlevel, kind)
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
@@ -171,3 +175,17 @@ def ranks():
                 "puma": 2378}
     }
     return jsonify(data=attr_sumlvls)
+
+
+def zip_search(zc):
+    zc = "86000US" + zc
+    filters = [
+        ZipLookup.child_geoid == zc,
+        ZipLookup.percent_covered >= 90,
+        Search.id == ZipLookup.parent_geoid
+    ]
+    qry = Search.query.join(ZipLookup).filter(*filters)
+    qry = qry.order_by(ZipLookup.parent_area.asc())
+    data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.sumlevel] for a in qry]
+    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
+    return jsonify(data=data, headers=headers)
