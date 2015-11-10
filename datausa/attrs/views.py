@@ -188,4 +188,4 @@ def zip_search(zc):
     qry = qry.order_by(ZipLookup.parent_area.asc())
     data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.sumlevel] for a in qry]
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
-    return jsonify(data=data, headers=headers)
+    return jsonify(data=data, headers=headers, zip_search=True)
