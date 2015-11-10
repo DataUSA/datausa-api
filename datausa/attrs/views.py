@@ -19,7 +19,7 @@ import re
 ix = index.open_dir(SEARCH_INDEX_DIR)
 qp = QueryParser("name", schema=ix.schema, group=qparser.OrGroup)
 facet = sorting.FieldFacet("zvalue", reverse=True)
-
+scores = sorting.ScoreFacet()
 
 attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
@@ -111,7 +111,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0):
     with ix.searcher() as s:
         corrector = s.corrector("display")
         suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
-        results = s.search(q, sortedby=facet)
+        results = s.search(q, sortedby=[scores, facet])
         data = [[r["id"], r["name"], r["zvalue"],
                  r["kind"], r["display"], r["sumlevel"]]
                 for r in results]
