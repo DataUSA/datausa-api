@@ -17,8 +17,9 @@ from config import SEARCH_INDEX_DIR
 import re
 
 class CWeighting(scoring.Weighting):
-    def __init__(self):
+    def __init__(self, fullterm):
         self.termweight = scoring.BM25F()
+        self.fullterm = fullterm.lower().strip()
     def score(self, searcher, fieldnum, text, docnum, weight, qf=1):
         # Get the BM25 score for this term in this document
         bm25 = self.termweight.scorer(searcher, fieldnum, text, docnum)
@@ -26,16 +27,16 @@ class CWeighting(scoring.Weighting):
         score_me = bm25.score(q.matcher(searcher))
         name = searcher.stored_fields(docnum).get("name")
         zvalue = searcher.stored_fields(docnum).get("zvalue")
-
-        if text.startswith(name):
-            return score_me * 1.5 + 5 + zvalue
-        return score_me * 0.75 + zvalue
+        if self.fullterm.startswith(name):
+            return (score_me * 1.75) + (15 * zvalue)
+        elif text.startswith(name):
+            return (score_me * 1.75) + (1.25 * zvalue)
+        return (score_me * 0.75) + (zvalue * 0.25)
 
 ix = index.open_dir(SEARCH_INDEX_DIR)
 qp = QueryParser("name", schema=ix.schema, group=qparser.OrGroup)
 facet = sorting.FieldFacet("zvalue", reverse=True)
 scores = sorting.ScoreFacet()
-weighter = CWeighting()
 
 attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
@@ -125,7 +126,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0):
         return [],[]
     q = qp.parse(txt)
 
-    with ix.searcher(weighting=weighter) as s:
+    with ix.searcher(weighting=CWeighting(txt)) as s:
         corrector = s.corrector("display")
         suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
         results = s.search(q, sortedby=[scores, facet])
