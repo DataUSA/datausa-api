@@ -306,6 +306,7 @@ class Skill(BaseAttr):
     __tablename__ = 'skill'
 
     avg_value = db.Column(db.Float)
+    parent = db.Column(db.String)
 
 
 class PumsNaicsCrosswalk(db.Model):
