@@ -11,15 +11,31 @@ from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
 from datausa.attrs.consts import ALL
 
 from whoosh.qparser import QueryParser
-from whoosh import index, sorting, qparser
+from whoosh import index, sorting, qparser, scoring
 from config import SEARCH_INDEX_DIR
 
 import re
+
+class CWeighting(scoring.Weighting):
+    def __init__(self):
+        self.termweight = scoring.BM25F()
+    def score(self, searcher, fieldnum, text, docnum, weight, qf=1):
+        # Get the BM25 score for this term in this document
+        bm25 = self.termweight.scorer(searcher, fieldnum, text, docnum)
+        q=qp.parse(text)
+        score_me = bm25.score(q.matcher(searcher))
+        name = searcher.stored_fields(docnum).get("name")
+        zvalue = searcher.stored_fields(docnum).get("zvalue")
+
+        if text.startswith(name):
+            return score_me * 1.5 + 5 + zvalue
+        return score_me * 0.75 + zvalue
 
 ix = index.open_dir(SEARCH_INDEX_DIR)
 qp = QueryParser("name", schema=ix.schema, group=qparser.OrGroup)
 facet = sorting.FieldFacet("zvalue", reverse=True)
 scores = sorting.ScoreFacet()
+weighter = CWeighting()
 
 attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
@@ -99,6 +115,7 @@ def get_children(kind, attr_id):
         return jsonify(data=data, headers=headers)
     raise Exception("Invalid attribute type.")
 
+
 def do_search(txt, sumlevel=None, kind=None, tries=0):
     if kind:
         txt += " AND kind:{}".format(kind)
@@ -108,7 +125,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0):
         return [],[]
     q = qp.parse(txt)
 
-    with ix.searcher() as s:
+    with ix.searcher(weighting=weighter) as s:
         corrector = s.corrector("display")
         suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
         results = s.search(q, sortedby=[scores, facet])
