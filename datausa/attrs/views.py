@@ -27,10 +27,15 @@ class CWeighting(scoring.Weighting):
         score_me = bm25.score(q.matcher(searcher))
         name = searcher.stored_fields(docnum).get("name")
         zvalue = searcher.stored_fields(docnum).get("zvalue")
-        if self.fullterm.startswith(name):
-            return (score_me * 1.75) + (15 * zvalue)
+        if name == self.fullterm:
+            return score_me * 10
+        elif name.startswith(self.fullterm):
+            if zvalue > 1:
+                return (score_me * 1.75) + (15 * zvalue)
+            else:
+                return score_me * 1.75 + -15 * zvalue
         elif text.startswith(name):
-            return (score_me * 1.75) + (1.25 * zvalue)
+            return (score_me * 1.75) + (10 * zvalue)
         return (score_me * 0.75) + (zvalue * 0.25)
 
 ix = index.open_dir(SEARCH_INDEX_DIR)
