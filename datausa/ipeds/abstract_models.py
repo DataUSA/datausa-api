@@ -6,7 +6,8 @@ from sqlalchemy.orm import column_property
 from datausa.core.models import BaseModel
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql import func
-from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, PLACE, ALL, GEO
+from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
+from datausa.attrs.consts import PUMA, PLACE, ALL, GEO
 
 class BaseIpeds(db.Model, BaseModel):
     __abstract__ = True
@@ -76,7 +77,7 @@ class Grads(BaseIpeds):
     grads_nonresident_women = db.Column(db.Integer())
 
 class GeoId(object):
-    LEVELS = [NATION, STATE, COUNTY, PLACE, MSA, ALL]
+    LEVELS = [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL]
     @declared_attr
     def geo(cls):
         return db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)
@@ -89,7 +90,8 @@ class GeoId(object):
     def geo_filter(cls, level):
         if level == ALL:
             return True
-        level_map = {NATION: "010", STATE: "040", COUNTY: "050", MSA: "310"}
+        level_map = {NATION: "010", STATE: "040", PUMA: "795",
+                     COUNTY: "050", MSA: "310", PLACE: "160"}
         level_code = level_map[level]
         return cls.geo.startswith(level_code)
 
