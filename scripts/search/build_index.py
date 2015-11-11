@@ -26,4 +26,10 @@ if __name__ == '__main__':
         writer.add_document(id=obj.id, name=obj.name,
                             display=obj.display, zvalue=obj.zvalue,
                             kind=obj.kind, sumlevel=obj.sumlevel)
+
+    # Custom synonyms to help with search
+    doc_obj = Search.query.filter_by(id="291060").first()
+    writer.add_document(id=doc_obj.id, name=u'doctors',
+                        display=u'Doctors', zvalue=doc_obj.zvalue*1.5,
+                        kind=doc_obj.kind, sumlevel=doc_obj.sumlevel)
     writer.commit()
