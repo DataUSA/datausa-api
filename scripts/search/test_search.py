@@ -89,6 +89,11 @@ class TestStringMethods(unittest.TestCase):
         data,suggs,tries = do_search("massachusitt")
         self.assertEqual(data[0][0], '04000US25')
 
+  def test_econ(self):
+        econs = ['193011', '450601']
+        data,suggs,tries = do_search("econ")
+        self.assertTrue(data[0][0] in econs)
+
 unittest.main()
 
 
