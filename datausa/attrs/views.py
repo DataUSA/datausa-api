@@ -1,5 +1,5 @@
 from datausa import app
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
 from datausa.attrs.models import Cip, Naics, University, Soc, Degree
@@ -8,7 +8,7 @@ from datausa.attrs.models import Skill, Sector, Geo, AcsInd
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
-from datausa.attrs.consts import ALL
+from datausa.attrs.consts import ALL, GEO
 
 from whoosh.qparser import QueryParser
 from whoosh import index, sorting, qparser, scoring
@@ -31,9 +31,9 @@ class CWeighting(scoring.Weighting):
             return score_me * 10
         elif name.startswith(self.fullterm):
             if zvalue > 1:
-                return (score_me * 1.75) + (15 * zvalue)
+                return (score_me * 5.75) + (15 * zvalue)
             else:
-                return score_me * 1.75 + -15 * zvalue
+                return score_me * 5.75 + -15 * zvalue
         elif text.startswith(name):
             return (score_me * 1.75) + (10 * zvalue)
         return (score_me * 0.75) + (zvalue * 0.25)
@@ -212,3 +212,19 @@ def zip_search(zc):
     data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.sumlevel] for a in qry]
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
     return jsonify(data=data, headers=headers, zip_search=True)
+
+
+@mod.route("/geo/<attr_id>/ipeds")
+def has_ipeds_data(attr_id):
+    from datausa.util import inmem
+    # first check, do I have any data
+    data, headers = Geo.parents(attr_id)
+    id_idx = headers.index("id")
+    ipeds_places = inmem.ipeds_place_map()
+    if attr_id in ipeds_places:
+        return jsonify(data=[], headers=[])
+    data.reverse()
+    for row in data:
+        geo_id = row[id_idx]
+        if geo_id in ipeds_places:
+            return jsonify(data=[geo_id], headers=[GEO])
