@@ -3,6 +3,8 @@ from whoosh import index, sorting, scoring
 from whoosh import qparser
 from config import SEARCH_INDEX_DIR
 import math
+import unittest
+
 
 class CWeighting(scoring.Weighting):
     def __init__(self, fullterm):
@@ -54,11 +56,42 @@ def do_search(txt, sumlevel=None, kind=None, tries=0):
         return data, suggs, tries
 
 
-data,suggs,tries = do_search("nome")
-assert data[0][0] == '16000US0254920'
-data,suggs,tries = do_search("new york")
-nys = ['31000US35620', '05000US36061', '04000US36', '16000US3651000']
-assert data[0][0] in nys 
+
+class TestStringMethods(unittest.TestCase):
+  NY_IDS = ['31000US35620', '05000US36061', '04000US36', '16000US3651000']
+
+  def test_extra_word(self):
+      data,suggs,tries = do_search("new york economy")
+      data,suggs,tries = do_search("new york")
+      self.assertTrue(data[0][0] in self.NY_IDS)
+
+  def test_exact_match_begin(self):
+      data,suggs,tries = do_search("nome")
+      self.assertEqual(data[0][0], '16000US0254920')
+
+  def test_ny(self):
+      data,suggs,tries = do_search("new york")
+      self.assertTrue(data[0][0] in self.NY_IDS)
+
+  def test_doc(self):
+      data,suggs,tries = do_search("doctor")
+      self.assertEqual(data[0][0], '291060')
+
+  def test_stl(self):
+      data,suggs,tries = do_search("st louis")
+      self.assertEqual(data[0][0], '16000US2965000')
+
+  def test_wmass(self):
+        data,suggs,tries = do_search("western massachusetts")
+        self.assertEqual(data[0][0], '04000US25')
+
+  def test_bad_spelling(self):
+        data,suggs,tries = do_search("massachusitt")
+        self.assertEqual(data[0][0], '04000US25')
+
+unittest.main()
+
+
 
 if __name__ == '__main__':
     import sys
