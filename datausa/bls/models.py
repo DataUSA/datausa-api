@@ -9,6 +9,27 @@ class Bls(BaseModel):
     __table_args__ = {"schema": "bls"}
 
 
+class GrowthO(db.Model, Bls):
+    __tablename__ = 'growth_o'
+    median_moe = 1
+
+    soc = db.Column(db.String, primary_key=True)
+    emp_2012_thousands = db.Column(db.Float)
+    emp_2022_thousands = db.Column(db.Float)
+    emp_pct_2012 = db.Column(db.Float)
+    emp_pct_2022 = db.Column(db.Float)
+    change_thousands = db.Column(db.Float)
+    change_thousands = db.Column(db.Float)
+    pct_change = db.Column(db.Float)
+    pct_change = db.Column(db.Float)
+    openings_thousands = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "soc": [ALL, "0", "1", "2", "3"]
+        }
+
 class GrowthI(db.Model, Bls):
     __tablename__ = 'growth_i'
     median_moe = 2
