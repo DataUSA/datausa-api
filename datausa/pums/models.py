@@ -128,6 +128,17 @@ class Ygw(BasePums, Personal, Year, GeoId, WageId):
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "wage_bin": ALL}
 
+
+class Yor(BasePums, Personal, Year, SocId, RaceId):
+    __tablename__ = "yor"
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"soc": SocId.LEVELS,
+                "race": [ALL]}
+
+
 class Ygor(BasePums, Personal, Year, GeoId, SocId, RaceId):
     __tablename__ = "ygor"
     median_moe = 3
@@ -202,6 +213,15 @@ class Yos(BasePums, Personal, Year, SocId, SexId):
     @classmethod
     def get_supported_levels(cls):
         return {"soc": SocId.LEVELS, "sex": [ALL]}
+
+
+class Yod(BasePums, Personal, Year, SocId, DegreeId):
+    __tablename__ = "yod"
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"soc": SocId.LEVELS, "degree": [ALL]}
 
 
 class Yios(BasePums, Personal, Year, NaicsId, SocId, SexId):
