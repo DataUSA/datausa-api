@@ -23,7 +23,11 @@ if __name__ == '__main__':
     from datausa.attrs.models import Search
     all_objs = Search.query.all()
     for obj in all_objs:
-        writer.add_document(id=obj.id, name=obj.name,
+        dname = obj.display
+        if dname:
+            dname = dname.lower().replace(",", "")
+            dname = dname.replace(".", "")
+        writer.add_document(id=obj.id, name=dname,
                             display=obj.display, zvalue=obj.zvalue,
                             kind=obj.kind, sumlevel=obj.sumlevel)
 
