@@ -215,6 +215,16 @@ class Yos(BasePums, Personal, Year, SocId, SexId):
         return {"soc": SocId.LEVELS, "sex": [ALL]}
 
 
+class Yoas(BasePums, Personal, Year, SocId, SexId):
+    __tablename__ = "yoas"
+    median_moe = 3
+    age = db.Column(db.String(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"soc": SocId.LEVELS, "sex": [ALL], "age": [ALL]}
+
+
 class Yod(BasePums, Personal, Year, SocId, DegreeId):
     __tablename__ = "yod"
     median_moe = 2

@@ -11,7 +11,7 @@ from datausa.acs.automap_models import *
 registered_models = [
     # PUMS
     Yg, Ygd, Ygr, Ygi, Ygio,
-    Yo, Yow, Yos, Yod, Yor,
+    Yo, Yow, Yos, Yod, Yor, Yoas,
     Ygo, Ygw, Ygor, Ygs, Ygb, Ygos,
 
     Yc, Ygc, Yca, Ycd, Ycb, Yoc, Yic, Ycs,
