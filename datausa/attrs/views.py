@@ -123,7 +123,7 @@ def get_children(kind, attr_id):
     raise Exception("Invalid attribute type.")
 
 
-def do_search(txt, sumlevel=None, kind=None, tries=0):
+def do_search(txt, sumlevel=None, kind=None, tries=0,limit=10):
     if kind:
         txt += " AND kind:{}".format(kind)
     if sumlevel:
@@ -135,18 +135,18 @@ def do_search(txt, sumlevel=None, kind=None, tries=0):
     with ix.searcher(weighting=CWeighting(txt)) as s:
         corrector = s.corrector("display")
         suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
-        results = s.search(q, sortedby=[scores, facet])
+        results = s.search(q, sortedby=[scores, facet], limit=limit)
         data = [[r["id"], r["name"], r["zvalue"],
                  r["kind"], r["display"], r["sumlevel"]]
                 for r in results]
         if not data and suggs:
-            return do_search(suggs[0], sumlevel, kind, tries=tries+1)
+            return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit)
         return data, suggs, tries
 
 @mod.route("/search/")
 def search():
     offset = request.args.get("offset", None)
-    limit = request.args.get("limit", 100)
+    limit = int(request.args.get("limit", 10))
     kind = request.args.get("kind", None)
     sumlevel = request.args.get("sumlevel", None)
     txt = request.args.get("q", '').lower()
@@ -155,7 +155,7 @@ def search():
     elif re.match('\d{5}$', txt):
         return zip_search(txt)
 
-    data, suggs, tries = do_search(txt, sumlevel, kind)
+    data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit)
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
     autocorrected = tries > 0
     suggs = [x for x in suggs if x != txt]
