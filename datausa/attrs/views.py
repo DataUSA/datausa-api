@@ -99,11 +99,11 @@ def attrs_by_id(kind, attr_id):
         return jsonify(data=[tmp.values()], headers=tmp.keys())
     raise Exception("Invalid attribute type.")
 
-@mod.route("/list")
+@mod.route("/list/")
 def attrs_list():
     return jsonify(data=attr_map.keys())
 
-@mod.route("/<kind>/<attr_id>/parents")
+@mod.route("/<kind>/<attr_id>/parents/")
 def get_parents(kind, attr_id):
     if kind in attr_map:
         attr_obj = attr_map[kind]
@@ -112,7 +112,7 @@ def get_parents(kind, attr_id):
     raise Exception("Invalid attribute type.")
 
 
-@mod.route("/<kind>/<attr_id>/children")
+@mod.route("/<kind>/<attr_id>/children/")
 def get_children(kind, attr_id):
     if kind in attr_map:
         attr_obj = attr_map[kind]
@@ -214,7 +214,7 @@ def zip_search(zc):
     return jsonify(data=data, headers=headers, zip_search=True)
 
 
-@mod.route("/geo/<attr_id>/ipeds")
+@mod.route("/geo/<attr_id>/ipeds/")
 def has_ipeds_data(attr_id):
     from datausa.util import inmem
     # first check, do I have any data
