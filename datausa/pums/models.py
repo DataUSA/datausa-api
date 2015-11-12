@@ -194,6 +194,16 @@ class Yior(BasePums, Personal, Year, NaicsId, SocId, RaceId):
     def get_supported_levels(cls):
         return {"soc": SocId.LEVELS, "naics": NaicsId.LEVELS, "race": [ALL]}
 
+
+class Yos(BasePums, Personal, Year, SocId, SexId):
+    __tablename__ = "yos"
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"soc": SocId.LEVELS, "sex": [ALL]}
+
+
 class Yios(BasePums, Personal, Year, NaicsId, SocId, SexId):
     __tablename__ = "yios"
     median_moe = 3
