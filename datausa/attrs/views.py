@@ -52,7 +52,8 @@ attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "wage_bin": PumsWage, "iocode": IoCode,
             "race": Race, "acs_race": AcsRace,
             "acs_occ": AcsOcc, "conflict": Conflict, "acs_ind": AcsInd,
-            "language": AcsLanguage}
+            "language": AcsLanguage,
+            "bls_soc": Soc, "bls_naics": Naics}
 
 def show_attrs(attr_obj):
     if attr_obj is Geo:
