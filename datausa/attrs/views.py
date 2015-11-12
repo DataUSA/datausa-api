@@ -28,9 +28,9 @@ class CWeighting(scoring.Weighting):
         name = searcher.stored_fields(docnum).get("name")
         zvalue = searcher.stored_fields(docnum).get("zvalue")
         if name == self.fullterm:
-            return score_me * 30
+            return score_me * 30 + (2 * zvalue)
         elif name.startswith(self.fullterm):
-            if zvalue > 1:
+            if zvalue > 0:
                 return (score_me * 5.75) + (25 * zvalue)
             else:
                 return score_me * 5.75 + (1 - abs(zvalue) * 25)

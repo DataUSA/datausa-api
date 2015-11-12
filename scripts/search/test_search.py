@@ -18,9 +18,9 @@ class CWeighting(scoring.Weighting):
         name = searcher.stored_fields(docnum).get("name")
         zvalue = searcher.stored_fields(docnum).get("zvalue")
         if name == self.fullterm:
-            return score_me * 30
+            return score_me * 30 + (2 * zvalue)
         elif name.startswith(self.fullterm):
-            if zvalue > 1:
+            if zvalue > 0:
                 return (score_me * 5.75) + (25 * zvalue)
             else:
                 return score_me * 5.75 + (1 - abs(zvalue) * 25)
@@ -97,6 +97,10 @@ class TestStringMethods(unittest.TestCase):
   def test_milford(self):
         data,suggs,tries = do_search("milford nh")
         self.assertEqual(data[0][0], '16000US3347940')
+
+  def test_bevhills(self):
+        data,suggs,tries = do_search("beverly hills")
+        self.assertEqual(data[0][0], '16000US0606308')
 
 
 
