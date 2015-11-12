@@ -26,7 +26,7 @@ registered_models = [
     UnivGeo,
 
     # ONET
-    SkillByCip,
+    SkillByCip, SkillBySoc,
 
     # County Health Rankings
     HealthYg,
