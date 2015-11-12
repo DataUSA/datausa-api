@@ -33,7 +33,7 @@ class AcsIndId(object):
 
 class AcsOccId(object):
     LEVELS = ["0", "1", "2", "3", "4", ALL]
-    JOINED_FILTER = {"acs_occ": {"column": AcsOcc.depth,
+    JOINED_FILTER = {"acs_occ": {"column": AcsOcc.level,
                                  "table": AcsOcc,
                                  "id": AcsOcc.id}}
 
