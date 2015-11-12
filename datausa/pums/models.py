@@ -234,6 +234,15 @@ class Yod(BasePums, Personal, Year, SocId, DegreeId):
         return {"soc": SocId.LEVELS, "degree": [ALL]}
 
 
+class Yid(BasePums, Personal, Year, NaicsId, DegreeId):
+    __tablename__ = "yid"
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"naics": NaicsId.LEVELS, "degree": [ALL]}
+
+
 class Yios(BasePums, Personal, Year, NaicsId, SocId, SexId):
     __tablename__ = "yios"
     median_moe = 3
