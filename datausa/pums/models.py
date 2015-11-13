@@ -198,6 +198,17 @@ class Yio(BasePums, Personal, Year, NaicsId, SocId):
     def get_supported_levels(cls):
         return {"soc": SocId.LEVELS, "naics": NaicsId.LEVELS}
 
+
+class Yir(BasePums, Personal, Year, NaicsId, RaceId):
+    __tablename__ = "yir"
+    median_moe = 2
+    avg_wage_rca = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"soc": SocId.LEVELS, "race": [ALL]}
+
+
 class Yior(BasePums, Personal, Year, NaicsId, SocId, RaceId):
     __tablename__ = "yior"
     median_moe = 3
@@ -256,6 +267,16 @@ class Yi(BasePums, Personal, Year, NaicsId):
     @classmethod
     def get_supported_levels(cls):
         return {"naics": NaicsId.LEVELS}
+
+
+class Yis(BasePums, Personal, Year, NaicsId, SexId):
+    __tablename__ = "yis"
+    median_moe = 2
+    avg_wage_rca = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"naics": NaicsId.LEVELS, "sex": [ALL]}
 
 
 class Yios(BasePums, Personal, Year, NaicsId, SocId, SexId):
