@@ -417,3 +417,11 @@ class OccCrosswalk(db.Model):
     acs_occ = db.Column(db.String, primary_key=True)
     pums_soc = db.Column(db.String, db.ForeignKey(PumsSoc.id), primary_key=True)
     level = db.Column(db.Integer)
+
+
+class IndCrosswalk(db.Model):
+    __tablename__ = 'ind_crosswalk'
+    __table_args__ = {"schema": "attrs"}
+    acs_ind = db.Column(db.String, primary_key=True)
+    pums_naics = db.Column(db.String, db.ForeignKey(PumsNaics.id), primary_key=True)
+    level = db.Column(db.Integer)
