@@ -35,4 +35,5 @@ class BeaUse(db.Model, BaseModel):
     def commodity_iocode_filter(cls, level):
         if level == ALL:
             return True
-        return ~cls.commodity_iocode.in_(["TOTCOMOUT", "TOTFU", "TOTII", "TOTINDOUT", "TOTVA"])
+        to_filter = ["Other", "PROF", "Used", "V001", "V002", "V003", "TOTCOMOUT", "TOTFU", "TOTII", "TOTINDOUT", "TOTVA"]
+        return ~cls.commodity_iocode.in_(to_filter)
