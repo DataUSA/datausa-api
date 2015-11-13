@@ -21,7 +21,7 @@ class BeaUse(db.Model, BaseModel):
     def get_supported_levels(cls):
         return {
             "industry_iocode": [ALL, "0", "1"],
-            "commodity_iocode": [ALL],
+            "commodity_iocode": [ALL, "naics"],
         }
 
     @classmethod
@@ -30,3 +30,9 @@ class BeaUse(db.Model, BaseModel):
             return True
         target_len = int(level)
         return cls.industry_level == target_len
+
+    @classmethod
+    def commodity_iocode_filter(cls, level):
+        if level == ALL:
+            return True
+        return ~cls.commodity_iocode.in_(["TOTCOMOUT", "TOTFU", "TOTII", "TOTINDOUT", "TOTVA"])
