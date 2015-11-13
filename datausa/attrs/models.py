@@ -409,3 +409,11 @@ class ZipLookup(db.Model):
                              primary_key=True)
     percent_covered = db.Column(db.Float)
     parent_area = db.Column(db.Float)
+
+
+class OccCrosswalk(db.Model):
+    __tablename__ = 'occ_crosswalk'
+    __table_args__ = {"schema": "attrs"}
+    acs_occ = db.Column(db.String, primary_key=True)
+    pums_soc = db.Column(db.String, db.ForeignKey(PumsSoc.id), primary_key=True)
+    level = db.Column(db.Integer)
