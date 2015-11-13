@@ -92,6 +92,7 @@ def crosswalk(table, api_obj):
     to be performed'''
     registered_crosswalks = [
         {"column": "industry_iocode", "schema": "bea", "mapping": iocode_map},
+        {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
         {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
         # cbp uses same naics coding as bls
         {"column": "naics", "schema": "cbp", "mapping": pums_to_bls_naics_map},

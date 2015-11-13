@@ -2,13 +2,14 @@ from datausa.database import db
 from datausa.attrs.models import IoCode
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import ALL
-
+# from sqlalchemy import and_
 
 class BeaUse(db.Model, BaseModel):
     __table_args__ = {"schema": "bea"}
     __tablename__ = 'use'
     source_title = 'Bureau of Economic Analysis'
     median_moe = 2
+    to_filter = ["Other", "PROF", "Used", "V001", "V002", "V003", "TOTCOMOUT", "TOTFU", "TOTII", "TOTINDOUT", "TOTVA"]
 
     year = db.Column(db.Integer, primary_key=True)
     industry_iocode = db.Column(db.String, db.ForeignKey(IoCode.id), primary_key=True)
@@ -20,7 +21,7 @@ class BeaUse(db.Model, BaseModel):
     @classmethod
     def get_supported_levels(cls):
         return {
-            "industry_iocode": [ALL, "0", "1"],
+            "industry_iocode": [ALL, "0", "1", "naics"],
             "commodity_iocode": [ALL, "naics"],
         }
 
@@ -28,6 +29,8 @@ class BeaUse(db.Model, BaseModel):
     def industry_iocode_filter(cls, level):
         if level == ALL:
             return True
+        elif level == "naics":
+            return ~cls.industry_iocode.in_(cls.to_filter)
         target_len = int(level)
         return cls.industry_level == target_len
 
@@ -35,5 +38,4 @@ class BeaUse(db.Model, BaseModel):
     def commodity_iocode_filter(cls, level):
         if level == ALL:
             return True
-        to_filter = ["Other", "PROF", "Used", "V001", "V002", "V003", "TOTCOMOUT", "TOTFU", "TOTII", "TOTINDOUT", "TOTVA"]
-        return ~cls.commodity_iocode.in_(to_filter)
+        return ~cls.commodity_iocode.in_(cls.to_filter)
