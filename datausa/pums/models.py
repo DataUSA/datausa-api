@@ -192,6 +192,7 @@ class Yic(BasePums, Personal, Year, NaicsId, CipId):
 class Yio(BasePums, Personal, Year, NaicsId, SocId):
     __tablename__ = "yio"
     median_moe = 2
+    num_ppl_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
