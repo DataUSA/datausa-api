@@ -62,6 +62,8 @@ class Ygi(BasePums, Personal, Year, GeoId, NaicsId):
     __tablename__ = "ygi"
     median_moe = 2
 
+    num_ppl_rca = db.Column(db.Float)
+
     @classmethod
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "naics": NaicsId.LEVELS}
