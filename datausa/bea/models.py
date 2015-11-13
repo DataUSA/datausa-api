@@ -21,6 +21,7 @@ class BeaUse(db.Model, BaseModel):
     def get_supported_levels(cls):
         return {
             "industry_iocode": [ALL, "0", "1"],
+            "commodity_iocode": [ALL],
         }
 
     @classmethod
