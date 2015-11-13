@@ -4,6 +4,7 @@ from flask import Blueprint, request, jsonify, abort
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
 from datausa.attrs.models import Cip, Naics, University, Soc, Degree
 from datausa.attrs.models import Race, Search, ZipLookup
+from datausa.attrs.models import OccCrosswalk, IndCrosswalk
 from datausa.attrs.models import Skill, Sector, Geo, AcsInd
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
@@ -131,13 +132,12 @@ def do_search(txt, sumlevel=None, kind=None, tries=0,limit=10):
     if tries > 2:
         return [],[]
     q = qp.parse(txt)
-
     with ix.searcher(weighting=CWeighting(txt)) as s:
         corrector = s.corrector("display")
         suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
         results = s.search(q, sortedby=[scores, facet], limit=limit)
         data = [[r["id"], r["name"], r["zvalue"],
-                 r["kind"], r["display"], r["sumlevel"]]
+                 r["kind"], r["display"], r["sumlevel"] if "sumlevel" in r else ""]
                 for r in results]
         if not data and suggs:
             return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit)
@@ -150,11 +150,10 @@ def search():
     kind = request.args.get("kind", None)
     sumlevel = request.args.get("sumlevel", None)
     txt = request.args.get("q", '').lower()
-    if not txt:
+    if not txt or len(txt) <= 2:
         return search_old()
     elif re.match('\d{5}$', txt):
         return zip_search(txt)
-
     data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit)
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
     autocorrected = tries > 0
@@ -229,3 +228,14 @@ def has_ipeds_data(attr_id):
         geo_id = row[id_idx]
         if geo_id in ipeds_places:
             return jsonify(data=[geo_id], headers=[GEO])
+
+@mod.route("/crosswalk/<attr_kind>/<attr_id>/")
+def crosswalk_acs(attr_kind, attr_id):
+    if attr_kind not in ["acs_occ", "acs_ind"]:
+        return abort(404)
+    attr_obj = {"acs_occ": OccCrosswalk, "acs_ind": IndCrosswalk}[attr_kind]
+    header_name = {"acs_occ": "soc", "acs_ind": "naics"}[attr_kind]
+    col_name = "pums_{}".format(header_name)
+    results = attr_obj.query.filter(getattr(attr_obj, attr_kind) == attr_id).with_entities(col_name).all()
+    results = [getattr(item, col_name) for item in results]
+    return jsonify(data=results, headers=[header_name])
