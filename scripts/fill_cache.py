@@ -17,7 +17,8 @@ def crawl_page(moi):
     page = 'http://postgres.datawheel.us:81/profile/{}/{}/'.format( attr_kind, display_id)
     print page, "getting..."
     r = requests.get(page)
-    print r.status_code
+    if r.status_code != 200:
+        print "PAGE ERROR", page, r.status_code
 
 def crawl_attr(base_url, attr_kind='country'):
     data, headers = url_to_json('{}/attrs/search?q=&kind={}&limit=100000'.format(base_url, attr_kind))
