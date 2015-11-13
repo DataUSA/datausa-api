@@ -44,6 +44,10 @@ class GrowthI(db.Model, Bls):
     output_2002 = db.Column(db.Float)
     output_2012 = db.Column(db.Float)
     output_2022 = db.Column(db.Float)
+    output_carc_2002_2012 = db.Column(db.Float)
+    output_carc_2012_2022 = db.Column(db.Float)
+    emp_carc_2002_2012 = db.Column(db.Float)
+    emp_carc_2012_2022 = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
