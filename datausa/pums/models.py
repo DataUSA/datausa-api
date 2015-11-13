@@ -110,6 +110,16 @@ class Yow(BasePums, Personal, Year, SocId, WageId):
     def get_supported_levels(cls):
         return {"soc": SocId.LEVELS, "wage_bin": ALL}
 
+
+class Yiw(BasePums, Personal, Year, NaicsId, WageId):
+    __tablename__ = "yiw"
+    median_moe = 1
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"naics": NaicsId.LEVELS, "wage_bin": ALL}
+
+
 class Ygo(BasePums, Personal, Year, GeoId, SocId):
     __tablename__ = "ygo"
     median_moe = 2
