@@ -40,7 +40,7 @@ class GrowthI(db.Model, Bls):
     emp_2012_thousands = db.Column(db.Float)
     emp_2022_thousands = db.Column(db.Float)
     emp_change_2002_2022 = db.Column(db.Float)
-    emp_pct_change_2002_2022 = db.Column(db.Float)
+    emp_pct_change_2012_2022 = db.Column(db.Float)
     output_2002 = db.Column(db.Float)
     output_2012 = db.Column(db.Float)
     output_2022 = db.Column(db.Float)
