@@ -35,7 +35,7 @@ for level in [2, 4, 6]:
     queries.append(cip_qry.format("cip", "ipeds_beta.grads_yc", "grads_total", level))
 
 # GEO codes
-geo_qry = '''SELECT g.{0},  (g.{2} - stats.average) / stats.st AS zvalue, '{0}' as kind , lower(a.name) as name, a.name as display, a.sumlevel::text as level
+geo_qry = '''SELECT g.{0},  (g.{2} - stats.average) / stats.st AS zvalue, '{0}' as kind , lower(a.name) as name, a.display_name as display, a.sumlevel::text as level
 FROM {1} g 
 LEFT JOIN attrs.geo_names a ON (a.id = g.{0})
 CROSS JOIN
