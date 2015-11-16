@@ -1,5 +1,6 @@
 from datausa.database import db
-from datausa.attrs.models import Geo, Soc, Naics, PumsNaics
+from datausa.attrs.models import Geo, Soc, Naics
+from datausa.attrs.models import PumsSoc, PumsNaics
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, MSA, ALL
 
@@ -55,11 +56,18 @@ class GrowthI(db.Model, Bls):
             "naics": [ALL, "0", "1", "2", "3", "4"]
         }
 
+
 class BlsCrosswalk(db.Model, Bls):
     __tablename__ = 'bls_crosswalk'
     pums_naics = db.Column(db.String, db.ForeignKey(PumsNaics.id),
                            primary_key=True)
     bls_naics = db.Column(db.String, primary_key=True)
+
+
+class SocCrosswalk(db.Model, Bls):
+    __tablename__ = 'soc_crosswalk'
+    pums_soc = db.Column(db.String, primary_key=True)
+    bls_soc = db.Column(db.String, primary_key=True)
 
 
 class OesYgo(db.Model, Bls):
