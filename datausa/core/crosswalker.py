@@ -5,6 +5,8 @@ from datausa.attrs.consts import OR
 from datausa import cache
 from sqlalchemy import or_, and_
 
+def truncate_cip(x, api_obj=None):
+     return x[:2]
 
 @cache.memoize()
 def pums_to_bls_soc():
@@ -113,7 +115,7 @@ def crosswalk(table, api_obj):
         # cbp uses same naics coding as bls
         {"column": "naics", "schema": "cbp", "mapping": pums_to_bls_naics_map},
         {"column": "naics", "schema": "pums_beta", "mapping": naics_map},
-        {"column": "cip", "schema": "pums_beta", "mapping": lambda x: x[:2]},
+        {"column": "cip", "schema": "pums_beta", "mapping": truncate_cip},
         {"column": "geo", "schema": "pums_beta", "mapping": pums_parent_puma},
         {"column": "geo", "schema": "chr", "mapping": chr_parents}
 
