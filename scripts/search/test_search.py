@@ -47,7 +47,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0):
     with ix.searcher(weighting=CWeighting(txt)) as s:
         corrector = s.corrector("display")
         suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
-        results = s.search(q, sortedby=[scores])
+        results = s.search_page(q, 1, sortedby=[scores], pagelen=20)
         data = [[r["id"], r["name"], r["zvalue"],
                  r["kind"], r["display"], r["sumlevel"]]
                 for r in results]

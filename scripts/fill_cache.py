@@ -2,7 +2,9 @@ import requests
 import json
 import time
 import threading
+import os
 from multiprocessing import Pool
+from requests.auth import HTTPBasicAuth
 
 
 def url_to_json(url):
@@ -14,9 +16,9 @@ def url_to_json(url):
 
 def crawl_page(moi):
     display_id,attr_kind = moi
-    page = 'http://postgres.datawheel.us:81/profile/{}/{}/'.format( attr_kind, display_id)
+    page = 'http://usa.datawheel.us/profile/{}/{}/'.format( attr_kind, display_id)
     print page, "getting..."
-    r = requests.get(page)
+    r = requests.get(page, auth=HTTPBasicAuth('datausa', os.environ.get('DATAUSA_WEB_PW', '')))
     if r.status_code != 200:
         print "PAGE ERROR", page, r.status_code
 
