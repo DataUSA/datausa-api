@@ -97,9 +97,9 @@ def industry_iocode_func(naics, api_obj=None):
     my_obj = PumsIoCrosswalk.query.filter(PumsIoCrosswalk.pums_naics == naics).first()
     if hasattr(api_obj, "vars_and_vals"):
         if "industry_level" in api_obj.vars_and_vals and int(api_obj.vars_and_vals["industry_level"]) == 0:
-            return my_obj.iocode_parent
+            return my_obj.iocode_parent if my_obj else naics
         else:
-            return my_obj.iocode
+            return my_obj.iocode if my_obj else naics
     return naics
 
 def crosswalk(table, api_obj):
