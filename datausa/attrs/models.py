@@ -323,7 +323,7 @@ class PumsIoCrosswalk(db.Model):
 
     pums_naics = db.Column(db.String, primary_key=True)
     iocode = db.Column(db.String)
-
+    iocode_parent = db.Column(db.String)
 
 class IoCode(BaseAttr):
     __tablename__ = 'iocode'

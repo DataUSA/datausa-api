@@ -33,7 +33,7 @@ def iocode_mapping():
     return {obj.pums_naics: obj.iocode for obj in all_objs}
 
 
-def pums_parent_puma(geo_id):
+def pums_parent_puma(geo_id, api_obj=None):
     '''Some data is only accessible at the PUMA level
     so we crosswalk codes to the nearest PUMA'''
     needs_crosswalk = ["050", "140", "160", "310"]
@@ -76,7 +76,7 @@ def pums_parent_puma(geo_id):
             raise Exception("Not yet implemented")
     return geo_id
 
-def chr_parents(geo_id):
+def chr_parents(geo_id, api_obj=None):
     '''CHR data'''
     needs_crosswalk = ["160", "310", "795"]
     prefix = geo_id[:3]
@@ -93,11 +93,20 @@ def chr_parents(geo_id):
             return geo_contain.parent_geoid
     return geo_id
 
+def industry_iocode_func(naics, api_obj=None):
+    my_obj = PumsIoCrosswalk.query.filter(PumsIoCrosswalk.pums_naics == naics).first()
+    if hasattr(api_obj, "vars_and_vals"):
+        if "industry_level" in api_obj.vars_and_vals and int(api_obj.vars_and_vals["industry_level"]) == 0:
+            return my_obj.iocode_parent
+        else:
+            return my_obj.iocode
+    return naics
+
 def crosswalk(table, api_obj):
     '''Given a table and an API object, determine if any crosswalks need
     to be performed'''
     registered_crosswalks = [
-        {"column": "industry_iocode", "schema": "bea", "mapping": iocode_map},
+        {"column": "industry_iocode", "schema": "bea", "mapping": industry_iocode_func},
         {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
         {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
         {"column": "soc", "schema": "bls", "mapping": pums_to_bls_soc_map},
@@ -121,7 +130,7 @@ def crosswalk(table, api_obj):
             if isinstance(mapping, dict):
                 new_vals = [mapping[val] if val in mapping else val for val in curr_vals]
             else:
-                new_vals = [mapping(val) for val in curr_vals]
+                new_vals = [mapping(val, api_obj=api_obj) for val in curr_vals]
             new_val_str = OR.join(new_vals)
             api_obj.vars_and_vals[column] = new_val_str
 
