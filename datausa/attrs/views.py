@@ -237,5 +237,5 @@ def crosswalk_acs(attr_kind, attr_id):
     header_name = {"acs_occ": "soc", "acs_ind": "naics"}[attr_kind]
     col_name = "pums_{}".format(header_name)
     results = attr_obj.query.filter(getattr(attr_obj, attr_kind) == attr_id).with_entities(col_name).all()
-    results = [getattr(item, col_name) for item in results]
+    results = [[getattr(item, col_name)] for item in results]
     return jsonify(data=results, headers=[header_name])
