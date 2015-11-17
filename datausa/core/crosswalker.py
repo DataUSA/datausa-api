@@ -1,9 +1,10 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
-from datausa.attrs.models import GeoContainment
+from datausa.attrs.models import GeoContainment, Soc
 from datausa.bls.models import BlsCrosswalk, SocCrosswalk
 from datausa.attrs.consts import OR
 from datausa import cache
 from sqlalchemy import or_, and_
+from datausa.util.inmem import onet_socs
 
 def truncate_cip(x, api_obj=None):
      return x[:2]
@@ -112,6 +113,7 @@ def crosswalk(table, api_obj):
         {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
         {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
         {"column": "soc", "schema": "bls", "mapping": pums_to_bls_soc_map},
+        {"column": "soc", "schema": "onet", "mapping": onet_parents},
         # cbp uses same naics coding as bls
         {"column": "naics", "schema": "cbp", "mapping": pums_to_bls_naics_map},
         {"column": "naics", "schema": "pums_beta", "mapping": naics_map},
@@ -140,6 +142,19 @@ def crosswalk(table, api_obj):
             if curr_vals_str != new_val_str:
                 api_obj.subs[column] = new_val_str
     return api_obj
+
+def onet_parents(attr_id, **kwargs):
+    data, headers = Soc.parents(attr_id)
+    id_idx = headers.index("id")
+    onet_data = onet_socs()
+    if attr_id in onet_data:
+        return attr_id
+    data.reverse()
+    for row in data:
+        parent_soc = row[id_idx]
+        if parent_soc in onet_data:
+            return parent_soc
+    return attr_id
 
 naics_map = pums_naics_mapping()
 iocode_map = iocode_mapping()
