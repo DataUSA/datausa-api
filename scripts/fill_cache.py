@@ -31,7 +31,7 @@ def crawl_attr(base_url, attr_kind='country'):
 
 
 
-def main(base_url):
+def main(base_url="http://postgres.datawheel.us"):
     if not base_url.startswith('http://'):
         base_url = 'http://' + base_url
     if base_url.endswith('/'):
@@ -51,5 +51,6 @@ def main(base_url):
 if __name__ == "__main__":
     import sys
     if len(sys.argv) != 2:
-        raise Exception("Usage: {} BASE_URL".format(__file__))
-    main(sys.argv[1])
+        main()
+    else:
+        main(sys.argv[1])
