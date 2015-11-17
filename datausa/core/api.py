@@ -82,16 +82,34 @@ def process_value_filters(table, vars_and_vals):
         filts.append(filt)
     return filts
 
+def remove_filters(filters, table, col):
+    new_filts = []
+    for filt in filters:
+        if hasattr(filt, "left") and hasattr(filt, "right"):
+            if filt.left.key == col:
+                continue
+        new_filts.append(filt)
+    return new_filts
+
 def handle_join(qry, filters, table, api_obj):
     joins = []
     joined_filt = table.JOINED_FILTER
     for col, level in api_obj.shows_and_levels.items():
         if level != consts.ALL:
             if col in joined_filt:
-                joins.append(joined_filt[col]["table"])
-                filters.append(joined_filt[col]["column"] == level)
-                filters.append(joined_filt[col]["id"] == getattr(table, col))
-
+                if not "triggers" in joined_filt[col]:
+                    joins.append(joined_filt[col]["table"])
+                    filters.append(joined_filt[col]["column"] == level)
+                    filters.append(joined_filt[col]["id"] == getattr(table, col))
+                else:
+                    triggers = joined_filt[col]["triggers"]
+                    for target_lvl, starting in triggers:
+                        if col in api_obj.vars_and_vals:
+                            if api_obj.vars_and_vals[col].startswith(starting) and level == target_lvl:
+                                joins.append(joined_filt[col]["table"])
+                                filters = remove_filters(filters, table, col)
+                                filters.append(joined_filt[col]["id"] == getattr(table, col))
+                                filters.append(joined_filt[col]["column"] == api_obj.vars_and_vals[col])
     qry=qry.join(*joins)
     return qry, filters
 

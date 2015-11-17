@@ -1,7 +1,7 @@
 from sqlalchemy.ext.declarative import declared_attr
 
 from datausa.database import db
-from datausa.attrs.models import Geo, AcsOcc, AcsInd
+from datausa.attrs.models import Geo, AcsOcc, AcsInd, GeoContainment
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY
 from datausa.attrs.consts import PUMA, MSA, ALL, GEO
@@ -51,7 +51,12 @@ class AcsOccId(object):
 
 class GeoId(object):
     LEVELS = [NATION, STATE, COUNTY, MSA, PLACE, TRACT, ALL]
-
+    JOINED_FILTER = {"geo": {
+                            "triggers": [("tract", "160")],
+                            "table": GeoContainment.parent,
+                            "column": GeoContainment.parent_geoid,
+                            "id": GeoContainment.child_geoid,
+    }}
     @classmethod
     def get_supported_levels(cls):
         return {GEO: GeoId.LEVELS}
