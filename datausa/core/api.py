@@ -1,9 +1,17 @@
 import flask
 import sqlalchemy
+from flask import Response
 
 from datausa.core import get_columns
 from datausa.core.table_manager import TableManager, table_name
 from datausa.attrs import consts
+
+def stream_format(table, cols, qry, api_obj):
+    def generate():
+        yield ','.join([col if isinstance(col, basestring) else col.key for col in cols]) + '\n'
+        for row in qry.all():
+            yield ','.join(map(str, list(row))) + '\n'
+    return Response(generate(), mimetype='text/csv')
 
 def simple_format(table, cols, data, api_obj):
     headers = [col if isinstance(col, basestring) else col.key for col in cols]
@@ -113,7 +121,7 @@ def handle_join(qry, filters, table, api_obj):
     qry=qry.join(*joins)
     return qry, filters
 
-def query(table, api_obj):
+def query(table, api_obj, stream=False):
     vars_and_vals = api_obj.vars_and_vals
     shows_and_levels = api_obj.shows_and_levels
     values = api_obj.values
@@ -149,6 +157,9 @@ def query(table, api_obj):
         qry = qry.order_by("{} {} NULLS LAST".format(api_obj.order, sort))
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
+
+    if stream:
+        return stream_format(table, cols, qry, api_obj)
 
     data = qry.all()
     return simple_format(table, cols, data, api_obj)
