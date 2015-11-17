@@ -10,15 +10,12 @@ from sqlalchemy.sql import func
 
 class AcsIndId(object):
     LEVELS = ["0", "1", "2", ALL]
-    # JOINED_FILTER = {"acs_occ": {"column": AcsInd.depth,
-    #                              "table": AcsInd,
-    #                              "id": AcsInd.id}}
+
     @classmethod
     def acs_ind_filter(cls, level):
         if level == ALL:
             return True
         else:
-            # tmap = {"0": 2, "1": 4, "2": 6}
             target = (int(level) * 2) + 2
             return func.length(cls.acs_ind) == target
 
@@ -33,9 +30,6 @@ class AcsIndId(object):
 
 class AcsOccId(object):
     LEVELS = ["0", "1", "2", "3", "4", ALL]
-    JOINED_FILTER = {"acs_occ": {"column": AcsOcc.level,
-                                 "table": AcsOcc,
-                                 "id": AcsOcc.id}}
 
     @classmethod
     def get_supported_levels(cls):
@@ -45,6 +39,14 @@ class AcsOccId(object):
     def acs_occ(cls):
         return db.Column(db.String(), db.ForeignKey(AcsOcc.id),
                          primary_key=True)
+
+    @classmethod
+    def acs_occ_filter(cls, level):
+        if level == ALL:
+            return True
+        else:
+            target = (int(level) * 2) + 2
+            return func.length(cls.acs_occ) == target
 
 
 class GeoId(object):
