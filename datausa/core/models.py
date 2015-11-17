@@ -5,6 +5,7 @@ class BaseModel(object):
     median_moe = None
     size = None
     source_title = ''
+    source_link = ''
     # def __init__(levels, moe, size):
     #     self.supported_levels = levels
     #     self.median_moe = moe
@@ -20,6 +21,7 @@ class BaseModel(object):
         return {
             "dataset": dataset,
             "table": cls.__tablename__,
+            "link": cls.source_link,
             "supported_levels": cls.get_supported_levels(),
         }
 

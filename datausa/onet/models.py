@@ -9,6 +9,7 @@ class BaseOnet(db.Model, BaseModel):
     __table_args__ = {"schema": "onet"}
     supported_levels = {}
     source_title = 'O*NET'
+    source_link = 'http://www.onetonline.org/'
 
 class SkillId(object):
     @declared_attr

@@ -8,6 +8,7 @@ from datausa.attrs.consts import NATION, STATE, MSA, ALL
 class Bls(BaseModel):
     source_title = 'Bureau of Labor Statistics'
     __table_args__ = {"schema": "bls"}
+    source_link = 'http://bls.gov'
 
 
 class GrowthO(db.Model, Bls):

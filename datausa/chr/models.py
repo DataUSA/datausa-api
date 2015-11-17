@@ -14,6 +14,7 @@ AutomapBase = automap_base(bind=db.engine, metadata=metadata)
 class HealthYg(AutomapBase, db.Model, BaseModel):
     __table_args__ = {"schema": "chr"}
     source_title = 'University of Wisconsin County Health Rankings'
+    source_link = 'http://www.countyhealthrankings.org/'
     __tablename__ = 'yg'
     median_moe = 1
 

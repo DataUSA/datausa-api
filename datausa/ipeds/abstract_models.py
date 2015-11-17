@@ -14,6 +14,7 @@ class BaseIpeds(db.Model, BaseModel):
     __table_args__ = {"schema": "ipeds_beta"}
     supported_levels = {}
     source_title = 'NCES IPEDS'
+    source_link = 'http://nces.ed.gov/ipeds/'
 
 class Enrollment(BaseIpeds):
     __abstract__ = True

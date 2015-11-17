@@ -81,6 +81,7 @@ class BaseAcs5(db.Model, BaseModel):
     __table_args__ = {"schema": "acs"}
     supported_levels = {}
     source_title = 'ACS 5-year Estimate'
+    source_link = 'http://www.census.gov/programs-surveys/acs/'
 
 
 class BaseAcs3(db.Model, BaseModel):
@@ -88,3 +89,4 @@ class BaseAcs3(db.Model, BaseModel):
     __table_args__ = {"schema": "acs_3year"}
     supported_levels = {}
     source_title = 'ACS 3-year Estimate'
+    source_link = 'http://www.census.gov/programs-surveys/acs/'

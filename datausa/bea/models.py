@@ -8,6 +8,8 @@ class BeaUse(db.Model, BaseModel):
     __table_args__ = {"schema": "bea"}
     __tablename__ = 'use'
     source_title = 'Bureau of Economic Analysis'
+    source_link = 'http://bea.gov'
+
     median_moe = 2
     to_filter = ["F07S", "TOTCOMOUT", "F010", "F07C", "F02S", "HS", "F06N", "F02E", "F07E", "F10N", "F06E",
                  "F10C","F030", "F10E", "TOTFU", "F050", "F06S", "ORE", "F02R", "F040", "F06C", "GFGD", "F020",
