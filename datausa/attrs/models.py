@@ -227,7 +227,7 @@ class PumsDegree(BaseAttr):
     __table_args__ = {"schema": "pums_attrs"}
 
 
-class PumsNaics(BaseAttr):
+class PumsNaics(BaseAttr, ImageAttr):
     __tablename__ = 'pums_naics'
     __table_args__ = {"schema": "pums_attrs"}
     id = db.Column(db.String(10), primary_key=True)
@@ -249,7 +249,7 @@ class PumsNaics(BaseAttr):
         return parents, PumsNaics.HEADERS
 
 
-class PumsSoc(BaseAttr):
+class PumsSoc(BaseAttr, ImageAttr):
     __tablename__ = 'pums_soc'
     __table_args__ = {"schema": "pums_attrs"}
     id = db.Column(db.String(10), primary_key=True)
