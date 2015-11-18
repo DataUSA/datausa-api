@@ -52,7 +52,7 @@ class AcsOccId(object):
 class GeoId(object):
     LEVELS = [NATION, STATE, COUNTY, MSA, PUMA, PLACE, TRACT, ALL]
     JOINED_FILTER = {"geo": {
-                            "triggers": [("tract", "160")],
+                            "triggers": [("tract", "160"), ("county", "310")],
                             "table": GeoContainment.parent,
                             "column": GeoContainment.parent_geoid,
                             "id": GeoContainment.child_geoid,

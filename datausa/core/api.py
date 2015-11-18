@@ -117,12 +117,13 @@ def process_value_filters(table, vars_and_vals):
         filts.append(filt)
     return filts
 
-def remove_filters(filters, table, col):
+def remove_filters(filters, table, col, api_obj):
     new_filts = []
     for filt in filters:
         if hasattr(filt, "left") and hasattr(filt, "right"):
-            if filt.left.key == col:
-                continue
+            if filt.left.key == col and isinstance(filt.right.value, basestring):
+                if api_obj.vars_and_vals[col] == filt.right.value:
+                    continue
         new_filts.append(filt)
     return new_filts
 
@@ -142,7 +143,7 @@ def handle_join(qry, filters, table, api_obj):
                         if col in api_obj.vars_and_vals:
                             if api_obj.vars_and_vals[col].startswith(starting) and level == target_lvl:
                                 joins.append(joined_filt[col]["table"])
-                                filters = remove_filters(filters, table, col)
+                                filters = remove_filters(filters, table, col, api_obj)
                                 filters.append(joined_filt[col]["id"] == getattr(table, col))
                                 filters.append(joined_filt[col]["column"] == api_obj.vars_and_vals[col])
     qry=qry.join(*joins)
