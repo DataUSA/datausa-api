@@ -159,7 +159,7 @@ def query(table, api_obj, stream=False):
     filters += sumlevel_filtering(table, api_obj)
 
     if values:
-        pk = [col for col in table.__table__.columns if col.primary_key]
+        pk = [col for col in table.__table__.columns if col.primary_key and col.key not in values]
         cols = pk + values
     else:
         cols = get_columns(table)
