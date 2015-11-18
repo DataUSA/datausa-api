@@ -5,12 +5,38 @@ from flask import Response
 from datausa.core import get_columns
 from datausa.core.table_manager import TableManager, table_name
 from datausa.attrs import consts
+from datausa.attrs.views import attr_map
+from sqlalchemy.orm import aliased
+
+def use_attr_names(table, qry, cols):
+    new_cols = []
+    joins = {}
+    for col in cols:
+        col_str = col if isinstance(col, basestring) else col.key
+        orig_str = col_str
+        col_str = "iocode" if "_iocode" in col_str else col_str
+        if col_str in attr_map:
+            attr_obj = attr_map[col_str]
+            if col_str in joins:
+                # we need to alias
+                attr_alias = aliased(attr_obj)
+                joins[orig_str] = [attr_alias, getattr(table, orig_str) == attr_alias.id]
+                new_cols.append(attr_alias.name.label(orig_str + "_name"))
+            else:
+                joins[col_str] = [attr_obj, getattr(table, orig_str) == attr_obj.id]
+                new_cols.append(attr_obj.name.label(orig_str + "_name"))
+        new_cols.append(col)
+    for col_str, j in joins.items():
+        qry = qry.join(*j)
+    return qry, new_cols
+
 
 def stream_format(table, cols, qry, api_obj):
     def generate():
         yield ','.join([col if isinstance(col, basestring) else col.key for col in cols]) + '\n'
         for row in qry.all():
-            yield ','.join(map(str, list(row))) + '\n'
+            row = ['"{}"'.format(x) if isinstance(x, basestring) else str(x) for x in list(row)]
+            yield ','.join(row) + '\n'
     return Response(generate(), mimetype='text/csv')
 
 def simple_format(table, cols, data, api_obj):
@@ -145,7 +171,11 @@ def query(table, api_obj, stream=False):
     if needs_show_filter and hasattr(table, "gen_show_level_filters"):
         filters += table.gen_show_level_filters(shows_and_levels)
 
-    qry = table.query.with_entities(*cols)
+    # qry = table.query.with_entities(*cols)
+    qry = table.query
+    if stream:
+        qry, cols = use_attr_names(table, qry, cols)
+    qry = qry.with_entities(*cols)
 
     if hasattr(table, "JOINED_FILTER"):
         qry, filters = handle_join(qry, filters, table, api_obj)
