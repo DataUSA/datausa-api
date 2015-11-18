@@ -8,7 +8,7 @@ attrs = [("soc", "pums_beta.yo", "avg_wage", [0, 1, 2, 3]),
 
 qry = '''SELECT g.{0} as id,  (g.{2} - stats.average) / stats.st AS zvalue, '{0}' as kind , lower(a.name) as name, a.name as display, a.level::text
 FROM {1} g 
-LEFT JOIN pums_attrs.pums_{0} a ON (a.id = g.{0})
+LEFT JOIN pums_attrs.pums_{0} a ON (a.id = g.{0} and a.level = g.{0}_level)
 CROSS JOIN
 (select STDDEV({2}) as st, AVG({2}) as average FROM {1} WHERE {0}_level={3} AND year=2013) stats
 WHERE g.{0}_level = {3}
@@ -49,5 +49,5 @@ for level in ['040', '050', '160', '310', '795']:
 queries.append("SELECT '01000US', 1500, 'geo', 'united states', 'United States', '010'")
 
 tail_qrys = ["({})".format(q) if i!= 0 else q for i,q in enumerate(queries)]
-final_q = " UNION ".join(tail_qrys);
+final_q = "\n UNION \n".join(tail_qrys);
 print final_q
