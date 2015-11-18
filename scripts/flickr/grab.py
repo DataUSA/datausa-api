@@ -32,7 +32,10 @@ def read_csv():
     for row in input_file:
         update = False
         uid = row["id"]
-        attr = table.query.get(uid)
+        if "depth" in row:
+            attr = table.query.filter_by(id=uid,level=row["depth"]).first()
+        else:
+            attr = table.query.get(uid)
 
         if "image_link" in row:
             image = row["image_link"]
@@ -50,7 +53,7 @@ def read_csv():
 
                 image = {"id": uid, "url": image, "license": photo._Photo__license}
 
-                if image["license"] in ["0", "7", "8"]:
+                if image["license"] in ["0"]:
                     badImages.append(image)
                 else:
 
