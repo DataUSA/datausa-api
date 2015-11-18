@@ -89,6 +89,18 @@ class GradsYcu(Grads, CipId, UniversityId):
         return {"cip": CipId.LEVELS, "university": [ALL],
                 GEO: [STATE, COUNTY, MSA, PLACE, ALL]}
 
+
+class GradsYg(Grads, GeoId):
+    __tablename__ = "grads_yg"
+    median_moe = 1
+
+    year = db.Column(db.Integer, primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {GEO: GeoId.LEVELS}
+
+
 class GradsYgc(Grads, GeoId, CipId):
     __tablename__ = "grads_ygc"
     median_moe = 2
