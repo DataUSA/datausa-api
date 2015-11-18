@@ -56,7 +56,7 @@ class University(BaseAttr):
 
 
 class Naics(BaseAttr):
-    __tablename__ = 'naics'
+    __tablename__ = 'bls_naics'
 
     @classmethod
     def parents(cls, naics_id):
@@ -88,7 +88,7 @@ class Naics(BaseAttr):
 
 
 class Soc(BaseAttr):
-    __tablename__ = 'soc'
+    __tablename__ = 'bls_soc'
     level = db.Column(db.String)
 
     @classmethod
