@@ -44,24 +44,16 @@ def build_api_obj():
     return api_obj
 
 @mod.route("/")
-def api_view():
+@mod.route("/csv/", defaults={'csv': True})
+def api_view(csv=None):
     api_obj = build_api_obj()
     table_list = manager.all_tables(api_obj)
     table = manager.select_best(table_list, api_obj)
     api_obj.capture_logic(table_list)
     api_obj = manager.crosswalk(table, api_obj)
-    data = api.query(table, api_obj)
+    data = api.query(table, api_obj, stream=csv)
     return data
 
-@mod.route("/csv/")
-def csv_view():
-    api_obj = build_api_obj()
-    table_list = manager.all_tables(api_obj)
-    table = manager.select_best(table_list, api_obj)
-    api_obj.capture_logic(table_list)
-    api_obj = manager.crosswalk(table, api_obj)
-    data = api.query(table, api_obj, stream=True)
-    return data
 
 @mod.route("/logic/")
 def logic_view():
