@@ -150,10 +150,12 @@ def search():
     kind = request.args.get("kind", None)
     sumlevel = request.args.get("sumlevel", None)
     txt = request.args.get("q", '').lower()
-    if not txt or len(txt) <= 2:
+
+    if txt and re.match('^[0-9]{1,5}$', txt):
+        return zip_search(txt, limit=limit)
+    elif not txt or len(txt) <= 2:
         return search_old()
-    elif re.match('\d{5}$', txt):
-        return zip_search(txt)
+
     data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit)
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
     autocorrected = tries > 0
@@ -200,17 +202,25 @@ def ranks():
     return jsonify(data=attr_sumlvls)
 
 
-def zip_search(zc):
+def zip_search(zc, limit=10):
+    if len(zc) != 5:
+        zc += "%"
     zc = "86000US" + zc
+
     filters = [
-        ZipLookup.child_geoid == zc,
+        ZipLookup.child_geoid.like(zc),
         ZipLookup.percent_covered >= 90,
         Search.id == ZipLookup.parent_geoid
     ]
+
     qry = Search.query.join(ZipLookup).filter(*filters)
     qry = qry.order_by(ZipLookup.parent_area.asc())
-    data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.sumlevel] for a in qry]
-    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
+
+    qry = qry.with_entities(Search.id, Search.name, Search.zvalue, Search.kind,
+                            Search.display, Search.sumlevel, ZipLookup.child_geoid)
+    qry = qry.limit(limit)
+    data = [list(row) for row in qry]
+    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "zipcode"]
     return jsonify(data=data, headers=headers, zip_search=True)
 
 
