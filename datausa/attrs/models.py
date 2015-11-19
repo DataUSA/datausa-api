@@ -325,8 +325,10 @@ class PumsIoCrosswalk(db.Model):
     iocode = db.Column(db.String)
     iocode_parent = db.Column(db.String)
 
+
 class IoCode(BaseAttr):
     __tablename__ = 'iocode'
+    level = db.Column(db.Integer)
 
 
 class GeoContainment(db.Model):
