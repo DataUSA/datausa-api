@@ -4,6 +4,13 @@ from whoosh import index
 from whoosh.fields import Schema, ID, TEXT, NUMERIC, KEYWORD, NGRAM, NGRAMWORDS
 from config import SEARCH_INDEX_DIR
 
+def manual_add(name, display, orig_id):
+    doc_obj = Search.query.filter_by(id=orig_id).first()
+    writer.add_document(id=doc_obj.id, name=name,
+                        display=display, zvalue=doc_obj.zvalue*1.5,
+                        kind=doc_obj.kind, sumlevel=doc_obj.sumlevel)
+    writer.commit()
+
 def get_schema():
     return Schema(id=ID(unique=True, stored=True),
                   name=NGRAMWORDS(stored=True, minsize=2, maxsize=12, at='start', queryor=True),
@@ -32,8 +39,5 @@ if __name__ == '__main__':
                             kind=obj.kind, sumlevel=obj.sumlevel)
 
     # Custom synonyms to help with search
-    doc_obj = Search.query.filter_by(id="291060").first()
-    writer.add_document(id=doc_obj.id, name=u'doctors',
-                        display=u'Doctors', zvalue=doc_obj.zvalue*1.5,
-                        kind=doc_obj.kind, sumlevel=doc_obj.sumlevel)
-    writer.commit()
+    manual_add('doctors', 'Doctors', '291060')
+    manual_add('manhattan', 'Manhattan', '05000US36061')
