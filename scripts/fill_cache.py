@@ -16,7 +16,7 @@ def url_to_json(url):
 
 def crawl_page(moi):
     display_id,attr_kind = moi
-    page = 'http://usa.datawheel.us/profile/{}/{}/'.format( attr_kind, display_id)
+    page = 'http://beta.datausa.io/profile/{}/{}/'.format( attr_kind, display_id)
     print page, "getting..."
     r = requests.get(page, auth=HTTPBasicAuth('datausa', os.environ.get('DATAUSA_WEB_PW', '')))
     if r.status_code != 200:
@@ -31,26 +31,21 @@ def crawl_attr(base_url, attr_kind='country'):
 
 
 
-def main(base_url="http://postgres.datawheel.us"):
+def main(base_url="http://db.datausa.io", attr="geo"):
     if not base_url.startswith('http://'):
         base_url = 'http://' + base_url
     if base_url.endswith('/'):
         base_url = base_url[:-1]
-    attrs = ['geo']
-    thread_list = []
+    attrs = attr.split(",")
     print "Waiting for crawl to complete..."
-
     for attr in attrs:
-        thread = threading.Thread(target=crawl_attr, args=[base_url, attr])
-        thread.start()
-        thread_list.append(thread)
-    for thread in thread_list:
-        thread.join()
+        crawl_attr(base_url, attr)
     print "Crawl complete!"
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         main()
     else:
-        main(sys.argv[1])
+        attr = sys.argv[2] if len(sys.argv) >= 3 else "geo"
+        main(sys.argv[1], attr)
