@@ -32,8 +32,8 @@ def read_csv():
     for row in input_file:
         update = False
         uid = row["id"]
-        if "depth" in row:
-            attr = table.query.filter_by(id=uid,level=row["depth"]).first()
+        if "level" in row:
+            attr = table.query.filter_by(id=uid,level=row["level"]).first()
         else:
             attr = table.query.get(uid)
 
