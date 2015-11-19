@@ -4,7 +4,7 @@ from datausa.bls.models import BlsCrosswalk, SocCrosswalk
 from datausa.attrs.consts import OR
 from datausa import cache
 from sqlalchemy import or_, and_
-from datausa.util.inmem import onet_socs
+from datausa.util.inmem import onet_socs, onet_cips
 
 def truncate_cip(x, api_obj=None):
      return x[:2]
@@ -114,6 +114,8 @@ def crosswalk(table, api_obj):
         {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
         {"column": "soc", "schema": "bls", "mapping": pums_to_bls_soc_map},
         {"column": "soc", "schema": "onet", "mapping": onet_parents},
+        {"column": "cip", "schema": "onet", "mapping": onet_cip_parents},
+        
         # cbp uses same naics coding as bls
         {"column": "naics", "schema": "cbp", "mapping": pums_to_bls_naics_map},
         {"column": "naics", "schema": "pums_beta", "mapping": naics_map},
@@ -155,6 +157,16 @@ def onet_parents(attr_id, **kwargs):
         if parent_soc in onet_data:
             return parent_soc
     return attr_id
+
+def onet_cip_parents(attr_id, **kwargs):
+    onet_data = onet_cips()
+    orig_id = attr_id
+    if not attr_id in onet_data:
+        while len(attr_id) > 0:
+            attr_id = attr_id[:-2]
+            if attr_id in onet_data:
+                return attr_id
+    return orig_id
 
 naics_map = pums_naics_mapping()
 iocode_map = iocode_mapping()
