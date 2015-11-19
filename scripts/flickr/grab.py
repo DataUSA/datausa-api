@@ -37,7 +37,7 @@ def read_csv():
         else:
             attr = table.query.get(uid)
 
-        if "image_link" in row:
+        if attr and "image_link" in row:
             image = row["image_link"]
             if image and attr.image_link != image:
 
@@ -88,7 +88,7 @@ def read_csv():
                     update = True
 
         name = row["name"]
-        if name and attr.name != name:
+        if attr and name and attr.name != name:
             attr.name = name
             update = True
 
