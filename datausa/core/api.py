@@ -127,9 +127,22 @@ def remove_filters(filters, table, col, api_obj):
         new_filts.append(filt)
     return new_filts
 
+
+def copy_where_literals(api_obj):
+    if hasattr(api_obj, "where") and api_obj.where:
+        wheres = api_obj.where.split(",")
+        for where in wheres:
+            colname, cond = where.split(":")
+            if colname not in api_obj.vars_and_vals:
+                api_obj.vars_and_vals[colname] = cond
+    return api_obj
+
+
 def handle_join(qry, filters, table, api_obj):
     joins = []
     joined_filt = table.JOINED_FILTER
+    # see if we need to copy over which variables are involved
+    api_obj = copy_where_literals(api_obj)
     for col, level in api_obj.shows_and_levels.items():
         if level != consts.ALL:
             if col in joined_filt:
