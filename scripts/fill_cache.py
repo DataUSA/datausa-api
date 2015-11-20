@@ -49,7 +49,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         main()
     else:
-        attr = sys.argv[2] if len(sys.argv) >= 3 else "geo"
+        attr = sys.argv[2] if len(sys.argv) >= 3 else "geo,naics,soc,cip"
         main(sys.argv[1], attr)
 
 # EXAMPLE: python fill_cache.py db.datausa.io naics
