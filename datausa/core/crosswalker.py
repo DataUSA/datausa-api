@@ -1,6 +1,6 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
 from datausa.attrs.models import GeoContainment, Soc
-from datausa.bls.models import BlsCrosswalk, SocCrosswalk
+from datausa.bls.models import BlsCrosswalk, SocCrosswalk, GrowthI, GrowthILookup
 from datausa.attrs.consts import OR
 from datausa import cache
 from sqlalchemy import or_, and_
@@ -18,6 +18,12 @@ def pums_to_bls_soc():
 @cache.memoize()
 def pums_to_bls_naics():
     all_objs = BlsCrosswalk.query.all()
+    return {obj.pums_naics: obj.bls_naics for obj in all_objs}
+
+
+@cache.memoize()
+def pums_to_bls_growth():
+    all_objs = GrowthILookup.query.all()
     return {obj.pums_naics: obj.bls_naics for obj in all_objs}
 
 
@@ -112,6 +118,7 @@ def crosswalk(table, api_obj):
         {"column": "industry_iocode", "schema": "bea", "mapping": industry_iocode_func},
         {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
         {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
+        {"column": "naics", "schema": "bls", "mapping": pums_to_growth_map, "table": GrowthI},
         {"column": "soc", "schema": "bls", "mapping": pums_to_bls_soc_map},
         {"column": "soc", "schema": "onet", "mapping": onet_parents},
         {"column": "cip", "schema": "onet", "mapping": onet_cip_parents},
@@ -124,13 +131,18 @@ def crosswalk(table, api_obj):
         {"column": "geo", "schema": "chr", "mapping": chr_parents}
 
     ]
+    exclusives = {r["table"]: True for r in registered_crosswalks if "table" in r}
 
     for rcrosswalk in registered_crosswalks:
         column = rcrosswalk['column']
         schema = rcrosswalk['schema']
         mapping = rcrosswalk['mapping']
+        target_table = rcrosswalk['table'] if 'table' in rcrosswalk else None
 
         if column in api_obj.vars_and_vals.keys() and table.__table_args__['schema'] == schema:
+            if table in exclusives and (not target_table or target_table.__tablename__ != table.__tablename__):
+                continue
+
             curr_vals_str = api_obj.vars_and_vals[column]
             curr_vals = curr_vals_str.split(OR)
             if isinstance(mapping, dict):
@@ -172,3 +184,4 @@ naics_map = pums_naics_mapping()
 iocode_map = iocode_mapping()
 pums_to_bls_naics_map = pums_to_bls_naics()
 pums_to_bls_soc_map = pums_to_bls_soc()
+pums_to_growth_map = pums_to_bls_growth()
