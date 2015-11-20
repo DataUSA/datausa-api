@@ -46,7 +46,7 @@ AND g.year = 2013'''
 for level in ['040', '050', '160', '310', '795']:
     queries.append(geo_qry.format("geo", "acs.yg", "pop", level))
 
-queries.append("SELECT '01000US', 1500, 'geo', 'united states', 'United States', '010'")
+queries.append("SELECT '01000US', 150, 'geo', 'united states', 'United States', '010'")
 
 tail_qrys = ["({})".format(q) if i!= 0 else q for i,q in enumerate(queries)]
 final_q = "\n UNION \n".join(tail_qrys);
