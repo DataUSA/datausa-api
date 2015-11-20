@@ -5,7 +5,7 @@ mod = Blueprint('attrs', __name__, url_prefix='/attrs')
 from datausa.attrs.models import Cip, Naics, University, Soc, Degree
 from datausa.attrs.models import Race, Search, ZipLookup
 from datausa.attrs.models import OccCrosswalk, IndCrosswalk
-from datausa.attrs.models import Skill, Sector, Geo, AcsInd
+from datausa.attrs.models import Skill, Sector, Geo, AcsInd, PumsIoCrosswalk
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
@@ -241,11 +241,15 @@ def has_ipeds_data(attr_id):
 
 @mod.route("/crosswalk/<attr_kind>/<attr_id>/")
 def crosswalk_acs(attr_kind, attr_id):
-    if attr_kind not in ["acs_occ", "acs_ind"]:
+    if attr_kind not in ["acs_occ", "acs_ind", "iocode"]:
         return abort(404)
-    attr_obj = {"acs_occ": OccCrosswalk, "acs_ind": IndCrosswalk}[attr_kind]
-    header_name = {"acs_occ": "soc", "acs_ind": "naics"}[attr_kind]
-    col_name = "pums_{}".format(header_name)
-    results = attr_obj.query.filter(getattr(attr_obj, attr_kind) == attr_id).with_entities(col_name).all()
-    results = [[getattr(item, col_name), header_name] for item in results]
+    if attr_kind == "iocode":
+        results = PumsIoCrosswalk.query.filter(PumsIoCrosswalk.iocode == attr_id).all()
+        results = [[item.pums_naics, "naics"] for item in results]
+    else:
+        attr_obj = {"acs_occ": OccCrosswalk, "acs_ind": IndCrosswalk}[attr_kind]
+        header_name = {"acs_occ": "soc", "acs_ind": "naics"}[attr_kind]
+        col_name = "pums_{}".format(header_name)
+        results = attr_obj.query.filter(getattr(attr_obj, attr_kind) == attr_id).with_entities(col_name).all()
+        results = [[getattr(item, col_name), header_name] for item in results]
     return jsonify(data=results, headers=["attr_id", "attr_kind"])
