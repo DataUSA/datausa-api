@@ -201,6 +201,7 @@ class Geo(BaseAttr, ImageAttr):
         defaults = {'010': '040',
                     '040': '050',
                     '050': '140',
+                    '160': '140',
                     '310': '140,160'}
         sumlevel = geo[:3]
         if 'sumlevel' not in kwargs:
@@ -214,6 +215,7 @@ class Geo(BaseAttr, ImageAttr):
             levels = [[gobj.id, gobj.name] for gobj in geos]
         else:
             filters = [GeoContainment.parent_geoid == geo]
+            child_level = child_level.split(",") if isinstance(child_level, basestring) else child_level
             lvls = [GeoContainment.child_geoid.startswith(lvl) for lvl in child_level]
             filters.append(or_(*lvls))
             geos = GeoContainment.query.filter(*filters).all()
