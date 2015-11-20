@@ -32,69 +32,75 @@ def read_csv():
     for row in input_file:
         update = False
         uid = row["id"]
-        if "level" in row:
-            attr = table.query.filter_by(id=uid,level=row["level"]).first()
-        else:
-            attr = table.query.get(uid)
 
-        if attr and "image_link" in row:
-            image = row["image_link"]
-            if image and attr.image_link != image:
+        image_only = attr_type == "geo"
 
-                if "photolist" in image:
-                    image = image.split("/in/photolist")[0]
+        if not image_only or (image_only and "image_link" in row and row["image_link"] != ""):
 
-                pid = image.split("/")[-1]
-                if "flic.kr" not in image:
-                    image = "http://flic.kr/p/{}".format(short.encode(pid))
+            if "level" in row:
+                attr = table.query.filter_by(id=uid,level=row["level"]).first()
+            else:
+                attr = table.query.get(uid)
 
-                photo = flickr.Photo(pid)
-                photo._load_properties()
+            if attr and "image_link" in row:
+                image = row["image_link"]
+                if image and attr.image_link != image:
 
-                image = {"id": uid, "url": image, "license": photo._Photo__license}
+                    if "photolist" in image:
+                        image = image.split("/in/photolist")[0]
 
-                if image["license"] in ["0"]:
-                    badImages.append(image)
-                else:
+                    pid = image.split("/")[-1]
+                    if "flic.kr" not in image:
+                        image = "http://flic.kr/p/{}".format(short.encode(pid))
 
-                    author = photo._Photo__owner
-                    author = author.realname if author.realname else author.username
-                    image["author"] = author.replace("'", "\\'")
-                    download_url = max(photo.getSizes(), key=lambda item: item["width"])["source"]
+                    photo = flickr.Photo(pid)
+                    photo._load_properties()
 
-                    if not os.path.exists(imgdir):
-                        os.makedirs(imgdir)
+                    image = {"id": uid, "url": image, "license": photo._Photo__license}
 
-                    if not os.path.exists(thumbdir):
-                        os.makedirs(thumbdir)
+                    if image["license"] in ["0"]:
+                        badImages.append(image)
+                    else:
 
-                    imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
-                    thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
+                        author = photo._Photo__owner
+                        author = author.realname if author.realname else author.username
+                        image["author"] = author.replace("'", "\\'")
+                        download_url = max(photo.getSizes(), key=lambda item: item["width"])["source"]
 
-                    urllib.urlretrieve(download_url, imgpath)
+                        if not os.path.exists(imgdir):
+                            os.makedirs(imgdir)
 
-                    img = pillow.open(imgpath).convert("RGB")
+                        if not os.path.exists(thumbdir):
+                            os.makedirs(thumbdir)
 
-                    img.thumbnail((1200,1200), pillow.ANTIALIAS)
-                    img.save(imgpath, "JPEG", quality=60)
+                        imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
+                        thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
 
-                    img.thumbnail((150,150), pillow.ANTIALIAS)
-                    img.save(thumbpath, "JPEG", quality=60)
+                        urllib.urlretrieve(download_url, imgpath)
 
-                    goodImages.append(image)
+                        img = pillow.open(imgpath).convert("RGB")
 
-                    attr.image_link = image["url"]
-                    attr.image_author = image["author"]
+                        img.thumbnail((1200,1200), pillow.ANTIALIAS)
+                        img.save(imgpath, "JPEG", quality=60)
+
+                        img.thumbnail((150,150), pillow.ANTIALIAS)
+                        img.save(thumbpath, "JPEG", quality=60)
+
+                        goodImages.append(image)
+
+                        attr.image_link = image["url"]
+                        attr.image_author = image["author"]
+                        update = True
+
+            if not image_only:
+                name = row["name"]
+                if attr and name and attr.name != name:
+                    attr.name = name
                     update = True
 
-        name = row["name"]
-        if attr and name and attr.name != name:
-            attr.name = name
-            update = True
-
-        if update:
-            db.session.add(attr)
-            db.session.commit()
+            if update:
+                db.session.add(attr)
+                db.session.commit()
 
     print "{} new images have been processed.".format(len(goodImages))
     if len(badImages) > 0:
