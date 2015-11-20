@@ -62,8 +62,11 @@ class TestStringMethods(unittest.TestCase):
 
   def test_extra_word(self):
       data,suggs,tries = do_search("new york economy")
-      data,suggs,tries = do_search("new york")
       self.assertTrue(data[0][0] in self.NY_IDS)
+
+  def test_manhattan(self):
+      data,suggs,tries = do_search("manhattan")
+      self.assertEqual(data[0][0], "05000US36061")
 
   def test_exact_match_begin(self):
       data,suggs,tries = do_search("nome")
