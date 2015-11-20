@@ -65,6 +65,12 @@ class BlsCrosswalk(db.Model, Bls):
     bls_naics = db.Column(db.String, primary_key=True)
 
 
+class GrowthILookup(db.Model, Bls):
+    __tablename__ = 'growth_i_lookup'
+    pums_naics = db.Column(db.String, db.ForeignKey(PumsNaics.id), primary_key=True)
+    bls_naics = db.Column(db.String, primary_key=True)
+
+
 class SocCrosswalk(db.Model, Bls):
     __tablename__ = 'soc_crosswalk'
     pums_soc = db.Column(db.String, primary_key=True)
