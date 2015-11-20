@@ -246,8 +246,11 @@ class PumsNaics(BaseAttr, ImageAttr):
     @classmethod
     def parents(cls, naics_id, **kwargs):
         naics_hobj = NaicsHierarchy.query.filter_by(naics=naics_id).first()
-        parents = [[naics_hobj.grandparent_obj.id,naics_hobj.grandparent_obj.name],
-                   [naics_hobj.parent_obj.id,naics_hobj.parent_obj.name]]
+        if naics_hobj.grandparent_obj:
+            parents = [[naics_hobj.grandparent_obj.id,naics_hobj.grandparent_obj.name],
+                       [naics_hobj.parent_obj.id,naics_hobj.parent_obj.name]]
+        else:
+           parents = [[naics_hobj.parent_obj.id,naics_hobj.parent_obj.name]] 
         return parents, PumsNaics.HEADERS
 
 
