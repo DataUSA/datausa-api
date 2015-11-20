@@ -20,6 +20,8 @@ def crawl_page(moi):
     print page, "getting..."
     r = requests.get(page, auth=HTTPBasicAuth('datausa', os.environ.get('DATAUSA_WEB_PW', '')))
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise Exception("You may have forgotten to set DATAUSA_WEB_PW env var (or provided a bad PW).\nWe need this because the site is password protected")
         print "PAGE ERROR", page, r.status_code
 
 def crawl_attr(base_url, attr_kind='country'):
@@ -49,3 +51,7 @@ if __name__ == "__main__":
     else:
         attr = sys.argv[2] if len(sys.argv) >= 3 else "geo"
         main(sys.argv[1], attr)
+
+# EXAMPLE: python fill_cache.py db.datausa.io naics
+# python fill_cache.py db.datausa.io naics,soc
+# python fill_cache.py db.datausa.io geo
