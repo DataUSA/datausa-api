@@ -18,14 +18,10 @@ def use_attr_names(table, qry, cols):
         col_str = "pums_degree" if "pums" in table.__table_args__["schema"] and col_str == "degree" else col_str
         if col_str in attr_map:
             attr_obj = attr_map[col_str]
-            if col_str in joins:
-                # we need to alias
-                attr_alias = aliased(attr_obj)
-                joins[orig_str] = [attr_alias, getattr(table, orig_str) == attr_alias.id]
-                new_cols.append(attr_alias.name.label(orig_str + "_name"))
-            else:
-                joins[col_str] = [attr_obj, getattr(table, orig_str) == attr_obj.id]
-                new_cols.append(attr_obj.name.label(orig_str + "_name"))
+            attr_alias = aliased(attr_obj)
+            joins[orig_str] = [attr_alias, getattr(table, orig_str) == attr_alias.id]
+            new_cols.append(attr_alias.name.label(orig_str + "_name"))
+
         new_cols.append(col)
     for col_str, j in joins.items():
         qry = qry.join(*j)
