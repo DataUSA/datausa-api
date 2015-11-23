@@ -234,24 +234,23 @@ class PumsNaics(BaseAttr, ImageAttr):
     __table_args__ = {"schema": "pums_attrs"}
     id = db.Column(db.String(10), primary_key=True)
     level = db.Column(db.Integer, primary_key=True)
-    parent = db.Column(db.String)
-    grandparent = db.Column(db.String)
+    parent = db.Column(db.String, db.ForeignKey(id))
+    grandparent = db.Column(db.String, db.ForeignKey(id))
+    parent_obj = relationship('PumsNaics', foreign_keys='PumsNaics.parent', lazy='subquery')
+    grandparent_obj = relationship('PumsNaics', foreign_keys='PumsNaics.grandparent', lazy='subquery')
 
     @classmethod
     def children(cls, naics_id, **kwargs):
-        objs = NaicsHierarchy.query.filter_by(parent=naics_id).all()
-        data = [[obj.naics_obj.id, obj.naics_obj.name] for obj in objs]
+        objs = PumsNaics.query.filter(PumsNaics.parent == naics_id)
+        data = [[obj.id, obj.name] for obj in objs if obj.id != naics_id]
         return data, PumsNaics.HEADERS
 
     @classmethod
     def parents(cls, naics_id, **kwargs):
-        naics_hobj = NaicsHierarchy.query.filter_by(naics=naics_id).first()
-        if naics_hobj.grandparent_obj:
-            parents = [[naics_hobj.grandparent_obj.id,naics_hobj.grandparent_obj.name],
-                       [naics_hobj.parent_obj.id,naics_hobj.parent_obj.name]]
-        else:
-           parents = [[naics_hobj.parent_obj.id,naics_hobj.parent_obj.name]] 
-        return parents, PumsNaics.HEADERS
+        naics_obj = PumsNaics.query.filter_by(id=naics_id).first()
+        tmp = [naics_obj.grandparent, naics_obj.parent]
+        tmp = [[x.id, x.name] for x in tmp if x]
+        return tmp, PumsNaics.HEADERS
 
 
 class PumsSoc(BaseAttr, ImageAttr):
@@ -361,15 +360,6 @@ class AcsInd(BaseAttr):
     __tablename__ = 'acs_ind'
     level = db.Column(db.Integer)
 
-class NaicsHierarchy(db.Model):
-    __tablename__ = 'pums_naics_hierarchy'
-    __table_args__ = {"schema": "hierarchies"}
-    grandparent = db.Column(db.String, db.ForeignKey(PumsNaics.id))
-    parent = db.Column(db.String, db.ForeignKey(PumsNaics.id))
-    naics = db.Column(db.String, db.ForeignKey(PumsNaics.id), primary_key=True)
-    parent_obj = relationship('PumsNaics', foreign_keys='NaicsHierarchy.parent', lazy='subquery')
-    naics_obj = relationship('PumsNaics', foreign_keys='NaicsHierarchy.naics', lazy='subquery')
-    grandparent_obj = relationship('PumsNaics', foreign_keys='NaicsHierarchy.grandparent', lazy='subquery')
 
 class SocHierarchy(db.Model):
     __tablename__ = 'pums_soc_hierarchy'
