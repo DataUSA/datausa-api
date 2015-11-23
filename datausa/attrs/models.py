@@ -236,8 +236,6 @@ class PumsNaics(BaseAttr, ImageAttr):
     level = db.Column(db.Integer, primary_key=True)
     parent = db.Column(db.String, db.ForeignKey(id))
     grandparent = db.Column(db.String, db.ForeignKey(id))
-    parent_obj = relationship('PumsNaics', foreign_keys='PumsNaics.parent', lazy='subquery')
-    grandparent_obj = relationship('PumsNaics', foreign_keys='PumsNaics.grandparent', lazy='subquery')
 
     @classmethod
     def children(cls, naics_id, **kwargs):
@@ -248,7 +246,11 @@ class PumsNaics(BaseAttr, ImageAttr):
     @classmethod
     def parents(cls, naics_id, **kwargs):
         naics_obj = PumsNaics.query.filter_by(id=naics_id).first()
-        tmp = [naics_obj.grandparent, naics_obj.parent]
+        tmp = []
+        if naics_obj and naics_obj.grandparent:
+            tmp.append(PumsNaics.query.filter_by(id=naics_obj.grandparent).first())
+        if naics_obj and naics_obj.parent:
+            tmp.append(PumsNaics.query.filter_by(id=naics_obj.parent).first())
         tmp = [[x.id, x.name] for x in tmp if x]
         return tmp, PumsNaics.HEADERS
 
