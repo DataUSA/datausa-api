@@ -1,6 +1,6 @@
 from whoosh.qparser import QueryParser
 from whoosh import index, sorting, scoring
-from whoosh import qparser
+from whoosh import qparser, query
 from config import SEARCH_INDEX_DIR
 import math
 import unittest
@@ -35,11 +35,16 @@ facet = sorting.FieldFacet("zvalue", reverse=True)
 scores = sorting.ScoreFacet()
 
 
-def do_search(txt, sumlevel=None, kind=None, tries=0):
-    if kind:
-        txt += " AND kind:{}".format(kind)
-    if sumlevel:
-        txt += " AND sumlevel:{}".format(sumlevel)
+def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10):
+    my_filter = None
+    if kind and sumlevel:
+        kf = query.Term("kind", kind)
+        sf = query.Term("sumlevel", sumlevel)
+        my_filter = query.And([kf, sf])
+    elif kind:
+        my_filter = query.Term("kind", kind)
+    elif sumlevel:
+        my_filter = query.Term("sumlevel", sumlevel)
     if tries > 2:
         return [],[]
     q = qp.parse(txt)
@@ -47,12 +52,12 @@ def do_search(txt, sumlevel=None, kind=None, tries=0):
     with ix.searcher(weighting=CWeighting(txt)) as s:
         corrector = s.corrector("display")
         suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
-        results = s.search_page(q, 1, sortedby=[scores], pagelen=20)
+        results = s.search_page(q, 1, sortedby=[scores], pagelen=20, filter=my_filter)
         data = [[r["id"], r["name"], r["zvalue"],
-                 r["kind"], r["display"], r["sumlevel"]]
+                 r["kind"], r["display"], r["sumlevel"] if "sumlevel" in r else ""]
                 for r in results]
         if not data and suggs:
-            return do_search(suggs[0], sumlevel, kind, tries=tries+1)
+            return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit)
         return data, suggs, tries
 
 
@@ -105,6 +110,9 @@ class TestStringMethods(unittest.TestCase):
         data,suggs,tries = do_search("beverly hills")
         self.assertEqual(data[0][0], '16000US0606308')
 
+  def test_kind_naics(self):
+        data,suggs,tries = do_search("educat", kind="naics")
+        self.assertTrue(data[0][0])
 
 
 if __name__ == '__main__':

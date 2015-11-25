@@ -12,7 +12,7 @@ from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
 from datausa.attrs.consts import ALL, GEO
 
 from whoosh.qparser import QueryParser
-from whoosh import index, sorting, qparser, scoring
+from whoosh import index, sorting, qparser, scoring, query
 from config import SEARCH_INDEX_DIR
 
 import re
@@ -124,18 +124,24 @@ def get_children(kind, attr_id):
     raise Exception("Invalid attribute type.")
 
 
-def do_search(txt, sumlevel=None, kind=None, tries=0,limit=10):
-    if kind:
-        txt += " AND kind:{}".format(kind)
-    if sumlevel:
-        txt += " AND sumlevel:{}".format(sumlevel)
+def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10):
+    my_filter = None
+    if kind and sumlevel:
+        kf = query.Term("kind", kind)
+        sf = query.Term("sumlevel", sumlevel)
+        my_filter = query.And([kf, sf])
+    elif kind:
+        my_filter = query.Term("kind", kind)
+    elif sumlevel:
+        my_filter = query.Term("sumlevel", sumlevel)
     if tries > 2:
         return [],[]
     q = qp.parse(txt)
+
     with ix.searcher(weighting=CWeighting(txt)) as s:
         corrector = s.corrector("display")
         suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
-        results = s.search(q, sortedby=[scores, facet], limit=limit)
+        results = s.search_page(q, 1, sortedby=[scores], pagelen=20, filter=my_filter)
         data = [[r["id"], r["name"], r["zvalue"],
                  r["kind"], r["display"], r["sumlevel"] if "sumlevel" in r else ""]
                 for r in results]
