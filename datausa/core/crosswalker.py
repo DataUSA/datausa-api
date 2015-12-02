@@ -122,12 +122,12 @@ def crosswalk(table, api_obj):
         {"column": "soc", "schema": "bls", "mapping": pums_to_bls_soc_map},
         {"column": "soc", "schema": "onet", "mapping": onet_parents},
         {"column": "cip", "schema": "onet", "mapping": onet_cip_parents},
-        
+
         # cbp uses same naics coding as bls
         {"column": "naics", "schema": "cbp", "mapping": pums_to_bls_naics_map},
-        {"column": "naics", "schema": "pums_beta", "mapping": naics_map},
-        {"column": "cip", "schema": "pums_beta", "mapping": truncate_cip},
-        {"column": "geo", "schema": "pums_beta", "mapping": pums_parent_puma},
+        {"column": "naics", "schema": "pums_1year", "mapping": naics_map},
+        {"column": "cip", "schema": "pums_1year", "mapping": truncate_cip},
+        {"column": "geo", "schema": "pums_1year", "mapping": pums_parent_puma},
         {"column": "geo", "schema": "chr", "mapping": chr_parents}
 
     ]
@@ -185,4 +185,3 @@ iocode_map = iocode_mapping()
 pums_to_bls_naics_map = pums_to_bls_naics()
 pums_to_bls_soc_map = pums_to_bls_soc()
 pums_to_growth_map = pums_to_bls_growth()
-
