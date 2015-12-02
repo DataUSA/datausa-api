@@ -11,7 +11,7 @@ from datausa.attrs.consts import PUMA, PLACE, ALL, GEO
 
 class BaseIpeds(db.Model, BaseModel):
     __abstract__ = True
-    __table_args__ = {"schema": "ipeds_beta"}
+    __table_args__ = {"schema": "ipeds"}
     supported_levels = {}
     source_title = 'NCES IPEDS'
     source_link = 'http://nces.ed.gov/ipeds/'
@@ -134,4 +134,3 @@ class SectorId(object):
     @classmethod
     def get_supported_levels(cls):
         return {"sector": ["all"]}
-
