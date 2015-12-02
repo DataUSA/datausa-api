@@ -173,7 +173,7 @@ def onet_parents(attr_id, **kwargs):
 def onet_cip_parents(attr_id, **kwargs):
     onet_data = onet_cips()
     orig_id = attr_id
-    if not attr_id in onet_data:
+    if attr_id not in onet_data:
         while len(attr_id) > 0:
             attr_id = attr_id[:-2]
             if attr_id in onet_data:
@@ -185,3 +185,4 @@ iocode_map = iocode_mapping()
 pums_to_bls_naics_map = pums_to_bls_naics()
 pums_to_bls_soc_map = pums_to_bls_soc()
 pums_to_growth_map = pums_to_bls_growth()
+
