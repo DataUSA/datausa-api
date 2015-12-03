@@ -62,7 +62,7 @@ class ApiObject(object):
         #             self.shows_and_levels["geo"] = lookup[prefix]
 
     def set_year(self, yr):
-        self._year = yr
+        self._year = str(int(yr))
 
     def get_year(self):
         return self._year
