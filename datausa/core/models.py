@@ -1,5 +1,5 @@
 from datausa.core.exceptions import DataUSAException
-
+from datausa.attrs.consts import ALL
 
 class BaseModel(object):
     median_moe = None
@@ -16,8 +16,10 @@ class BaseModel(object):
         return {}
 
     @classmethod
-    def info(cls):
+    def info(cls, api_obj=None):
         dataset = cls.source_title
+        if api_obj and api_obj.get_year():
+            dataset = "{} {}".format(api_obj.get_year(), dataset)
         return {
             "dataset": dataset,
             "table": cls.__tablename__,
@@ -37,6 +39,7 @@ class ApiObject(object):
         allowed = ["vars_needed", "vars_and_vals", "values",
                    "shows_and_levels", "force", "where", "order",
                    "sort", "limit", "exclude"]
+        self._year = None
         for keyword, value in kwargs.items():
             if keyword in allowed:
                 setattr(self, keyword, value)
@@ -48,6 +51,9 @@ class ApiObject(object):
         self.table_list = []
         if self.exclude:
             self.exclude = self.exclude.split(",")
+        if hasattr(self, "year") and self.year != ALL:
+            self._year = self.year
+
         # if not "geo" in self.shows_and_levels and "geo" in self.vars_and_vals:
         #     if self.vars_and_vals["geo"]:
         #         prefix = self.vars_and_vals["geo"][:3]
@@ -55,6 +61,11 @@ class ApiObject(object):
         #         if prefix in lookup:
         #             self.shows_and_levels["geo"] = lookup[prefix]
 
+    def set_year(self, yr):
+        self._year = yr
+
+    def get_year(self):
+        return self._year
 
     def capture_logic(self, table_list):
         self.table_list = table_list

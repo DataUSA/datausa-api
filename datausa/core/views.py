@@ -27,7 +27,7 @@ def build_api_obj():
 
     shows = show.split(",")
     sumlevels = sumlevel.split(",")
-    values = required.split(",") if required else [] 
+    values = required.split(",") if required else []
 
     shows_and_levels = {val:sumlevels[idx] for idx, val in enumerate(shows)}
 
@@ -59,4 +59,4 @@ def api_view(csv=None):
 def logic_view():
     api_obj = build_api_obj()
     table_list = manager.all_tables(api_obj)
-    return jsonify(tables=[table.info() for table in table_list])
+    return jsonify(tables=[table.info(api_obj) for table in table_list])

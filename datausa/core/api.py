@@ -41,9 +41,9 @@ def simple_format(table, cols, data, api_obj):
     data = {
             "headers": list(headers),
             "data": [ list(row) for row in data],
-            "source": table.info(),
+            "source": table.info(api_obj),
             "subs": api_obj.subs,
-            "logic": [table.info() for table in api_obj.table_list]
+            "logic": [table.info(api_obj) for table in api_obj.table_list]
     }
     return flask.jsonify(data)
 
@@ -100,12 +100,14 @@ def sumlevel_filtering(table, api_obj):
     # raise Exception(filters)
     return filters
 
-def process_value_filters(table, vars_and_vals):
+def process_value_filters(table, vars_and_vals, api_obj):
     filts = []
     for var, val in vars_and_vals.items():
         if var == consts.YEAR and val in [consts.LATEST, consts.OLDEST]:
             years = TableManager.table_years[table_name(table)]
-            filt = table.year == years[val]
+            my_year = years[val]
+            filt = table.year == my_year
+            api_obj.set_year(my_year)
         elif consts.OR in val:
             filt = getattr(table, var).in_(val.split(consts.OR))
         else:
@@ -164,7 +166,7 @@ def query(table, api_obj, stream=False):
     values = api_obj.values
     exclude = api_obj.exclude
 
-    filters = process_value_filters(table, vars_and_vals)
+    filters = process_value_filters(table, vars_and_vals, api_obj)
     filters += where_filters(table, api_obj.where)
     filters += sumlevel_filtering(table, api_obj)
 
