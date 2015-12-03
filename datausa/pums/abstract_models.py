@@ -51,6 +51,16 @@ class Personal(object):
 
     num_ppl_moe =  db.Column(db.Float())
 
+class PersonalWithAge(object):
+    avg_wage =  db.Column(db.Float())
+    avg_hrs =  db.Column(db.Float())
+    num_ppl =  db.Column(db.Integer())
+
+    avg_wage_moe =  db.Column(db.Float())
+    avg_hrs_moe = db.Column(db.Float())
+
+    num_ppl_moe =  db.Column(db.Float())
+
 
 class Year(object):
     @declared_attr

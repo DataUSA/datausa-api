@@ -1,6 +1,15 @@
 from datausa.pums.abstract_models import *
 from datausa.attrs.consts import ALL
 
+class Ya(BasePums, PersonalWithAge, Year):
+    __tablename__ = "ya"
+    median_moe = 0.5
+
+    age = db.Column(db.String(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"age": [ALL]}
 
 class Yc(BasePums, Personal, Year, CipId):
     __tablename__ = "yc"
@@ -20,7 +29,7 @@ class Ycs(BasePums, Personal, Year, CipId, SexId):
     def get_supported_levels(cls):
         return {"cip": ["2", ALL], "sex": [ALL]}
 
-class Yca(BasePums, Personal, Year, CipId):
+class Yca(BasePums, PersonalWithAge, Year, CipId):
     __tablename__ = "yca"
     median_moe = 2
 
@@ -239,7 +248,7 @@ class Yos(BasePums, Personal, Year, SocId, SexId):
         return {"soc": SocId.LEVELS, "sex": [ALL]}
 
 
-class Yoas(BasePums, Personal, Year, SocId, SexId):
+class Yoas(BasePums, PersonalWithAge, Year, SocId, SexId):
     __tablename__ = "yoas"
     median_moe = 3
     age = db.Column(db.String(), primary_key=True)
