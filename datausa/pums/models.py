@@ -99,7 +99,6 @@ class Yo(BasePums, Employees, Year, SocId, EmployeesGini):
 
     avg_wage_rank = db.Column(db.Integer)
     num_ppl_rank = db.Column(db.Integer)
-    avg_age_rank = db.Column(db.Integer)
 
     @classmethod
     def get_supported_levels(cls):
@@ -269,7 +268,6 @@ class Yi(BasePums, Employees, Year, NaicsId, EmployeesGini):
 
     avg_wage_rank = db.Column(db.Integer)
     num_ppl_rank = db.Column(db.Integer)
-    avg_age_rank = db.Column(db.Integer)
 
     @classmethod
     def get_supported_levels(cls):
