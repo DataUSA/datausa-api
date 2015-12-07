@@ -125,9 +125,9 @@ def crosswalk(table, api_obj):
 
         # cbp uses same naics coding as bls
         {"column": "naics", "schema": "cbp", "mapping": pums_to_bls_naics_map},
-        {"column": "naics", "schema": "pums_1year", "mapping": naics_map},
-        {"column": "cip", "schema": "pums_1year", "mapping": truncate_cip},
-        {"column": "geo", "schema": "pums_1year", "mapping": pums_parent_puma},
+        {"column": "naics", "schema": "v2_pums_1year", "mapping": naics_map},
+        {"column": "cip", "schema": "v2_pums_1year", "mapping": truncate_cip},
+        {"column": "geo", "schema": "v2_pums_1year", "mapping": pums_parent_puma},
         {"column": "geo", "schema": "chr", "mapping": chr_parents}
 
     ]

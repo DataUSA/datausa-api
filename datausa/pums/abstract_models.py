@@ -19,7 +19,7 @@ def geo_sumlevel_filter(table, show_colname, sumlevel):
 
 class BasePums(db.Model, BaseModel):
     __abstract__ = True
-    __table_args__ = {"schema": "pums_1year"}
+    __table_args__ = {"schema": "v2_pums_1year"}
     source_title = 'ACS PUMS 1-year Estimate'
     source_link = 'http://census.gov/programs-surveys/acs/technical-documentation/pums.html'
 
@@ -40,26 +40,45 @@ class BasePums(db.Model, BaseModel):
         return '<{}>'.format(self.__class__)
 
 class Personal(object):
-    avg_age = db.Column(db.Float())
-    avg_wage =  db.Column(db.Float())
-    avg_hrs =  db.Column(db.Float())
-    num_ppl =  db.Column(db.Integer())
+    avg_age = db.Column(db.Float)
+    avg_wage =  db.Column(db.Float)
+    num_ppl =  db.Column(db.Integer)
+    avg_age_moe = db.Column(db.Float)
+    avg_wage_moe =  db.Column(db.Float)
+    num_ppl_moe =  db.Column(db.Float)
 
-    avg_age_moe = db.Column(db.Float())
-    avg_wage_moe =  db.Column(db.Float())
-    avg_hrs_moe = db.Column(db.Float())
+class Employees(Personal):
+    avg_age_ft = db.Column(db.Float)
+    avg_age_pt = db.Column(db.Float)
+    avg_wage_ft =  db.Column(db.Float)
+    avg_wage_pt =  db.Column(db.Float)
+    num_ppl_ft =  db.Column(db.Integer)
+    num_ppl_pt =  db.Column(db.Integer)
 
-    num_ppl_moe =  db.Column(db.Float())
+    avg_age_ft_moe = db.Column(db.Float)
+    avg_age_pt_moe = db.Column(db.Float)
+    avg_wage_ft_moe =  db.Column(db.Float)
+    avg_wage_pt_moe =  db.Column(db.Float)
+    num_ppl_ft_moe =  db.Column(db.Float)
+    num_ppl_pt_moe =  db.Column(db.Float())
+
+
+class EmployeesWithAge(Personal):
+    avg_wage_ft =  db.Column(db.Float)
+    avg_wage_pt =  db.Column(db.Float)
+    num_ppl_ft =  db.Column(db.Integer)
+    num_ppl_pt =  db.Column(db.Integer)
+
+    avg_wage_ft_moe =  db.Column(db.Float)
+    avg_wage_pt_moe =  db.Column(db.Float)
+    num_ppl_ft_moe =  db.Column(db.Float)
+    num_ppl_pt_moe =  db.Column(db.Float())
 
 class PersonalWithAge(object):
-    avg_wage =  db.Column(db.Float())
-    avg_hrs =  db.Column(db.Float())
-    num_ppl =  db.Column(db.Integer())
-
-    avg_wage_moe =  db.Column(db.Float())
-    avg_hrs_moe = db.Column(db.Float())
-
-    num_ppl_moe =  db.Column(db.Float())
+    avg_wage =  db.Column(db.Float)
+    num_ppl =  db.Column(db.Integer)
+    avg_wage_moe =  db.Column(db.Float)
+    num_ppl_moe =  db.Column(db.Float)
 
 
 class Year(object):

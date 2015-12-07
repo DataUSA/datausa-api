@@ -3,8 +3,8 @@ Script used to generate the query that makes up the search table
 '''
 
 # Industry and Occupation Z-scoring
-attrs = [("soc", "pums_1year.yo", "avg_wage", [0, 1, 2, 3]),
-         ("naics", "pums_1year.yi", "num_ppl", [0, 1, 2])]
+attrs = [("soc", "v2_pums_1year.yo", "avg_wage", [0, 1, 2, 3]),
+         ("naics", "v2_pums_1year.yi", "num_ppl", [0, 1, 2])]
 
 qry = '''SELECT g.{0} as id,  (g.{2} - stats.average) / stats.st AS zvalue, '{0}' as kind , lower(a.name) as name, a.name as display, a.level::text
 FROM {1} g 

@@ -1,7 +1,7 @@
 from datausa.pums.abstract_models import *
 from datausa.attrs.consts import ALL
 
-class Ya(BasePums, PersonalWithAge, Year):
+class Ya(BasePums, EmployeesWithAge, Year):
     __tablename__ = "ya"
     median_moe = 0.5
 
@@ -11,7 +11,7 @@ class Ya(BasePums, PersonalWithAge, Year):
     def get_supported_levels(cls):
         return {"age": [ALL]}
 
-class Yc(BasePums, Personal, Year, CipId):
+class Yc(BasePums, Employees, Year, CipId):
     __tablename__ = "yc"
     median_moe = 1
 
@@ -21,7 +21,7 @@ class Yc(BasePums, Personal, Year, CipId):
     def get_supported_levels(cls):
         return {"cip": ["2", ALL]}
 
-class Ycs(BasePums, Personal, Year, CipId, SexId):
+class Ycs(BasePums, Employees, Year, CipId, SexId):
     __tablename__ = "ycs"
     median_moe = 2
 
@@ -29,7 +29,7 @@ class Ycs(BasePums, Personal, Year, CipId, SexId):
     def get_supported_levels(cls):
         return {"cip": ["2", ALL], "sex": [ALL]}
 
-class Yca(BasePums, PersonalWithAge, Year, CipId):
+class Yca(BasePums, EmployeesWithAge, Year, CipId):
     __tablename__ = "yca"
     median_moe = 2
 
@@ -39,7 +39,7 @@ class Yca(BasePums, PersonalWithAge, Year, CipId):
     def get_supported_levels(cls):
         return {"cip": ["2", ALL], "age": [ALL]}
 
-class Ycb(BasePums, Personal, Year, CipId, BirthplaceId):
+class Ycb(BasePums, Employees, Year, CipId, BirthplaceId):
     __tablename__ = "ycb"
     median_moe = 2
 
@@ -49,7 +49,7 @@ class Ycb(BasePums, Personal, Year, CipId, BirthplaceId):
     def get_supported_levels(cls):
         return {"cip": ["2", ALL], "birthplace": ALL} # TODO support in/out of US?
 
-class Ycd(BasePums, Personal, Year, CipId, DegreeId):
+class Ycd(BasePums, Employees, Year, CipId, DegreeId):
     __tablename__ = "ycd"
     median_moe = 2
 
@@ -57,17 +57,17 @@ class Ycd(BasePums, Personal, Year, CipId, DegreeId):
     def get_supported_levels(cls):
         return {"cip": ["2", ALL], "degree": [ALL]}
 
-class Yg(BasePums, Personal, Year, GeoId):
+class Yg(BasePums, Employees, Year, GeoId):
     __tablename__ = "yg"
     median_moe = 1
 
     gini = db.Column(db.Float)
 
-class Ygd(BasePums, Personal, Year, GeoId, DegreeId):
+class Ygd(BasePums, Employees, Year, GeoId, DegreeId):
     __tablename__ = "ygd"
     median_moe = 2
 
-class Ygi(BasePums, Personal, Year, GeoId, NaicsId):
+class Ygi(BasePums, Employees, Year, GeoId, NaicsId):
     __tablename__ = "ygi"
     median_moe = 2
 
@@ -77,7 +77,7 @@ class Ygi(BasePums, Personal, Year, GeoId, NaicsId):
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "naics": NaicsId.LEVELS}
 
-class Ygio(BasePums, Personal, Year, GeoId, NaicsId, SocId):
+class Ygio(BasePums, Employees, Year, GeoId, NaicsId, SocId):
     __tablename__ = "ygio"
     median_moe = 5
     @classmethod
@@ -90,7 +90,7 @@ class Ygio(BasePums, Personal, Year, GeoId, NaicsId, SocId):
     # __tablename__ = "ygmd"
     # median_moe = 3
 
-class Ygc(BasePums, Personal, Year, GeoId, CipId):
+class Ygc(BasePums, Employees, Year, GeoId, CipId):
     __tablename__ = "ygc"
     median_moe = 2
 
@@ -100,7 +100,7 @@ class Ygc(BasePums, Personal, Year, GeoId, CipId):
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "cip": ["2", ALL]}
 
-class Yo(BasePums, Personal, Year, SocId):
+class Yo(BasePums, Employees, Year, SocId):
     __tablename__ = "yo"
     median_moe = 1
 
@@ -113,7 +113,7 @@ class Yo(BasePums, Personal, Year, SocId):
     def get_supported_levels(cls):
         return {"soc": SocId.LEVELS}
 
-class Yow(BasePums, Personal, Year, SocId, WageId):
+class Yow(BasePums, Employees, Year, SocId, WageId):
     __tablename__ = "yow"
     median_moe = 1
 
@@ -122,7 +122,7 @@ class Yow(BasePums, Personal, Year, SocId, WageId):
         return {"soc": SocId.LEVELS, "wage_bin": ALL}
 
 
-class Yiw(BasePums, Personal, Year, NaicsId, WageId):
+class Yiw(BasePums, Employees, Year, NaicsId, WageId):
     __tablename__ = "yiw"
     median_moe = 1
 
@@ -131,7 +131,7 @@ class Yiw(BasePums, Personal, Year, NaicsId, WageId):
         return {"naics": NaicsId.LEVELS, "wage_bin": ALL}
 
 
-class Ygo(BasePums, Personal, Year, GeoId, SocId):
+class Ygo(BasePums, Employees, Year, GeoId, SocId):
     __tablename__ = "ygo"
     median_moe = 2
 
@@ -141,7 +141,7 @@ class Ygo(BasePums, Personal, Year, GeoId, SocId):
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS}
 
-class Ygw(BasePums, Personal, Year, GeoId, WageId):
+class Ygw(BasePums, Employees, Year, GeoId, WageId):
     __tablename__ = "ygw"
     median_moe = 2
 
@@ -150,7 +150,7 @@ class Ygw(BasePums, Personal, Year, GeoId, WageId):
         return {"geo": GeoId.LEVELS, "wage_bin": ALL}
 
 
-class Yor(BasePums, Personal, Year, SocId, RaceId):
+class Yor(BasePums, Employees, Year, SocId, RaceId):
     __tablename__ = "yor"
     median_moe = 2
 
@@ -160,7 +160,7 @@ class Yor(BasePums, Personal, Year, SocId, RaceId):
                 "race": [ALL]}
 
 
-class Ygor(BasePums, Personal, Year, GeoId, SocId, RaceId):
+class Ygor(BasePums, Employees, Year, GeoId, SocId, RaceId):
     __tablename__ = "ygor"
     median_moe = 3
 
@@ -169,7 +169,7 @@ class Ygor(BasePums, Personal, Year, GeoId, SocId, RaceId):
         return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS,
                 "race": [ALL]}
 
-class Ygs(BasePums, Personal, Year, GeoId, SexId):
+class Ygs(BasePums, Employees, Year, GeoId, SexId):
     __tablename__ = "ygs"
     median_moe = 2
 
@@ -177,7 +177,7 @@ class Ygs(BasePums, Personal, Year, GeoId, SexId):
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "sex": [ALL]}
 
-class Ygr(BasePums, Personal, Year, GeoId, RaceId):
+class Ygr(BasePums, Employees, Year, GeoId, RaceId):
     __tablename__ = "ygr"
     median_moe = 2
 
@@ -185,7 +185,7 @@ class Ygr(BasePums, Personal, Year, GeoId, RaceId):
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "race": [ALL]}
 
-class Ygos(BasePums, Personal, Year, GeoId, SocId, SexId):
+class Ygos(BasePums, Employees, Year, GeoId, SocId, SexId):
     __tablename__ = "ygos"
     median_moe = 3
 
@@ -194,7 +194,7 @@ class Ygos(BasePums, Personal, Year, GeoId, SocId, SexId):
         return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS,
                 "sex": [ALL]}
 
-class Yoc(BasePums, Personal, Year, SocId, CipId):
+class Yoc(BasePums, Employees, Year, SocId, CipId):
     __tablename__ = "yoc"
     median_moe = 2
     num_ppl_rca = db.Column(db.Float)
@@ -203,14 +203,14 @@ class Yoc(BasePums, Personal, Year, SocId, CipId):
     def get_supported_levels(cls):
         return {"cip": ["2", ALL], "soc": SocId.LEVELS}
 
-class Yic(BasePums, Personal, Year, NaicsId, CipId):
+class Yic(BasePums, Employees, Year, NaicsId, CipId):
     __tablename__ = "yic"
     median_moe = 2
     @classmethod
     def get_supported_levels(cls):
         return {"cip": ["2"], "naics": NaicsId.LEVELS}
 
-class Yio(BasePums, Personal, Year, NaicsId, SocId):
+class Yio(BasePums, Employees, Year, NaicsId, SocId):
     __tablename__ = "yio"
     median_moe = 2
     num_ppl_rca = db.Column(db.Float)
@@ -220,7 +220,7 @@ class Yio(BasePums, Personal, Year, NaicsId, SocId):
         return {"soc": SocId.LEVELS, "naics": NaicsId.LEVELS}
 
 
-class Yir(BasePums, Personal, Year, NaicsId, RaceId):
+class Yir(BasePums, Employees, Year, NaicsId, RaceId):
     __tablename__ = "yir"
     median_moe = 2
     avg_wage_rca = db.Column(db.Float)
@@ -230,7 +230,7 @@ class Yir(BasePums, Personal, Year, NaicsId, RaceId):
         return {"soc": SocId.LEVELS, "race": [ALL]}
 
 
-class Yior(BasePums, Personal, Year, NaicsId, SocId, RaceId):
+class Yior(BasePums, Employees, Year, NaicsId, SocId, RaceId):
     __tablename__ = "yior"
     median_moe = 3
 
@@ -239,7 +239,7 @@ class Yior(BasePums, Personal, Year, NaicsId, SocId, RaceId):
         return {"soc": SocId.LEVELS, "naics": NaicsId.LEVELS, "race": [ALL]}
 
 
-class Yos(BasePums, Personal, Year, SocId, SexId):
+class Yos(BasePums, Employees, Year, SocId, SexId):
     __tablename__ = "yos"
     median_moe = 2
 
@@ -248,7 +248,7 @@ class Yos(BasePums, Personal, Year, SocId, SexId):
         return {"soc": SocId.LEVELS, "sex": [ALL]}
 
 
-class Yoas(BasePums, PersonalWithAge, Year, SocId, SexId):
+class Yoas(BasePums, EmployeesWithAge, Year, SocId, SexId):
     __tablename__ = "yoas"
     median_moe = 3
     age = db.Column(db.String(), primary_key=True)
@@ -258,7 +258,7 @@ class Yoas(BasePums, PersonalWithAge, Year, SocId, SexId):
         return {"soc": SocId.LEVELS, "sex": [ALL], "age": [ALL]}
 
 
-class Yod(BasePums, Personal, Year, SocId, DegreeId):
+class Yod(BasePums, Employees, Year, SocId, DegreeId):
     __tablename__ = "yod"
     median_moe = 2
 
@@ -267,7 +267,7 @@ class Yod(BasePums, Personal, Year, SocId, DegreeId):
         return {"soc": SocId.LEVELS, "degree": [ALL]}
 
 
-class Yid(BasePums, Personal, Year, NaicsId, DegreeId):
+class Yid(BasePums, Employees, Year, NaicsId, DegreeId):
     __tablename__ = "yid"
     median_moe = 2
 
@@ -276,7 +276,7 @@ class Yid(BasePums, Personal, Year, NaicsId, DegreeId):
         return {"naics": NaicsId.LEVELS, "degree": [ALL]}
 
 
-class Yi(BasePums, Personal, Year, NaicsId):
+class Yi(BasePums, Employees, Year, NaicsId):
     __tablename__ = "yi"
     median_moe = 1
 
@@ -290,7 +290,7 @@ class Yi(BasePums, Personal, Year, NaicsId):
         return {"naics": NaicsId.LEVELS}
 
 
-class Yis(BasePums, Personal, Year, NaicsId, SexId):
+class Yis(BasePums, Employees, Year, NaicsId, SexId):
     __tablename__ = "yis"
     median_moe = 2
     avg_wage_rca = db.Column(db.Float)
@@ -300,7 +300,7 @@ class Yis(BasePums, Personal, Year, NaicsId, SexId):
         return {"naics": NaicsId.LEVELS, "sex": [ALL]}
 
 
-class Yios(BasePums, Personal, Year, NaicsId, SocId, SexId):
+class Yios(BasePums, Employees, Year, NaicsId, SocId, SexId):
     __tablename__ = "yios"
     median_moe = 3
 
@@ -308,7 +308,7 @@ class Yios(BasePums, Personal, Year, NaicsId, SocId, SexId):
     def get_supported_levels(cls):
         return {"soc": SocId.LEVELS, "naics": NaicsId.LEVELS, "sex": [ALL]}
 
-class Yocd(BasePums, Personal, Year, SocId, CipId, DegreeId):
+class Yocd(BasePums, Employees, Year, SocId, CipId, DegreeId):
     __tablename__ = "yocd"
     median_moe = 3
     num_ppl_rca = db.Column(db.Float)
