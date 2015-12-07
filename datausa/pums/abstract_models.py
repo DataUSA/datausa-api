@@ -60,8 +60,17 @@ class Employees(Personal):
     avg_wage_ft_moe =  db.Column(db.Float)
     avg_wage_pt_moe =  db.Column(db.Float)
     num_ppl_ft_moe =  db.Column(db.Float)
-    num_ppl_pt_moe =  db.Column(db.Float())
+    num_ppl_pt_moe =  db.Column(db.Float)
 
+class EmployeesGini(object):
+    gini = db.Column(db.Float)
+    gini_ft = db.Column(db.Float)
+    gini_pt = db.Column(db.Float)
+
+class EmployeesRca(object):
+    num_ppl_rca = db.Column(db.Float)
+    num_ppl_pt_rca = db.Column(db.Float)
+    num_ppl_ft_rca = db.Column(db.Float)
 
 class EmployeesWithAge(Personal):
     avg_wage_ft =  db.Column(db.Float)
@@ -72,7 +81,7 @@ class EmployeesWithAge(Personal):
     avg_wage_ft_moe =  db.Column(db.Float)
     avg_wage_pt_moe =  db.Column(db.Float)
     num_ppl_ft_moe =  db.Column(db.Float)
-    num_ppl_pt_moe =  db.Column(db.Float())
+    num_ppl_pt_moe =  db.Column(db.Float)
 
 class PersonalWithAge(object):
     avg_wage =  db.Column(db.Float)

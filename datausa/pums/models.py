@@ -39,11 +39,9 @@ class Yca(BasePums, EmployeesWithAge, Year, CipId):
     def get_supported_levels(cls):
         return {"cip": ["2", ALL], "age": [ALL]}
 
-class Ycb(BasePums, Employees, Year, CipId, BirthplaceId):
+class Ycb(BasePums, Employees, Year, CipId, BirthplaceId, EmployeesRca):
     __tablename__ = "ycb"
     median_moe = 2
-
-    num_ppl_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
@@ -57,21 +55,18 @@ class Ycd(BasePums, Employees, Year, CipId, DegreeId):
     def get_supported_levels(cls):
         return {"cip": ["2", ALL], "degree": [ALL]}
 
-class Yg(BasePums, Employees, Year, GeoId):
+class Yg(BasePums, Employees, Year, GeoId, EmployeesGini):
     __tablename__ = "yg"
     median_moe = 1
 
-    gini = db.Column(db.Float)
 
 class Ygd(BasePums, Employees, Year, GeoId, DegreeId):
     __tablename__ = "ygd"
     median_moe = 2
 
-class Ygi(BasePums, Employees, Year, GeoId, NaicsId):
+class Ygi(BasePums, Employees, Year, GeoId, NaicsId, EmployeesRca):
     __tablename__ = "ygi"
     median_moe = 2
-
-    num_ppl_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
@@ -90,24 +85,21 @@ class Ygio(BasePums, Employees, Year, GeoId, NaicsId, SocId):
     # __tablename__ = "ygmd"
     # median_moe = 3
 
-class Ygc(BasePums, Employees, Year, GeoId, CipId):
+class Ygc(BasePums, Employees, Year, GeoId, CipId, EmployeesRca):
     __tablename__ = "ygc"
     median_moe = 2
-
-    num_ppl_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "cip": ["2", ALL]}
 
-class Yo(BasePums, Employees, Year, SocId):
+class Yo(BasePums, Employees, Year, SocId, EmployeesGini):
     __tablename__ = "yo"
     median_moe = 1
 
     avg_wage_rank = db.Column(db.Integer)
     num_ppl_rank = db.Column(db.Integer)
     avg_age_rank = db.Column(db.Integer)
-    gini = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
@@ -131,11 +123,9 @@ class Yiw(BasePums, Employees, Year, NaicsId, WageId):
         return {"naics": NaicsId.LEVELS, "wage_bin": ALL}
 
 
-class Ygo(BasePums, Employees, Year, GeoId, SocId):
+class Ygo(BasePums, Employees, Year, GeoId, SocId, EmployeesRca):
     __tablename__ = "ygo"
     median_moe = 2
-
-    num_ppl_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
@@ -194,10 +184,9 @@ class Ygos(BasePums, Employees, Year, GeoId, SocId, SexId):
         return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS,
                 "sex": [ALL]}
 
-class Yoc(BasePums, Employees, Year, SocId, CipId):
+class Yoc(BasePums, Employees, Year, SocId, CipId, EmployeesRca):
     __tablename__ = "yoc"
     median_moe = 2
-    num_ppl_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
@@ -210,20 +199,18 @@ class Yic(BasePums, Employees, Year, NaicsId, CipId):
     def get_supported_levels(cls):
         return {"cip": ["2"], "naics": NaicsId.LEVELS}
 
-class Yio(BasePums, Employees, Year, NaicsId, SocId):
+class Yio(BasePums, Employees, Year, NaicsId, SocId, EmployeesRca):
     __tablename__ = "yio"
     median_moe = 2
-    num_ppl_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
         return {"soc": SocId.LEVELS, "naics": NaicsId.LEVELS}
 
 
-class Yir(BasePums, Employees, Year, NaicsId, RaceId):
+class Yir(BasePums, Employees, Year, NaicsId, RaceId, EmployeesRca):
     __tablename__ = "yir"
     median_moe = 2
-    avg_wage_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
@@ -276,24 +263,22 @@ class Yid(BasePums, Employees, Year, NaicsId, DegreeId):
         return {"naics": NaicsId.LEVELS, "degree": [ALL]}
 
 
-class Yi(BasePums, Employees, Year, NaicsId):
+class Yi(BasePums, Employees, Year, NaicsId, EmployeesGini):
     __tablename__ = "yi"
     median_moe = 1
 
     avg_wage_rank = db.Column(db.Integer)
     num_ppl_rank = db.Column(db.Integer)
     avg_age_rank = db.Column(db.Integer)
-    gini = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
         return {"naics": NaicsId.LEVELS}
 
 
-class Yis(BasePums, Employees, Year, NaicsId, SexId):
+class Yis(BasePums, Employees, Year, NaicsId, SexId, EmployeesRca):
     __tablename__ = "yis"
     median_moe = 2
-    avg_wage_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
@@ -308,10 +293,9 @@ class Yios(BasePums, Employees, Year, NaicsId, SocId, SexId):
     def get_supported_levels(cls):
         return {"soc": SocId.LEVELS, "naics": NaicsId.LEVELS, "sex": [ALL]}
 
-class Yocd(BasePums, Employees, Year, SocId, CipId, DegreeId):
+class Yocd(BasePums, Employees, Year, SocId, CipId, DegreeId, EmployeesRca):
     __tablename__ = "yocd"
     median_moe = 3
-    num_ppl_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
