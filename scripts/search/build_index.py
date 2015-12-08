@@ -45,4 +45,5 @@ if __name__ == '__main__':
     # Custom synonyms to help with search
     manual_add(writer, u'doctors', u'Doctors', '291060')
     manual_add(writer, u'manhattan', u'Manhattan, NY', '05000US36061')
+    manual_add(writer, u'meteorologists', u'Meteorologists', '192021')
     writer.commit()
