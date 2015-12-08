@@ -334,12 +334,10 @@ class PumsIoCrosswalk(db.Model):
 
 class IoCode(BaseAttr):
     __tablename__ = 'iocode'
-    HEADERS = ["id", "name", "level"]
+    HEADERS = ["id", "name", "level", "parent"]
 
     level = db.Column(db.Integer)
-
-    def data_serialize(self):
-        return [self.id, self.name, self.level]
+    parent = db.Column(db.String)
 
 
 class GeoContainment(db.Model):
