@@ -54,18 +54,6 @@ class ApiObject(object):
         if hasattr(self, "year") and self.year != ALL:
             self._year = self.year
 
-        # -- If there is a force to an "acs" table (5-year)
-        #    determine if we can instead use the acs_1year
-        #    schema.
-        if hasattr(self, "force") and self.force and self.vars_and_vals:
-            schema, tblname = self.force.split(".")
-            gvals = self.vars_and_vals["geo"].split(",")
-            nation_state_only = all([v[:3] in ["010", "040"] for v in gvals])
-            not_ygi_ygo = all(["ygo" not in tblname, "ygi" not in tblname])
-            if schema != "acs_1year" and nation_state_only and not_ygi_ygo:
-                self.force = "acs_1year.{}".format(tblname)
-                self.subs["force"] = self.force
-
         # if not "geo" in self.shows_and_levels and "geo" in self.vars_and_vals:
         #     if self.vars_and_vals["geo"]:
         #         prefix = self.vars_and_vals["geo"][:3]
