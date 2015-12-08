@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declared_attr
 
 from datausa.database import db
 from datausa.attrs.models import Geo, AcsOcc, AcsInd, GeoContainment
+from datausa.attrs.models import AcsLanguage
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY
 from datausa.attrs.consts import PUMA, MSA, ALL, GEO
@@ -51,6 +52,8 @@ class AcsOccId(object):
 
 class GeoId(object):
     LEVELS = [NATION, STATE, COUNTY, MSA, PUMA, PLACE, TRACT, ALL]
+    LEVELS_5YR = [COUNTY, MSA, PUMA, PLACE, TRACT, ALL]
+
     JOINED_FILTER = {"geo": {
                             "triggers": [("tract", "160"), ("county", "310")],
                             "table": GeoContainment.parent,
@@ -90,3 +93,32 @@ class BaseAcs3(db.Model, BaseModel):
     supported_levels = {}
     source_title = 'ACS 3-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
+
+
+class BaseAcs1(db.Model, BaseModel):
+    __abstract__ = True
+    __table_args__ = {"schema": "acs_1year"}
+    supported_levels = {}
+    source_title = 'ACS 1-year Estimate'
+    source_link = 'http://www.census.gov/programs-surveys/acs/'
+
+
+class Ygl_Speakers(GeoId):
+    __tablename__ = "ygl_speakers"
+    median_moe = 2
+
+    num_speakers = db.Column(db.Float)
+    num_speakers_moe = db.Column(db.Float)
+    num_speakers_rca = db.Column(db.Float)
+
+    @declared_attr
+    def year(cls):
+        return db.Column(db.Integer, primary_key=True)
+
+    @declared_attr
+    def language(cls):
+        return db.Column(db.String(), db.ForeignKey(AcsLanguage.id), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS, "language": [consts.ALL]}

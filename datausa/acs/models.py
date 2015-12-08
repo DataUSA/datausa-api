@@ -1,23 +1,19 @@
-from datausa.acs.abstract_models import BaseAcs5, GeoId, AcsOccId
-from datausa.acs.abstract_models import BaseAcs3, db, AcsIndId
-from datausa.attrs.models import AcsLanguage
+from datausa.acs.abstract_models import GeoId, AcsOccId, db, AcsIndId
+from datausa.acs.abstract_models import BaseAcs1, BaseAcs3, BaseAcs5
+from datausa.acs.abstract_models import Ygl_Speakers
 from datausa.attrs import consts
 from datausa.attrs.consts import NATION, STATE, MSA, PLACE, PUMA, COUNTY, ALL
 
-
-class Acs5_Ygl_Speakers(BaseAcs5, GeoId):
-    __tablename__ = "ygl_speakers"
-    median_moe = 2
-
-    year = db.Column(db.Integer, primary_key=True)
-    language = db.Column(db.String(), db.ForeignKey(AcsLanguage.id), primary_key=True)
-    num_speakers = db.Column(db.Float)
-    num_speakers_moe = db.Column(db.Float)
-    num_speakers_rca = db.Column(db.Float)
-
+class Acs1_Ygl_Speakers(BaseAcs1, Ygl_Speakers):
     @classmethod
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "language": [consts.ALL]}
+
+
+class Acs5_Ygl_Speakers(BaseAcs5, Ygl_Speakers):
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS_5YR, "language": [consts.ALL]}
 
 
 class Acs3_Ygo_Num_Emp(BaseAcs3, GeoId, AcsOccId):

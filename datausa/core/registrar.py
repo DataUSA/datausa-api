@@ -53,6 +53,9 @@ registered_models = [
 
     # ACS 3-year
     Acs3_Ygo_Num_Emp, Acs3_Ygi_Num_Emp, Acs3_Ygi_MedEarnings,
+
+    # ACS 1-year
+    Acs1_Ygl_Speakers,
 ]
 
 
