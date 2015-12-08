@@ -32,9 +32,11 @@ class BaseAttr(db.Model):
 
 class ImageAttr(db.Model):
     __abstract__ = True
-    image_link = db.Column(db.String())
-    image_author = db.Column(db.String())
-    HEADERS = ["id", "name", "image_link", "image_author"]
+    image_link = db.Column(db.String)
+    image_author = db.Column(db.String)
+    image_path = db.Column(db.String)
+
+    HEADERS = ["id", "name", "image_link", "image_author", "image_path"]
 
     def data_serialize(self):
         return [self.id, self.name, self.image_link, self.image_author]
