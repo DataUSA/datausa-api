@@ -56,6 +56,10 @@ registered_models = [
 
     # ACS 1-year
     Acs1_Ygl_Speakers,
+    Acs1_Yg, Acs1_Yg_IncDist, Acs1_Yg_PovertyRace,
+    Acs1_Yg_NatAge, Acs1_Yg_Race, Acs1_Yg_Conflict,
+    Acs1_Yg_PropertyValue, Acs1_Yg_PropertyTax, Acs1_Yg_Vehicles,
+    Acs1_Yg_TravelTime, Acs1_Yg_Transport,
 ]
 
 
