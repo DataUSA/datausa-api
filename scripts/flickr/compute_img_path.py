@@ -24,7 +24,7 @@ def update_attr_img_paths(attr_kind):
     AttrCls = attr_map[attr_kind]
     filters = []
     if attr_kind == 'geo':
-        filters = [~Geo.id.startswith("140")]
+        filters = [~Geo.id.startswith("140"), ~Geo.id.startswith("860")]
     all_attrs = AttrCls.query.filter(*filters).all()
 
     attr_data_map = {a.id : a for a in all_attrs}
@@ -37,7 +37,7 @@ def update_attr_img_paths(attr_kind):
             attr_obj.image_path = calculated_img
             db.session.add(attr_obj)
             counter += 1
-        if counter % 100 == 0:
+        if counter % 1000 == 0:
             db.session.commit()
             counter = 0
 
@@ -49,4 +49,6 @@ if __name__ == '__main__':
     # print img_path(geo_obj, "geo")
     # soc_obj = PumsSoc.query.filter_by(id='111021').first()
     # print img_path(soc_obj, "soc")
-    update_attr_img_paths("geo")
+    for attr_kind in ["naics", "soc", "cip", "geo"]:
+        update_attr_img_paths(attr_kind)
+
