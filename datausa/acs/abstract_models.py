@@ -52,6 +52,7 @@ class AcsOccId(object):
 
 class GeoId(object):
     LEVELS = [NATION, STATE, COUNTY, MSA, PUMA, PLACE, TRACT, ALL]
+    LEVELS_1YR = [NATION, STATE, ALL]
     LEVELS_5YR = [COUNTY, MSA, PUMA, PLACE, TRACT, ALL]
 
     JOINED_FILTER = {"geo": {
@@ -78,6 +79,15 @@ class GeoId(object):
     def geo(cls):
         return db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)
 
+class GeoId1(GeoId):
+        @classmethod
+        def get_supported_levels(cls):
+            return {GEO: GeoId.LEVELS_1YR}
+
+class GeoId5(GeoId):
+        @classmethod
+        def get_supported_levels(cls):
+            return {GEO: GeoId.LEVELS_5YR}
 
 class BaseAcs5(db.Model, BaseModel):
     __abstract__ = True
@@ -85,6 +95,10 @@ class BaseAcs5(db.Model, BaseModel):
     supported_levels = {}
     source_title = 'ACS 5-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
+
+    @declared_attr
+    def year(cls):
+        return db.Column(db.Integer, primary_key=True)
 
 
 class BaseAcs3(db.Model, BaseModel):
@@ -94,6 +108,10 @@ class BaseAcs3(db.Model, BaseModel):
     source_title = 'ACS 3-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
 
+    @declared_attr
+    def year(cls):
+        return db.Column(db.Integer, primary_key=True)
+
 
 class BaseAcs1(db.Model, BaseModel):
     __abstract__ = True
@@ -102,18 +120,18 @@ class BaseAcs1(db.Model, BaseModel):
     source_title = 'ACS 1-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
 
+    @declared_attr
+    def year(cls):
+        return db.Column(db.Integer, primary_key=True)
 
-class Ygl_Speakers(GeoId):
+
+class Ygl_Speakers(object):
     __tablename__ = "ygl_speakers"
     median_moe = 2
 
     num_speakers = db.Column(db.Float)
     num_speakers_moe = db.Column(db.Float)
     num_speakers_rca = db.Column(db.Float)
-
-    @declared_attr
-    def year(cls):
-        return db.Column(db.Integer, primary_key=True)
 
     @declared_attr
     def language(cls):

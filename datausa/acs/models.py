@@ -5,12 +5,16 @@ from datausa.attrs import consts
 from datausa.attrs.consts import NATION, STATE, MSA, PLACE, PUMA, COUNTY, ALL
 
 class Acs1_Ygl_Speakers(BaseAcs1, Ygl_Speakers):
+    __tablename__ = "ygl_speakers"
+
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": GeoId.LEVELS, "language": [consts.ALL]}
+        return {"geo": GeoId.LEVELS_1YR, "language": [consts.ALL]}
 
 
 class Acs5_Ygl_Speakers(BaseAcs5, Ygl_Speakers):
+    __tablename__ = "ygl_speakers"
+
     @classmethod
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS_5YR, "language": [consts.ALL]}
@@ -20,7 +24,6 @@ class Acs3_Ygo_Num_Emp(BaseAcs3, GeoId, AcsOccId):
     __tablename__ = "ygo_num_emp"
     median_moe = 2
 
-    year = db.Column(db.Integer, primary_key=True)
     num_emp = db.Column(db.Float)
     num_emp_moe = db.Column(db.Float)
     num_emp_rca = db.Column(db.Float)
@@ -38,7 +41,6 @@ class Acs5_Ygo_Num_Emp(BaseAcs5, GeoId, AcsOccId):
     __tablename__ = "ygo_num_emp"
     median_moe = 2
 
-    year = db.Column(db.Integer, primary_key=True)
     num_emp = db.Column(db.Float)
     num_emp_moe = db.Column(db.Float)
     num_emp_rca = db.Column(db.Float)
@@ -56,7 +58,6 @@ class Acs5_Ygo_Earnings(BaseAcs5, GeoId, AcsOccId):
     __tablename__ = "ygo_med_earnings"
     median_moe = 2
 
-    year = db.Column(db.Integer, primary_key=True)
     med_earnings = db.Column(db.Float)
     med_earnings_male = db.Column(db.Float)
     med_earnings_female = db.Column(db.Float)
@@ -74,7 +75,6 @@ class Acs3_Ygi_Num_Emp(BaseAcs3, AcsIndId, GeoId):
     __tablename__ = "ygi_num_emp"
     median_moe = 2
 
-    year = db.Column(db.Integer, primary_key=True)
     num_emp = db.Column(db.Float)
     num_emp_moe = db.Column(db.Float)
     num_emp_rca = db.Column(db.Float)
@@ -88,7 +88,6 @@ class Acs5_Ygi_Num_Emp(BaseAcs5, AcsIndId, GeoId):
     __tablename__ = "ygi_num_emp"
     median_moe = 1.9
 
-    year = db.Column(db.Integer, primary_key=True)
     num_emp = db.Column(db.Float)
     num_emp_moe = db.Column(db.Float)
     num_emp_rca = db.Column(db.Float)
@@ -103,7 +102,6 @@ class Acs3_Ygi_MedEarnings(BaseAcs3, AcsIndId, GeoId):
     __tablename__ = "ygi_med_earnings"
     median_moe = 2
 
-    year = db.Column(db.Integer, primary_key=True)
     med_earnings = db.Column(db.Float)
     med_earnings_moe = db.Column(db.Float)
 

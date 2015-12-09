@@ -47,6 +47,7 @@ def build_api_obj():
 @mod.route("/csv/", defaults={'csv': True})
 def api_view(csv=None):
     api_obj = build_api_obj()
+    api_obj = manager.schema_selector(api_obj)
     table_list = manager.all_tables(api_obj)
     table = manager.select_best(table_list, api_obj)
     api_obj.capture_logic(table_list)

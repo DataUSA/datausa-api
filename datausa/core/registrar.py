@@ -42,6 +42,13 @@ registered_models = [
     # BEA I/O Tables
     BeaUse,
 
+    # ACS 1-year
+    Acs1_Ygl_Speakers,
+    Acs1_Yg, Acs1_Yg_IncDist, Acs1_Yg_PovertyRace,
+    Acs1_Yg_NatAge, Acs1_Yg_Race, Acs1_Yg_Conflict,
+    Acs1_Yg_PropertyValue, Acs1_Yg_PropertyTax, Acs1_Yg_Vehicles,
+    Acs1_Yg_TravelTime, Acs1_Yg_Transport,
+
     # ACS
     Acs5_Yg, Acs5_Yg_Income, Acs5_Yg_Conflict, Acs5_Yg_IncDist,
     Acs5_Ygo_Earnings,
@@ -54,8 +61,7 @@ registered_models = [
     # ACS 3-year
     Acs3_Ygo_Num_Emp, Acs3_Ygi_Num_Emp, Acs3_Ygi_MedEarnings,
 
-    # ACS 1-year
-    Acs1_Ygl_Speakers,
+
 ]
 
 

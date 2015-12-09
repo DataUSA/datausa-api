@@ -31,6 +31,10 @@ def tbl_years():
     return years
 
 
+def table_exists(full_tblname):
+    return full_tblname in tbl_years()
+
+
 @cache.memoize()
 def tbl_sizes():
     sizes = {}
@@ -45,6 +49,23 @@ class TableManager(object):
                           for col in get_columns(t)]
     table_years = tbl_years()
     # table_sizes = tbl_sizes()
+    @classmethod
+    def schema_selector(cls, api_obj):
+        # -- If there is a force to an "acs" table (5-year)
+        #    determine if we can instead use the acs_1year
+        #    schema.
+        if hasattr(api_obj, "force") and api_obj.force and api_obj.vars_and_vals:
+            schema, tblname = api_obj.force.split(".")
+            if schema and schema in ["acs", "acs_3year"]:
+                gvals = api_obj.vars_and_vals["geo"].split(",")
+                nation_state_only = all([v[:3] in ["010", "040"] for v in gvals])
+                not_ygi_ygo = all(["ygo" not in tblname, "ygi" not in tblname])
+                if schema != "acs_1year" and nation_state_only and not_ygi_ygo:
+                    new_fullname = "acs_1year.{}".format(tblname)
+                    if new_fullname in cls.table_years:
+                        api_obj.force = new_fullname
+                        api_obj.subs["force"] = api_obj.force
+        return api_obj
 
     @classmethod
     def table_can_show(cls, table, api_obj):
