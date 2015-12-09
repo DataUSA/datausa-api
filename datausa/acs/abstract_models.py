@@ -126,7 +126,6 @@ class BaseAcs1(db.Model, BaseModel):
 
 
 class Ygl_Speakers(object):
-    __tablename__ = "ygl_speakers"
     median_moe = 2
 
     num_speakers = db.Column(db.Float)
@@ -136,7 +135,3 @@ class Ygl_Speakers(object):
     @declared_attr
     def language(cls):
         return db.Column(db.String(), db.ForeignKey(AcsLanguage.id), primary_key=True)
-
-    @classmethod
-    def get_supported_levels(cls):
-        return {"geo": GeoId.LEVELS, "language": [consts.ALL]}
