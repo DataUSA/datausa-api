@@ -48,6 +48,7 @@ registered_models = [
     Acs1_Yg_NatAge, Acs1_Yg_Race, Acs1_Yg_Conflict,
     Acs1_Yg_PropertyValue, Acs1_Yg_PropertyTax, Acs1_Yg_Vehicles,
     Acs1_Yg_TravelTime, Acs1_Yg_Transport,
+    Acs1_Yg_Poverty, Acs1_Yg_Tenure, Acs1_Yg_Income,
 
     # ACS
     Acs5_Yg, Acs5_Yg_Income, Acs5_Yg_Conflict, Acs5_Yg_IncDist,

@@ -11,6 +11,17 @@ metadata_1yr = MetaData(schema='acs_1year')
 AutomapBase_1yr = automap_base(bind=db.engine, metadata=metadata_1yr)
 
 # 1 year
+class Acs1_Yg_Income(AutomapBase_1yr, BaseAcs1, GeoId1):
+    __tablename__ = "yg_income"
+    median_moe = 1.2
+
+class Acs1_Yg_Poverty(AutomapBase_1yr, BaseAcs1, GeoId1):
+    __tablename__ = 'yg_poverty'
+    median_moe = 1
+
+class Acs1_Yg_Tenure(AutomapBase_1yr, BaseAcs1, GeoId1):
+    __tablename__ = 'yg_tenure'
+    median_moe = 1
 
 class Acs1_Yg(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = "yg"
