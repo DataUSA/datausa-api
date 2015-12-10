@@ -73,7 +73,7 @@ class TableManager(object):
         supported_levels = table.get_supported_levels()
         vars_and_vals = api_obj.vars_and_vals
         required_geos = [] if "geo" not in vars_and_vals else vars_and_vals["geo"].split(",")
-        if required_geos and supported_levels and "geo" in supported_levels:
+        if table.__table_args__["schema"] in ["acs", "acs_1year", "acs_3year"] and required_geos:
             need_to_support = set([my_geo[:3] for my_geo in required_geos])
             required_levels = [consts.LEVEL_TO_GEO[slvl] for slvl in need_to_support]
             cond_check = [x in supported_levels["geo"] for x in required_levels]
