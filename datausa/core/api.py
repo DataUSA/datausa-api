@@ -177,9 +177,8 @@ def query(table, api_obj, stream=False):
         cols = get_columns(table)
 
     if exclude:
-        cols = [col for col in cols if col.key not in exclude]
-        #cols = [col for col in cols
-        #        if (isinstance(basestring, col) and col not in exclude) or col.key not in exclude]
+        cols = [col for col in cols
+               if (isinstance(col, basestring) and col not in exclude) or col.key not in exclude]
 
     needs_show_filter = any([v != consts.ALL for v in shows_and_levels.values()])
 
