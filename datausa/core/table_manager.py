@@ -77,7 +77,9 @@ class TableManager(object):
             need_to_support = set([my_geo[:3] for my_geo in required_geos])
             required_levels = [consts.LEVEL_TO_GEO[slvl] for slvl in need_to_support]
             cond_check = [x in supported_levels["geo"] for x in required_levels]
-            return all(cond_check)
+            result = all(cond_check)
+            if not result:
+                return False
 
         for show_col, show_level in shows_and_levels.items():
             if show_col not in supported_levels:
@@ -89,7 +91,6 @@ class TableManager(object):
 
         if api_obj.force and table.full_name() != api_obj.force:
             return False
-
         return True
 
     @classmethod
