@@ -71,6 +71,14 @@ class TableManager(object):
     def table_can_show(cls, table, api_obj):
         shows_and_levels = api_obj.shows_and_levels
         supported_levels = table.get_supported_levels()
+        vars_and_vals = api_obj.vars_and_vals
+        required_geos = [] if "geo" not in vars_and_vals else vars_and_vals["geo"].split(",")
+        if required_geos and supported_levels and "geo" in supported_levels:
+            need_to_support = set([my_geo[:3] for my_geo in required_geos])
+            required_levels = [consts.LEVEL_TO_GEO[slvl] for slvl in need_to_support]
+            cond_check = [x in supported_levels["geo"] for x in required_levels]
+            return all(cond_check)
+
         for show_col, show_level in shows_and_levels.items():
             if show_col not in supported_levels:
                 # print show_col, supported_levels, "Supported Levels"
