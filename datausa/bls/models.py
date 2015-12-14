@@ -6,12 +6,15 @@ from datausa.attrs.consts import NATION, STATE, MSA, ALL
 
 
 class Bls(BaseModel):
-    source_title = 'Bureau of Labor Statistics'
+    source_title = 'Growth'
+    source_org = 'Bureau of Labor Statistics'
+
     __table_args__ = {"schema": "bls"}
     source_link = 'http://bls.gov'
 
 
 class GrowthO(db.Model, Bls):
+    source_title = 'Occupation Growth'
     __tablename__ = 'growth_o'
     median_moe = 1
 
@@ -33,6 +36,7 @@ class GrowthO(db.Model, Bls):
         }
 
 class GrowthI(db.Model, Bls):
+    source_title = 'Industry Growth'
     __tablename__ = 'growth_i'
     median_moe = 2
 

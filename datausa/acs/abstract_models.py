@@ -95,6 +95,7 @@ class BaseAcs5(db.Model, BaseModel):
     supported_levels = {}
     source_title = 'ACS 5-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
+    source_org = 'Census Bureau'
 
     @declared_attr
     def year(cls):
@@ -107,6 +108,7 @@ class BaseAcs3(db.Model, BaseModel):
     supported_levels = {}
     source_title = 'ACS 3-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
+    source_org = 'Census Bureau'
 
     @declared_attr
     def year(cls):
@@ -119,6 +121,7 @@ class BaseAcs1(db.Model, BaseModel):
     supported_levels = {}
     source_title = 'ACS 1-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
+    source_org = 'Census Bureau'
 
     @declared_attr
     def year(cls):

@@ -15,6 +15,7 @@ class BaseIpeds(db.Model, BaseModel):
     supported_levels = {}
     source_title = 'NCES IPEDS'
     source_link = 'http://nces.ed.gov/ipeds/'
+    source_org = 'Department of Education'
 
 class Enrollment(BaseIpeds):
     __abstract__ = True

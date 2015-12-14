@@ -12,6 +12,7 @@ class BaseCbp(db.Model, BaseModel):
     __table_args__ = {"schema": "cbp"}
     source_title = 'County Business Patterns'
     source_link = 'http://www.census.gov/econ/cbp/'
+    source_org = 'Census Bureau'
 
     est = db.Column(db.Integer())
 

@@ -7,8 +7,9 @@ from datausa.attrs.consts import ALL
 class BeaUse(db.Model, BaseModel):
     __table_args__ = {"schema": "bea"}
     __tablename__ = 'use'
-    source_title = 'Bureau of Economic Analysis'
+    source_title = 'Use Tables'
     source_link = 'http://bea.gov'
+    source_org = 'Bureau of Economic Analysis'
 
     median_moe = 2
     to_filter = ["TOTCOMOUT", "HS", "ORE", "GFGD", "G", "TOTII", "GFGN", "GSLE",

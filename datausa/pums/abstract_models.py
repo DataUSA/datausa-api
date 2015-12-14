@@ -22,7 +22,7 @@ class BasePums(db.Model, BaseModel):
     __table_args__ = {"schema": "v2_pums_1year"}
     source_title = 'ACS PUMS 1-year Estimate'
     source_link = 'http://census.gov/programs-surveys/acs/technical-documentation/pums.html'
-
+    source_org = 'Census Bureau'
     num_records =  db.Column(db.Integer)
 
     @classmethod

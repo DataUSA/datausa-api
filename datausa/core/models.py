@@ -6,6 +6,7 @@ class BaseModel(object):
     size = None
     source_title = ''
     source_link = ''
+    source_org = ''
     # def __init__(levels, moe, size):
     #     self.supported_levels = levels
     #     self.median_moe = moe
@@ -22,6 +23,7 @@ class BaseModel(object):
             dataset = "{} {}".format(api_obj.get_year(), dataset)
         return {
             "dataset": dataset,
+            "org": cls.source_org,
             "table": cls.__tablename__,
             "link": cls.source_link,
             "supported_levels": cls.get_supported_levels(),
