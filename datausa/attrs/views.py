@@ -230,7 +230,7 @@ def zip_search(zc, limit=10):
     return jsonify(data=data, headers=headers, zip_search=True)
 
 
-@mod.route("/geo/<geo_id>/neighbors")
+@mod.route("/geo/<geo_id>/neighbors/")
 def neighbors(geo_id):
     results = GeoNeighbors.query.filter_by(geo=geo_id).all()
     headers = ["geo", "neighbor"]
@@ -267,4 +267,3 @@ def crosswalk_acs(attr_kind, attr_id):
         results = attr_obj.query.filter(getattr(attr_obj, attr_kind) == attr_id).with_entities(col_name).all()
         results = [[getattr(item, col_name), header_name] for item in results]
     return jsonify(data=results, headers=["attr_id", "attr_kind"])
-
