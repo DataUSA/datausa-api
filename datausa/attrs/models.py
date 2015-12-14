@@ -353,6 +353,12 @@ class GeoContainment(db.Model):
     child = relationship('Geo', foreign_keys='GeoContainment.child_geoid',
                          lazy='subquery')
 
+class GeoNeighbors(db.Model):
+    __tablename__ = 'geo_neighbors'
+    __table_args__ = {"schema": "attrs"}
+    geo = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
+    neighbor = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
+
 
 class AcsOcc(BaseAttr):
     __tablename__ = 'acs_occ'

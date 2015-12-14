@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify, abort
 
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
 from datausa.attrs.models import Cip, Naics, University, Soc, Degree
-from datausa.attrs.models import Race, Search, ZipLookup
+from datausa.attrs.models import Race, Search, ZipLookup, GeoNeighbors
 from datausa.attrs.models import OccCrosswalk, IndCrosswalk
 from datausa.attrs.models import Skill, Sector, Geo, AcsInd, PumsIoCrosswalk
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
@@ -230,6 +230,14 @@ def zip_search(zc, limit=10):
     return jsonify(data=data, headers=headers, zip_search=True)
 
 
+@mod.route("/geo/<geo_id>/neighbors")
+def neighbors(geo_id):
+    results = GeoNeighbors.query.filter_by(geo=geo_id).all()
+    headers = ["geo", "neighbor"]
+    data = [[result.geo, result.neighbor] for result in results]
+    return jsonify(data=data, headers=headers)
+
+
 @mod.route("/geo/<attr_id>/ipeds/")
 def has_ipeds_data(attr_id):
     from datausa.util import inmem
@@ -259,3 +267,4 @@ def crosswalk_acs(attr_kind, attr_id):
         results = attr_obj.query.filter(getattr(attr_obj, attr_kind) == attr_id).with_entities(col_name).all()
         results = [[getattr(item, col_name), header_name] for item in results]
     return jsonify(data=results, headers=["attr_id", "attr_kind"])
+
