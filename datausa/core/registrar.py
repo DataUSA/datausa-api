@@ -7,6 +7,7 @@ from datausa.cbp.models import *
 from datausa.bea.models import *
 from datausa.acs.models import *
 from datausa.acs.automap_models import *
+from datausa.acs.stats_models import *
 
 registered_models = [
     # PUMS
@@ -62,7 +63,8 @@ registered_models = [
     # ACS 3-year
     Acs3_Ygo_Num_Emp, Acs3_Ygi_Num_Emp, Acs3_Ygi_MedEarnings,
 
-
+    # Stats
+    CountyStats, MSAStats, PlaceStats, PUMAStats,
 ]
 
 
