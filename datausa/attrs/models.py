@@ -35,11 +35,12 @@ class ImageAttr(db.Model):
     image_link = db.Column(db.String)
     image_author = db.Column(db.String)
     image_path = db.Column(db.String)
+    url_name = db.Column(db.String)
 
-    HEADERS = ["id", "name", "image_link", "image_author", "image_path"]
+    HEADERS = ["id", "name", "image_link", "image_author", "image_path", "url_name"]
 
     def data_serialize(self):
-        return [self.id, self.name, self.image_link, self.image_author]
+        return [self.id, self.name, self.image_link, self.image_author, self.image_path, self.url_name]
 
 
 class University(BaseAttr):
