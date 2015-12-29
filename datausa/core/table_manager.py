@@ -7,6 +7,8 @@ from operator import attrgetter
 from sqlalchemy.sql import func
 from datausa import cache
 
+from datausa.acs.abstract_models import BaseAcs5, BaseAcs3, BaseAcs1
+
 
 def table_name(tbl):
     return "{}.{}".format(tbl.__table_args__["schema"],
@@ -52,16 +54,16 @@ class TableManager(object):
     @classmethod
     def schema_selector(cls, api_obj):
         # -- If there is a force to an "acs" table (5-year)
-        #    determine if we can instead use the acs_1year
+        #    determine if we can instead use the acs 1 year estimate
         #    schema.
         if hasattr(api_obj, "force") and api_obj.force and api_obj.vars_and_vals:
             schema, tblname = api_obj.force.split(".")
-            if schema and schema in ["acs", "acs_3year"]:
+            if schema and schema in [BaseAcs5.schema_name, BaseAcs3.schema_name]:
                 gvals = api_obj.vars_and_vals["geo"].split(",")
                 nation_state_only = all([v[:3] in ["010", "040"] for v in gvals])
                 not_ygi_ygo = all(["ygo" not in tblname, "ygi" not in tblname])
-                if schema != "acs_1year" and nation_state_only and not_ygi_ygo:
-                    new_fullname = "acs_1year.{}".format(tblname)
+                if schema != BaseAcs1.schema_name and nation_state_only and not_ygi_ygo:
+                    new_fullname = "{}.{}".format(BaseAcs1.schema_name, tblname)
                     if new_fullname in cls.table_years:
                         api_obj.force = new_fullname
                         api_obj.subs["force"] = api_obj.force
@@ -73,7 +75,7 @@ class TableManager(object):
         supported_levels = table.get_supported_levels()
         vars_and_vals = api_obj.vars_and_vals
         required_geos = [] if "geo" not in vars_and_vals else vars_and_vals["geo"].split(",")
-        if table.__table_args__["schema"] in ["acs", "acs_1year", "acs_3year"] and required_geos:
+        if table.__table_args__["schema"] in [BaseAcs5.schema_name, BaseAcs1.schema_name, BaseAcs3.schema_name] and required_geos:
             need_to_support = set([my_geo[:3] for my_geo in required_geos])
             required_levels = [consts.LEVEL_TO_GEO[slvl] for slvl in need_to_support]
             cond_check = [x in supported_levels["geo"] for x in required_levels]

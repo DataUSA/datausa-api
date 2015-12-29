@@ -4,10 +4,10 @@ from datausa.acs.abstract_models import BaseAcs1, BaseAcs5, GeoId, GeoId5, GeoId
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import MetaData
 
-metadata = MetaData(schema='acs')
+metadata = MetaData(schema=BaseAcs5.schema_name)
 AutomapBase = automap_base(bind=db.engine, metadata=metadata)
 
-metadata_1yr = MetaData(schema='acs_1year')
+metadata_1yr = MetaData(schema=BaseAcs1.schema_name)
 AutomapBase_1yr = automap_base(bind=db.engine, metadata=metadata_1yr)
 
 # 1 year
