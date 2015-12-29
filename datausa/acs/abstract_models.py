@@ -91,7 +91,7 @@ class GeoId5(GeoId):
 
 class BaseAcs5(db.Model, BaseModel):
     __abstract__ = True
-    schema_name = 'acs_5yr'
+    schema_name = 'acs'
     __table_args__ = {"schema": schema_name}
     supported_levels = {}
     source_title = 'ACS 5-year Estimate'
@@ -119,7 +119,7 @@ class BaseAcs3(db.Model, BaseModel):
 
 class BaseAcs1(db.Model, BaseModel):
     __abstract__ = True
-    schema_name = 'acs_1yr'
+    schema_name = 'acs_1year'
     __table_args__ = {"schema": schema_name}
     supported_levels = {}
     source_title = 'ACS 1-year Estimate'
