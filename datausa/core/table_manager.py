@@ -53,11 +53,17 @@ class TableManager(object):
     # table_sizes = tbl_sizes()
     @classmethod
     def schema_selector(cls, api_obj):
-        # -- If there is a force to an "acs" table (5-year)
+        # -- If there is a force to an "acs" table (defaults to 5-year)
         #    determine if we can instead use the acs 1 year estimate
         #    schema.
-        if hasattr(api_obj, "force") and api_obj.force and api_obj.vars_and_vals:
+        has_force =  hasattr(api_obj, "force") and api_obj.force
+        if has_force:
             schema, tblname = api_obj.force.split(".")
+            if schema == 'acs':
+                schema = BaseAcs5.schema_name
+                api_obj.force = "{}.{}".format(schema, tblname)
+                api_obj.subs["force"] = schema
+        if has_force and api_obj.vars_and_vals:
             if schema and schema in [BaseAcs5.schema_name, BaseAcs3.schema_name]:
                 gvals = api_obj.vars_and_vals["geo"].split(",")
                 nation_state_only = all([v[:3] in ["010", "040"] for v in gvals])
