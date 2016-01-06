@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 from datausa import cache
 
 from datausa.acs.abstract_models import BaseAcs5, BaseAcs3, BaseAcs1
-
+from datausa.util.big_places import is_big_geo
 
 def table_name(tbl):
     return "{}.{}".format(tbl.__table_args__["schema"],
@@ -60,9 +60,15 @@ class TableManager(object):
         if has_force:
             schema, tblname = api_obj.force.split(".")
             if schema == 'acs':
-                schema = BaseAcs5.schema_name
-                api_obj.force = "{}.{}".format(schema, tblname)
-                api_obj.subs["force"] = schema
+                if api_obj.force_schema:
+                    schema = BaseAcs1.schema_name
+                    api_obj.force = "{}.{}".format(schema, tblname)
+                    api_obj.subs["force"] = schema
+                    return api_obj
+                else:
+                    schema = BaseAcs5.schema_name
+                    api_obj.force = "{}.{}".format(schema, tblname)
+                    api_obj.subs["force"] = schema
         if has_force and api_obj.vars_and_vals:
             if schema and schema in [BaseAcs5.schema_name, BaseAcs3.schema_name]:
                 gvals = api_obj.vars_and_vals["geo"].split(",")
@@ -81,6 +87,11 @@ class TableManager(object):
         supported_levels = table.get_supported_levels()
         vars_and_vals = api_obj.vars_and_vals
         required_geos = [] if "geo" not in vars_and_vals else vars_and_vals["geo"].split(",")
+
+        if table.get_schema_name().startswith("acs"):
+            if api_obj.force_schema and table.schema_name != api_obj.force_schema:
+                return False
+
         if table.__table_args__["schema"] in [BaseAcs5.schema_name, BaseAcs1.schema_name, BaseAcs3.schema_name] and required_geos:
             need_to_support = set([my_geo[:3] for my_geo in required_geos])
             required_levels = [consts.LEVEL_TO_GEO[slvl] for slvl in need_to_support]
@@ -99,6 +110,8 @@ class TableManager(object):
 
         if api_obj.force and table.full_name() != api_obj.force:
             return False
+
+
         return True
 
     @classmethod
@@ -128,3 +141,17 @@ class TableManager(object):
     @classmethod
     def crosswalk(cls, table, api_obj):
         return crosswalker.crosswalk(table, api_obj)
+
+    @classmethod
+    def force_1yr_for_big_places(cls, api_obj):
+        if api_obj.vars_and_vals and "geo" in api_obj.vars_and_vals:
+            cond_a = "med_earnings" in api_obj.values or "med_earnings_moe" in api_obj.values
+            cond_b = "acs_ind" in api_obj.shows_and_levels
+            if cond_a and cond_b:
+                return api_obj
+            geos = api_obj.vars_and_vals["geo"].split(consts.OR)
+            if not api_obj.force or api_obj.force.startswith("acs."):
+                can_use_1yr = all([is_big_geo(geo) for geo in geos])
+                if can_use_1yr:
+                    api_obj.force_schema = BaseAcs1.schema_name
+        return api_obj

@@ -7,13 +7,15 @@ from datausa.attrs.consts import NATION, STATE, MSA, PLACE, PUMA, COUNTY, ALL
 
 class Acs1_Ygl_Speakers(BaseAcs1, GeoId1, Ygl_Speakers):
     __tablename__ = "ygl_speakers"
+    median_moe = 2.2
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": GeoId.LEVELS_1YR, "language": [consts.ALL]}
+        return {"geo": GeoId.LEVELS, "language": [consts.ALL]}
 
 class Acs5_Ygl_Speakers(BaseAcs5, GeoId5, Ygl_Speakers):
     __tablename__ = "ygl_speakers"
+    median_moe = 2
 
     @classmethod
     def get_supported_levels(cls):
@@ -35,6 +37,54 @@ class Acs3_Ygo_Num_Emp(BaseAcs3, GeoId, AcsOccId):
     @classmethod
     def get_supported_levels(cls):
         return {"geo": [NATION, STATE, MSA, ALL], "acs_occ": AcsOccId.LEVELS}
+
+
+class Acs1_Ygo_Num_Emp(BaseAcs1, GeoId, AcsOccId):
+    __tablename__ = "ygo_num_emp"
+    median_moe = 2.5
+
+    num_emp = db.Column(db.Float)
+    num_emp_moe = db.Column(db.Float)
+    num_emp_rca = db.Column(db.Float)
+    num_emp_male = db.Column(db.Float)
+    num_emp_moe_male = db.Column(db.Float)
+    num_emp_female = db.Column(db.Float)
+    num_emp_moe_female = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": [NATION, COUNTY, MSA, PLACE, PUMA, ALL], "acs_occ": AcsOccId.LEVELS}
+
+
+class Acs1_Ygo_Earnings(BaseAcs1, GeoId, AcsOccId):
+    __tablename__ = "ygo_med_earnings"
+    median_moe = 2.5
+
+    med_earnings = db.Column(db.Float)
+    med_earnings_male = db.Column(db.Float)
+    med_earnings_female = db.Column(db.Float)
+    med_earnings_moe = db.Column(db.Float)
+    med_earnings_moe_female = db.Column(db.Float)
+    med_earnings_moe_male = db.Column(db.Float)
+    med_earnings_rca = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": [NATION, STATE, COUNTY, MSA, PLACE, PUMA, ALL], "acs_occ": AcsOccId.LEVELS}
+
+
+class Acs1_Ygi_Num_Emp(BaseAcs1, AcsIndId, GeoId):
+    __tablename__ = "ygi_num_emp"
+    median_moe = 2.5
+
+    num_emp = db.Column(db.Float)
+    num_emp_moe = db.Column(db.Float)
+    num_emp_rca = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
+                "acs_ind": ["0", "1", ALL]}
 
 
 class Acs5_Ygo_Num_Emp(BaseAcs5, GeoId, AcsOccId):

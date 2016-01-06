@@ -4,6 +4,7 @@ from datausa.core import table_manager
 from datausa.core import api
 from datausa.core.models import ApiObject
 from datausa.core.crosswalker import crosswalk
+from datausa.util.big_places import is_big_geo
 
 mod = Blueprint('core', __name__, url_prefix='/api')
 
@@ -47,6 +48,7 @@ def build_api_obj():
 @mod.route("/csv/", defaults={'csv': True})
 def api_view(csv=None):
     api_obj = build_api_obj()
+    api_obj = manager.force_1yr_for_big_places(api_obj)
     api_obj = manager.schema_selector(api_obj)
     table_list = manager.all_tables(api_obj)
     table = manager.select_best(table_list, api_obj)

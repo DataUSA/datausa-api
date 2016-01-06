@@ -1,5 +1,6 @@
 from datausa.core.exceptions import DataUSAException
-from datausa.attrs.consts import ALL
+from datausa.attrs.consts import ALL, OR
+
 
 class BaseModel(object):
     median_moe = None
@@ -35,6 +36,10 @@ class BaseModel(object):
         schema_name = cls.__table_args__["schema"]
         return "{}.{}".format(schema_name, table_name)
 
+    @classmethod
+    def get_schema_name(cls):
+        return cls.__table_args__["schema"]
+
 
 class ApiObject(object):
     def __init__(self, **kwargs):
@@ -55,14 +60,13 @@ class ApiObject(object):
             self.exclude = self.exclude.split(",")
         if hasattr(self, "year") and self.year != ALL:
             self._year = self.year
-
+        self.force_schema = None
         # if not "geo" in self.shows_and_levels and "geo" in self.vars_and_vals:
         #     if self.vars_and_vals["geo"]:
         #         prefix = self.vars_and_vals["geo"][:3]
         #         lookup = {"010": "nation", "040": "state", "050": "county", "310":"msa", "795":"puma", "160":"place"}
         #         if prefix in lookup:
         #             self.shows_and_levels["geo"] = lookup[prefix]
-
     def set_year(self, yr):
         self._year = str(int(yr))
 
