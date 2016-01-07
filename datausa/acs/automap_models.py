@@ -17,55 +17,55 @@ class Acs1_Yg_Income(AutomapBase_1yr, BaseAcs1, GeoId1):
 
 class Acs1_Yg_Poverty(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = 'yg_poverty'
-    median_moe = 1
+    median_moe = 1.2
 
 class Acs1_Yg_Tenure(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = 'yg_tenure'
-    median_moe = 1
+    median_moe = 1.2
 
 class Acs1_Yg(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = "yg"
-    median_moe = 1
+    median_moe = 1.2
 
 class Acs1_Yg_IncDist(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = "yg_income_distribution"
-    median_moe = 2
+    median_moe = 2.2
 
 class Acs1_Yg_PovertyRace(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = 'yg_poverty_race'
-    median_moe = 2
+    median_moe = 2.2
 
 class Acs1_Yg_NatAge(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = 'yg_nativity_age'
-    median_moe = 1
+    median_moe = 1.2
 
 class Acs1_Yg_Race(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = 'yg_race'
-    median_moe = 1
+    median_moe = 1.2
 
 class Acs1_Yg_Conflict(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = "yg_conflict"
-    median_moe = 2
+    median_moe = 2.2
 
 class Acs1_Yg_PropertyValue(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = 'yg_property_value'
-    median_moe = 1
+    median_moe = 1.2
 
 class Acs1_Yg_PropertyTax(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = 'yg_property_tax'
-    median_moe = 1
+    median_moe = 1.2
 
 class Acs1_Yg_Vehicles(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = 'yg_vehicles'
-    median_moe = 1
+    median_moe = 1.2
 
 class Acs1_Yg_TravelTime(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = 'yg_travel_time'
-    median_moe = 1
+    median_moe = 1.2
 
 class Acs1_Yg_Transport(AutomapBase_1yr, BaseAcs1, GeoId1):
     __tablename__ = 'yg_transport'
-    median_moe = 1
+    median_moe = 1.2
 
 # 5 year
 
