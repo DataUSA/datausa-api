@@ -14,7 +14,7 @@ class BeaUse(db.Model, BaseModel):
     median_moe = 2
     to_filter = ["TOTCOMOUT", "HS", "ORE", "GFGD", "G", "TOTII", "GFGN", "GSLE",
                  "GFE", "GSLG", "Other", "Used", "TOTFU", "V001", "V002",
-                 "V003", "TOTINDOUT", "TOTVA"]
+                 "V003", "TOTINDOUT"]
     year = db.Column(db.Integer, primary_key=True)
     industry_iocode = db.Column(db.String, db.ForeignKey(IoCode.id), primary_key=True)
     commodity_iocode = db.Column(db.String, db.ForeignKey(IoCode.id), primary_key=True)
