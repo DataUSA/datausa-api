@@ -130,6 +130,7 @@ class Cip(BaseAttr, ImageAttr):
     __tablename__ = 'course'
     level = db.Column(db.Integer)
     name_long = db.Column(db.String)
+    is_stem = db.Column(db.Boolean)
 
     @classmethod
     def parents(cls, cip_id, **kwargs):
