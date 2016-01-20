@@ -173,6 +173,7 @@ class Geo(BaseAttr, ImageAttr):
     display_name = db.Column(db.String)
     name_long = db.Column(db.String)
     sumlevel = db.Column(db.String)
+    HEADERS = ["id", "name", "url_name"]
 
     @classmethod
     def parents(cls, geo):
@@ -186,13 +187,13 @@ class Geo(BaseAttr, ImageAttr):
                     geos2.append(g)
             else:
                 geos2.append(g)
-        levels = [[gobj.parent.id, gobj.parent.name] for gobj in geos2]
+        levels = [[gobj.parent.id, gobj.parent.name, gobj.parent.url_name] for gobj in geos2]
         if mysumlevel in ['050', '140', '795', '160']:
             state_id = "04000US" + geo.split("US")[1][:2]
             state = Geo.query.filter_by(id=state_id).one()
-            levels.insert(0, [state_id, state.name])
+            levels.insert(0, [state_id, state.name, state.url_name])
         if mysumlevel != '010':
-            levels.insert(0, ["01000US", "United States"])
+            levels.insert(0, ["01000US", "United States", "united-states"])
         return levels, Geo.HEADERS
 
     @classmethod
