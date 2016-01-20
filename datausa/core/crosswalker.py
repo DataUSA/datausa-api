@@ -1,6 +1,7 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
 from datausa.attrs.models import GeoContainment, Soc
 from datausa.bls.models import BlsCrosswalk, SocCrosswalk, GrowthI, GrowthILookup
+from datausa.pums.abstract_models import BasePums
 from datausa.attrs.consts import OR
 from datausa import cache
 from sqlalchemy import or_, and_
@@ -114,6 +115,7 @@ def industry_iocode_func(naics, api_obj=None):
 def crosswalk(table, api_obj):
     '''Given a table and an API object, determine if any crosswalks need
     to be performed'''
+    pums_schema_name = BasePums.get_schema_name()
     registered_crosswalks = [
         {"column": "industry_iocode", "schema": "bea", "mapping": industry_iocode_func},
         {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
@@ -125,9 +127,9 @@ def crosswalk(table, api_obj):
 
         # cbp uses same naics coding as bls
         {"column": "naics", "schema": "cbp", "mapping": pums_to_bls_naics_map},
-        {"column": "naics", "schema": "v2_pums_1year", "mapping": naics_map},
-        {"column": "cip", "schema": "v2_pums_1year", "mapping": truncate_cip},
-        {"column": "geo", "schema": "v2_pums_1year", "mapping": pums_parent_puma},
+        {"column": "naics", "schema": pums_schema_name, "mapping": naics_map},
+        {"column": "cip", "schema": pums_schema_name, "mapping": truncate_cip},
+        {"column": "geo", "schema": pums_schema_name, "mapping": pums_parent_puma},
         {"column": "geo", "schema": "chr", "mapping": chr_parents}
 
     ]
