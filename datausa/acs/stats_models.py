@@ -13,6 +13,20 @@ class BaseStat(db.Model, BaseModel):
     source_org = 'Census Bureau'
 
 
+class StateStats(BaseStat, GeoId):
+    __tablename__ = "state"
+    median_moe = 1.2
+
+    year = db.Column(db.Integer, primary_key=True)
+    state_rank = db.Column(db.Integer)
+    top_places = db.Column(postgresql.ARRAY(db.String))
+    top_counties = db.Column(postgresql.ARRAY(db.String))
+    state_neighbors = db.Column(postgresql.ARRAY(db.String))
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": [consts.STATE]}
+
 
 class CountyStats(BaseStat, GeoId):
     __tablename__ = "counties"

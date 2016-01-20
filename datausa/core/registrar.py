@@ -65,7 +65,7 @@ registered_models = [
     Acs3_Ygo_Num_Emp, Acs3_Ygi_Num_Emp, Acs3_Ygi_MedEarnings,
 
     # Stats
-    CountyStats, MSAStats, PlaceStats, PUMAStats,
+    StateStats, CountyStats, MSAStats, PlaceStats, PUMAStats,
 ]
 
 
