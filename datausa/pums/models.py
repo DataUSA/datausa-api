@@ -45,7 +45,7 @@ class Ycb(BasePums, Employees, Year, CipId, BirthplaceId, EmployeesRca):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", ALL], "birthplace": ALL} # TODO support in/out of US?
+        return {"cip": ["2", ALL], "birthplace": [ALL]} # TODO support in/out of US?
 
 class Ycd(BasePums, Employees, Year, CipId, DegreeId):
     __tablename__ = "ycd"
@@ -63,6 +63,11 @@ class Yg(BasePums, Employees, Year, GeoId, EmployeesGini):
 class Ygd(BasePums, Employees, Year, GeoId, DegreeId):
     __tablename__ = "ygd"
     median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS, "degree": [ALL]}
+
 
 class Ygi(BasePums, Employees, Year, GeoId, NaicsId, EmployeesRca):
     __tablename__ = "ygi"
@@ -110,7 +115,7 @@ class Yow(BasePums, Employees, Year, SocId, WageId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"soc": SocId.LEVELS, "wage_bin": ALL}
+        return {"soc": SocId.LEVELS, "wage_bin": [ALL]}
 
 
 class Yiw(BasePums, Employees, Year, NaicsId, WageId):
@@ -119,7 +124,7 @@ class Yiw(BasePums, Employees, Year, NaicsId, WageId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"naics": NaicsId.LEVELS, "wage_bin": ALL}
+        return {"naics": NaicsId.LEVELS, "wage_bin": [ALL]}
 
 
 class Ygo(BasePums, Employees, Year, GeoId, SocId, EmployeesRca):
@@ -136,7 +141,7 @@ class Ygw(BasePums, Employees, Year, GeoId, WageId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": GeoId.LEVELS, "wage_bin": ALL}
+        return {"geo": GeoId.LEVELS, "wage_bin": [ALL]}
 
 
 class Yor(BasePums, Employees, Year, SocId, RaceId):
