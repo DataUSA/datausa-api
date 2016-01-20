@@ -2,15 +2,17 @@ import os
 import os.path
 from whoosh import index
 from whoosh.fields import Schema, ID, TEXT, NUMERIC, KEYWORD, NGRAM, NGRAMWORDS
+from whoosh.fields import BOOLEAN
 from config import SEARCH_INDEX_DIR
 
 
-def manual_add(writer, name, display, orig_id):
+def manual_add(writer, name, display, orig_id, is_stem=False, url_name=None):
     from datausa.attrs.models import Search
     doc_obj = Search.query.filter_by(id=orig_id).first()
     writer.add_document(id=doc_obj.id, name=name,
                         display=display, zvalue=doc_obj.zvalue*1.5,
-                        kind=doc_obj.kind, sumlevel=doc_obj.sumlevel)
+                        kind=doc_obj.kind, sumlevel=doc_obj.sumlevel,
+                        is_stem=is_stem, url_name=url_name)
 
 def get_schema():
     return Schema(id=ID(unique=True, stored=True),
@@ -18,7 +20,9 @@ def get_schema():
                   display=TEXT(stored=True),
                   zvalue=NUMERIC(stored=True),
                   kind=KEYWORD(stored=True),
-                  sumlevel=KEYWORD(stored=True))
+                  sumlevel=KEYWORD(stored=True),
+                  is_stem=BOOLEAN(stored=True),
+                  url_name=TEXT(stored=True))
 
 if __name__ == '__main__':
     print "got here!"
@@ -35,12 +39,14 @@ if __name__ == '__main__':
     all_objs = Search.query.all()
     for obj in all_objs:
         dname = obj.display
+        stem = False if not hasattr(obj, "is_stem") else obj.is_stem
         if dname:
             dname = dname.lower().replace(",", "")
             dname = dname.replace(".", "")
         writer.add_document(id=obj.id, name=dname,
                             display=obj.display, zvalue=obj.zvalue,
-                            kind=obj.kind, sumlevel=obj.sumlevel)
+                            kind=obj.kind, sumlevel=obj.sumlevel,
+                            is_stem=stem, url_name=obj.url_name)
 
     # Custom synonyms to help with search
     manual_add(writer, u'doctors', u'Doctors', '291060')

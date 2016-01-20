@@ -17,6 +17,9 @@ from config import SEARCH_INDEX_DIR
 
 import re
 
+def to_bool(x):
+    return x and x.lower() == "true"
+
 class CWeighting(scoring.Weighting):
     def __init__(self, fullterm):
         self.termweight = scoring.BM25F()
@@ -124,7 +127,7 @@ def get_children(kind, attr_id):
     raise Exception("Invalid attribute type.")
 
 
-def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10):
+def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
     my_filter = None
     if kind and sumlevel:
         kf = query.Term("kind", kind)
@@ -134,8 +137,13 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10):
         my_filter = query.Term("kind", kind)
     elif sumlevel:
         my_filter = query.Term("sumlevel", sumlevel)
+    if is_stem and my_filter is not None:
+        my_filter = my_filter & query.Term("is_stem", True)
+    elif is_stem and my_filter is None:
+        my_filter = query.Term("is_stem", True)
+
     if tries > 2:
-        return [],[]
+        return [],[],[]
     q = qp.parse(txt)
 
     with ix.searcher(weighting=CWeighting(txt)) as s:
@@ -143,10 +151,13 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10):
         suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
         results = s.search_page(q, 1, sortedby=[scores], pagelen=20, filter=my_filter)
         data = [[r["id"], r["name"], r["zvalue"],
-                 r["kind"], r["display"], r["sumlevel"] if "sumlevel" in r else ""]
+                 r["kind"], r["display"],
+                 r["sumlevel"] if "sumlevel" in r else "",
+                 r["is_stem"] if "is_stem" in r else False,
+                 r["url_name"] if "url_name" in r else None]
                 for r in results]
         if not data and suggs:
-            return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit)
+            return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit, is_stem=is_stem)
         return data, suggs, tries
 
 @mod.route("/search/")
@@ -156,14 +167,15 @@ def search():
     kind = request.args.get("kind", None)
     sumlevel = request.args.get("sumlevel", None)
     txt = request.args.get("q", '').lower()
+    is_stem = to_bool(request.args.get("is_stem", None))
 
     if txt and re.match('^[0-9]{1,5}$', txt):
         return zip_search(txt, limit=limit)
     elif not txt or len(txt) <= 2:
         return search_old()
 
-    data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit)
-    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
+    data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit, is_stem=is_stem)
+    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "is_stem", "url_name"]
     autocorrected = tries > 0
     suggs = [x for x in suggs if x != txt]
     return jsonify(data=data, headers=headers, suggestions=suggs, autocorrected=autocorrected)
@@ -176,19 +188,22 @@ def search_old():
     limit = request.args.get("limit", 100)
     kind = request.args.get("kind", None)
     sumlevel = request.args.get("sumlevel", None)
+    is_stem = to_bool(request.args.get("is_stem", None))
     filters = [Search.name.like("%{}%".format(q))]
     if kind:
         filters.append(Search.kind == kind)
     if sumlevel:
         filters.append(Search.sumlevel == sumlevel)
+    if is_stem:
+        filters.append(Search.is_stem == is_stem)
     qry = Search.query.filter(*filters).order_by(Search.zvalue.desc())
     if limit:
         qry = qry.limit(int(limit))
     if offset:
         qry = qry.offset(int(offset))
     qry = qry.all()
-    data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.sumlevel] for a in qry]
-    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel"]
+    data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.sumlevel, a.is_stem, a.url_name] for a in qry]
+    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "is_stem", "url_name"]
     return jsonify(data=data, headers=headers)
 
 
@@ -223,10 +238,10 @@ def zip_search(zc, limit=10):
     qry = qry.order_by(ZipLookup.parent_area.asc())
 
     qry = qry.with_entities(Search.id, Search.name, Search.zvalue, Search.kind,
-                            Search.display, Search.sumlevel, ZipLookup.child_geoid)
+                            Search.display, Search.sumlevel, ZipLookup.child_geoid, Search.is_stem, Search.url_name)
     qry = qry.limit(limit)
     data = [list(row) for row in qry]
-    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "zipcode"]
+    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "zipcode", "is_stem", "url_name"]
     return jsonify(data=data, headers=headers, zip_search=True)
 
 

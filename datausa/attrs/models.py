@@ -403,7 +403,8 @@ class Search(BaseAttr):
     kind = db.Column(db.String)
     display = db.Column(db.String)
     sumlevel = db.Column(db.String)
-
+    is_stem = db.Column(db.Boolean)
+    url_name = db.Column(db.String)
 
 class ZipLookup(db.Model):
     __tablename__ = 'zip_lookup'
