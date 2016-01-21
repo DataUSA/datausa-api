@@ -36,7 +36,7 @@ class GrowthO(db.Model, Bls):
         }
 
 class GrowthI(db.Model, Bls):
-    source_title = 'Industry Growth'
+    source_title = 'Industry Projections'
     __tablename__ = 'growth_i'
     median_moe = 2
 
