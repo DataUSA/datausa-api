@@ -2,6 +2,7 @@ from datausa.database import db
 from datausa.attrs.models import IoCode
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import ALL
+from datausa.attrs.consts import NO_VALUE_ADDED
 # from sqlalchemy import and_
 
 class BeaUse(db.Model, BaseModel):
@@ -13,8 +14,9 @@ class BeaUse(db.Model, BaseModel):
 
     median_moe = 2
     to_filter = ["TOTCOMOUT", "HS", "ORE", "GFGD", "G", "TOTII", "GFGN", "GSLE",
-                 "GFE", "GSLG", "Other", "Used", "TOTFU", "V001", "V002",
-                 "V003", "TOTINDOUT"]
+                 "GFE", "GSLG", "Other", "Used", "TOTFU", "TOTVA", "TOTINDOUT"]
+    no_value_added = to_filter + ["V001", "V002", "V003", "F010", "F020", "F030",
+                                  "F040", "F050" "F100"]
     year = db.Column(db.Integer, primary_key=True)
     industry_iocode = db.Column(db.String, db.ForeignKey(IoCode.id), primary_key=True)
     commodity_iocode = db.Column(db.String, db.ForeignKey(IoCode.id), primary_key=True)
@@ -25,8 +27,8 @@ class BeaUse(db.Model, BaseModel):
     @classmethod
     def get_supported_levels(cls):
         return {
-            "industry_iocode": [ALL, "0", "1", "naics"],
-            "commodity_iocode": [ALL, "naics"],
+            "industry_iocode": [ALL, "0", "1", "naics", NO_VALUE_ADDED],
+            "commodity_iocode": [ALL, "naics", NO_VALUE_ADDED],
         }
 
     @classmethod
@@ -35,6 +37,8 @@ class BeaUse(db.Model, BaseModel):
             return True
         elif level == "naics":
             return ~cls.industry_iocode.in_(cls.to_filter)
+        elif level == NO_VALUE_ADDED:
+            return ~cls.industry_iocode.in_(cls.no_value_added)
         target_len = int(level)
         return cls.industry_level == target_len
 
@@ -42,4 +46,6 @@ class BeaUse(db.Model, BaseModel):
     def commodity_iocode_filter(cls, level):
         if level == ALL:
             return True
+        elif level == NO_VALUE_ADDED:
+            return ~cls.commodity_iocode.in_(cls.no_value_added)
         return ~cls.commodity_iocode.in_(cls.to_filter)

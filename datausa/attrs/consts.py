@@ -19,3 +19,4 @@ GEO_LEVEL_MAP = {NATION: "010", STATE: "040", COUNTY: "050",
 LEVEL_TO_GEO = {v: k for k,v in GEO_LEVEL_MAP.items()}
 
 POP_THRESHOLD = 250000
+NO_VALUE_ADDED = 'no_value_added'
