@@ -14,7 +14,7 @@ class Bls(BaseModel):
 
 
 class GrowthO(db.Model, Bls):
-    source_title = 'Occupation Growth'
+    source_title = 'Employment Projections'
     __tablename__ = 'growth_o'
     median_moe = 1
 
