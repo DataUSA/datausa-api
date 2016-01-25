@@ -9,7 +9,7 @@ from datausa.attrs.models import Skill, Sector, Geo, AcsInd, PumsIoCrosswalk
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
-from datausa.attrs.consts import ALL, GEO
+from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
 
 from whoosh.qparser import QueryParser
 from whoosh import index, sorting, qparser, scoring, query
@@ -59,8 +59,12 @@ attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "language": AcsLanguage,
             "bls_soc": Soc, "bls_naics": Naics}
 
-def show_attrs(attr_obj):
-    if attr_obj is Geo:
+def show_attrs(attr_obj, sumlevels=None):
+    if sumlevels is not None:
+        if attr_obj is Geo:
+            sumlevels = [GEO_LEVEL_MAP[lvl] if lvl in GEO_LEVEL_MAP else lvl for lvl in sumlevels]
+        attrs = attr_obj.query.filter(attr_obj.sumlevel.in_(sumlevels)).all()
+    elif attr_obj is Geo:
         # exclude census tracts
         attrs = attr_obj.query.filter(~Geo.id.startswith("140")).all()
     else:
@@ -88,7 +92,9 @@ def attrs(kind):
 
     if kind in attr_map:
         attr_obj = attr_map[kind]
-        return show_attrs(attr_obj)
+        sumlevel = request.args.get("sumlevel", None)
+        sumlevels = sumlevel.split(",") if sumlevel else None
+        return show_attrs(attr_obj, sumlevels=sumlevels)
     raise Exception("Invalid attribute type.")
 
 @mod.route("/<kind>/<attr_id>/")
