@@ -67,8 +67,8 @@ def show_attrs(attr_obj, sumlevels=None):
         else:
             attrs = attr_obj.query.filter(attr_obj.level.in_(sumlevels)).all()
     elif attr_obj is Geo:
-        # exclude census tracts
-        attrs = attr_obj.query.filter(~Geo.id.startswith("140")).all()
+        # exclude census tracts and ZIPs
+        attrs = attr_obj.query.filter(~Geo.id.startswith("140"), ~Geo.id.startswith("860")).all()
     else:
         attrs = attr_obj.query.all()
 
