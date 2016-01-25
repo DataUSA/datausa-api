@@ -63,7 +63,9 @@ def show_attrs(attr_obj, sumlevels=None):
     if sumlevels is not None:
         if attr_obj is Geo:
             sumlevels = [GEO_LEVEL_MAP[lvl] if lvl in GEO_LEVEL_MAP else lvl for lvl in sumlevels]
-        attrs = attr_obj.query.filter(attr_obj.sumlevel.in_(sumlevels)).all()
+            attrs = attr_obj.query.filter(attr_obj.sumlevel.in_(sumlevels)).all()
+        else:
+            attrs = attr_obj.query.filter(attr_obj.level.in_(sumlevels)).all()
     elif attr_obj is Geo:
         # exclude census tracts
         attrs = attr_obj.query.filter(~Geo.id.startswith("140")).all()
