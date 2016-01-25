@@ -399,10 +399,11 @@ class Conflict(BaseAttr):
 
 class Search(BaseAttr):
     __tablename__ = 'search'
+    id = db.Column(db.String, primary_key=True)
     zvalue = db.Column(db.Float)
-    kind = db.Column(db.String)
+    kind = db.Column(db.String, primary_key=True)
     display = db.Column(db.String)
-    sumlevel = db.Column(db.String)
+    sumlevel = db.Column(db.String, primary_key=True)
     is_stem = db.Column(db.Boolean)
     url_name = db.Column(db.String)
 

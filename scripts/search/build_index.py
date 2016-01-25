@@ -15,7 +15,7 @@ def manual_add(writer, name, display, orig_id, is_stem=False, url_name=None):
                         is_stem=is_stem, url_name=url_name)
 
 def get_schema():
-    return Schema(id=ID(unique=True, stored=True),
+    return Schema(id=ID(stored=True),
                   name=NGRAMWORDS(stored=True, minsize=2, maxsize=12, at='start', queryor=True),
                   display=TEXT(stored=True),
                   zvalue=NUMERIC(stored=True),
