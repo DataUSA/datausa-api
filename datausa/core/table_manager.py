@@ -147,7 +147,8 @@ class TableManager(object):
         if api_obj.vars_and_vals and "geo" in api_obj.vars_and_vals:
             cond_a = "med_earnings" in api_obj.values or "med_earnings_moe" in api_obj.values
             cond_b = "acs_ind" in api_obj.shows_and_levels
-            if cond_a and cond_b:
+            cond_c = any(["languge" in api_obj.shows_and_levels, "language" in api_obj.values, "num_speakers" in api_obj.values, "num_speakers_moe" in api_obj.values, "num_speakers_rca" in api_obj.values])
+            if (cond_a and cond_b) or cond_c:
                 return api_obj
             geos = api_obj.vars_and_vals["geo"].split(consts.OR)
             if not api_obj.force or api_obj.force.startswith("acs."):
