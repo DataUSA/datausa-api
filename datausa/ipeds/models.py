@@ -95,6 +95,7 @@ class GradsYg(Grads, GeoId):
     median_moe = 1
 
     year = db.Column(db.Integer, primary_key=True)
+    grads_total_growth = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
