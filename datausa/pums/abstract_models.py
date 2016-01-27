@@ -39,6 +39,15 @@ class BasePums(db.Model, BaseModel):
     def __repr__(self):
         return '<{}>'.format(self.__class__)
 
+
+class BasePums5(BasePums):
+    __abstract__ = True
+    __table_args__ = {"schema": "pums_5yr"}
+    source_title = 'ACS PUMS 5-year Estimate'
+    source_link = 'http://census.gov/programs-surveys/acs/technical-documentation/pums.html'
+    source_org = 'Census Bureau'
+
+
 class Personal(object):
     avg_age = db.Column(db.Float)
     avg_wage =  db.Column(db.Float)

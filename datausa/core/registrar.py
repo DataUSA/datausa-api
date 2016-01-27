@@ -1,4 +1,5 @@
 from datausa.pums.models import *
+from datausa.pums.models_5 import *
 from datausa.ipeds.models import *
 from datausa.onet.models import *
 from datausa.chr.models import *
@@ -19,6 +20,9 @@ registered_models = [
     Yi, Yio, Yior, Yios, Yocd, Yid, Yir, Yis,
     Yiw,
     Ya,
+
+    # PUMS 5-year tables
+    Ygo5, Ygi5, Yoas5,
 
     # IPEDS
     TuitionYc, TuitionYcu, TuitionYcs, TuitionYgs,
