@@ -2,7 +2,6 @@ from datausa.pums.abstract_models import *
 from datausa.attrs.consts import ALL
 
 
-
 class Ygi5(BasePums5, Employees, Year, GeoId, NaicsId, EmployeesRca):
     __tablename__ = "ygi"
     median_moe = 1.9
@@ -29,3 +28,13 @@ class Yoas5(BasePums5, EmployeesWithAge, Year, SocId, SexId):
     @classmethod
     def get_supported_levels(cls):
         return {"soc": SocId.LEVELS, "sex": [ALL], "age": [ALL]}
+
+
+class Ygor5(BasePums5, Employees, Year, GeoId, SocId, RaceId):
+    __tablename__ = "ygor"
+    median_moe = 2.9
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS,
+                "race": [ALL]}
