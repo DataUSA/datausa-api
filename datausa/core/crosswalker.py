@@ -1,7 +1,7 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
 from datausa.attrs.models import GeoContainment, Soc
 from datausa.bls.models import BlsCrosswalk, SocCrosswalk, GrowthI, GrowthILookup
-from datausa.pums.abstract_models import BasePums
+from datausa.pums.abstract_models import BasePums, BasePums5
 from datausa.attrs.consts import OR
 from datausa import cache
 from sqlalchemy import or_, and_
@@ -116,6 +116,8 @@ def crosswalk(table, api_obj):
     '''Given a table and an API object, determine if any crosswalks need
     to be performed'''
     pums_schema_name = BasePums.get_schema_name()
+    pums5_schema_name = BasePums5.get_schema_name()
+
     registered_crosswalks = [
         {"column": "industry_iocode", "schema": "bea", "mapping": industry_iocode_func},
         {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
@@ -130,6 +132,9 @@ def crosswalk(table, api_obj):
         {"column": "naics", "schema": pums_schema_name, "mapping": naics_map},
         {"column": "cip", "schema": pums_schema_name, "mapping": truncate_cip},
         {"column": "geo", "schema": pums_schema_name, "mapping": pums_parent_puma},
+        {"column": "naics", "schema": pums5_schema_name, "mapping": naics_map},
+        {"column": "cip", "schema": pums5_schema_name, "mapping": truncate_cip},
+        {"column": "geo", "schema": pums5_schema_name, "mapping": pums_parent_puma},
         {"column": "geo", "schema": "chr", "mapping": chr_parents}
 
     ]
