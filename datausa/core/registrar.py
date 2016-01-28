@@ -22,7 +22,7 @@ registered_models = [
     Ya,
 
     # PUMS 5-year tables
-    # Ygo5, Ygi5, Yoas5,
+    Ygo5, Ygi5, Yoas5,
 
     # IPEDS
     TuitionYc, TuitionYcu, TuitionYcs, TuitionYgs,
