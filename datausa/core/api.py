@@ -7,6 +7,7 @@ from datausa.core.table_manager import TableManager, table_name
 from datausa.attrs import consts
 from datausa.attrs.views import attr_map
 from sqlalchemy.orm import aliased
+from datausa.util.inmem import splitter
 
 def use_attr_names(table, qry, cols):
     new_cols = []
@@ -70,7 +71,7 @@ def where_filters(table, where_str):
         return []
     filts = []
 
-    wheres = where_str.split(",")
+    wheres = splitter(where_str)
     for where in wheres:
         colname, cond = where.split(":")
         col = getattr(table, colname)
@@ -109,7 +110,7 @@ def process_value_filters(table, vars_and_vals, api_obj):
             filt = table.year == my_year
             api_obj.set_year(my_year)
         elif consts.OR in val:
-            filt = getattr(table, var).in_(val.split(consts.OR))
+            filt = getattr(table, var).in_(splitter(val))
         else:
             filt = getattr(table, var) == val
         filts.append(filt)
@@ -128,7 +129,7 @@ def remove_filters(filters, table, col, api_obj):
 
 def copy_where_literals(api_obj):
     if hasattr(api_obj, "where") and api_obj.where:
-        wheres = api_obj.where.split(",")
+        wheres = splitter(api_obj.where)
         for where in wheres:
             colname, cond = where.split(":")
             if colname not in api_obj.vars_and_vals:

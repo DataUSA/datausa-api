@@ -5,7 +5,7 @@ from datausa.pums.abstract_models import BasePums, BasePums5
 from datausa.attrs.consts import OR
 from datausa import cache
 from sqlalchemy import or_, and_
-from datausa.util.inmem import onet_socs, onet_cips
+from datausa.util.inmem import onet_socs, onet_cips, splitter
 
 def truncate_cip(x, api_obj=None):
      return x[:2]
@@ -151,7 +151,7 @@ def crosswalk(table, api_obj):
                 continue
 
             curr_vals_str = api_obj.vars_and_vals[column]
-            curr_vals = curr_vals_str.split(OR)
+            curr_vals = splitter(curr_vals_str)
             if isinstance(mapping, dict):
                 new_vals = [mapping[val] if val in mapping else val for val in curr_vals]
             else:
