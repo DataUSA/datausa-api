@@ -60,6 +60,7 @@ class University(BaseAttr):
 
 class Naics(BaseAttr):
     __tablename__ = 'bls_naics'
+    level = db.Column(db.Integer)
 
     @classmethod
     def parents(cls, naics_id):

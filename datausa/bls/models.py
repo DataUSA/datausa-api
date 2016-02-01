@@ -112,6 +112,31 @@ class OesYgo(db.Model, Bls):
         return cls.geo.startswith(level_code)
 
 
+class CesYi(db.Model, Bls):
+    __tablename__ = 'ces_yi'
+    median_moe = 1.5
+
+    JOINED_FILTER = {"naics": {
+                            "table": Naics,
+                            "column": Naics.level,
+                            "id": Naics.id,
+    }}
+
+    year = db.Column(db.Integer, primary_key=True)
+    naics = db.Column(db.String, db.ForeignKey(Naics.id), primary_key=True)
+
+    avg_hrly_earnings = db.Column(db.Float)
+    avg_wkly_hrs = db.Column(db.Float)
+    employees_thousands = db.Column(db.Float)
+
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "naics": [ALL, "0", "1", "2", "3", "4"]
+        }
+
+
 class QcewYgi(db.Model, Bls):
     __tablename__ = 'qcew_ygi'
     median_moe = 2
