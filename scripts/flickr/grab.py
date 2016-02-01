@@ -6,6 +6,10 @@ from PIL import Image as pillow
 
 def read_csv():
 
+    max_side = 1600
+    thumb_side = 400
+    quality = 90
+
     if len(sys.argv) < 3:
         print "------------------------------------------"
         print "ERROR: Script requires 2 variables, an attribute type and a filename."
@@ -27,11 +31,20 @@ def read_csv():
     imgdir = os.path.join(FLICKR_DIR, attr_type)
     thumbdir = imgdir.replace("splash", "thumb")
     badImages = []
+    smallImages = []
     goodImages = []
+
+    # skip = True
 
     for row in input_file:
         update = False
         uid = row["id"]
+
+        # if uid == "31000US12700":
+        #     skip = False
+        #
+        # if skip:
+        #     continue
 
         image_only = attr_type == "geo"
 
@@ -44,6 +57,7 @@ def read_csv():
 
             if attr and "image_link" in row:
                 image = row["image_link"]
+                # if image: # Use this if statement instead of the next line to force an update on all images.
                 if image and attr.image_link != image:
 
                     if "photolist" in image:
@@ -61,36 +75,39 @@ def read_csv():
                     if image["license"] in ["0"]:
                         badImages.append(image)
                     else:
+                        sizes = [p for p in photo.getSizes() if p["width"] >= max_side]
+                        if len(sizes) == 0:
+                            smallImages.append(image)
+                        else:
+                            download_url = min(sizes, key=lambda item: item["width"])["source"]
 
-                        author = photo._Photo__owner
-                        author = author.realname if author.realname else author.username
-                        image["author"] = author.replace("'", "\\'")
-                        download_url = max(photo.getSizes(), key=lambda item: item["width"])["source"]
+                            if not os.path.exists(imgdir):
+                                os.makedirs(imgdir)
 
-                        if not os.path.exists(imgdir):
-                            os.makedirs(imgdir)
+                            if not os.path.exists(thumbdir):
+                                os.makedirs(thumbdir)
 
-                        if not os.path.exists(thumbdir):
-                            os.makedirs(thumbdir)
+                            imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
+                            thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
 
-                        imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
-                        thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
+                            urllib.urlretrieve(download_url, imgpath)
 
-                        urllib.urlretrieve(download_url, imgpath)
+                            img = pillow.open(imgpath).convert("RGB")
 
-                        img = pillow.open(imgpath).convert("RGB")
+                            img.thumbnail((max_side, max_side), pillow.ANTIALIAS)
+                            img.save(imgpath, "JPEG", quality=quality)
 
-                        img.thumbnail((1200,1200), pillow.ANTIALIAS)
-                        img.save(imgpath, "JPEG", quality=60)
+                            img.thumbnail((thumb_side, thumb_side), pillow.ANTIALIAS)
+                            img.save(thumbpath, "JPEG", quality=quality)
 
-                        img.thumbnail((150,150), pillow.ANTIALIAS)
-                        img.save(thumbpath, "JPEG", quality=60)
+                            author = photo._Photo__owner
+                            author = author.realname if author.realname else author.username
+                            image["author"] = author.replace("'", "\\'")
+                            goodImages.append(image)
 
-                        goodImages.append(image)
-
-                        attr.image_link = image["url"]
-                        attr.image_author = image["author"]
-                        update = True
+                            attr.image_link = image["url"]
+                            attr.image_author = image["author"]
+                            update = True
 
             if not image_only:
                 name = row["name"]
@@ -98,15 +115,28 @@ def read_csv():
                     attr.name = name
                     update = True
 
+            if "image_meta" in row:
+                meta = row["image_meta"]
+                if attr and meta and attr.image_meta != meta:
+                    attr.image_meta = meta
+                    update = True
+
             if update:
                 db.session.add(attr)
                 db.session.commit()
 
+            # break
+
     print "{} new images have been processed.".format(len(goodImages))
     if len(badImages) > 0:
         print "The following images have bad licenses: {}".format(", ".join([i["id"] for i in badImages]))
+    if len(smallImages) > 0:
+        print "The following images are too small: {}".format(", ".join([i["id"] for i in smallImages]))
 
 
 
 if __name__ == '__main__':
+    # img = pillow.open("04000US17-orig.jpg").convert("RGB")
+    # img.thumbnail((max_side, max_side), pillow.ANTIALIAS)
+    # img.save("04000US17-new.jpg", "JPEG", quality=quality)
     read_csv()
