@@ -174,6 +174,7 @@ class Geo(BaseAttr, ImageAttr):
     display_name = db.Column(db.String)
     name_long = db.Column(db.String)
     sumlevel = db.Column(db.String)
+    image_meta = db.Column(db.String)
     HEADERS = ["id", "name", "url_name"]
 
     @classmethod
