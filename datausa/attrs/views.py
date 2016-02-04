@@ -145,10 +145,10 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
         my_filter = query.Term("kind", kind)
     elif sumlevel:
         my_filter = query.Term("sumlevel", sumlevel)
-    if is_stem and my_filter is not None:
-        my_filter = my_filter & query.Term("is_stem", True)
-    elif is_stem and my_filter is None:
-        my_filter = query.Term("is_stem", True)
+    if is_stem and is_stem > 0 and my_filter is not None:
+        my_filter = my_filter & query.NumericRange("is_stem", 1, is_stem)
+    elif is_stem and is_stem > 0 and my_filter is None:
+        my_filter = query.NumericRange("is_stem", 1, is_stem)
 
     if tries > 2:
         return [],[],[]
@@ -175,7 +175,7 @@ def search():
     kind = request.args.get("kind", None)
     sumlevel = request.args.get("sumlevel", None)
     txt = request.args.get("q", '').lower()
-    is_stem = to_bool(request.args.get("is_stem", None))
+    is_stem = int(request.args.get("is_stem", 0))
 
     if txt and re.match('^[0-9]{1,5}$', txt):
         return zip_search(txt, limit=limit)
@@ -196,14 +196,16 @@ def search_old():
     limit = request.args.get("limit", 100)
     kind = request.args.get("kind", None)
     sumlevel = request.args.get("sumlevel", None)
-    is_stem = to_bool(request.args.get("is_stem", None))
+    is_stem = int(request.args.get("is_stem", 0))
     filters = [Search.name.like("%{}%".format(q))]
     if kind:
         filters.append(Search.kind == kind)
     if sumlevel:
         filters.append(Search.sumlevel == sumlevel)
-    if is_stem:
+    if is_stem == 1:
         filters.append(Search.is_stem == is_stem)
+    elif is_stem == 2:
+        filters.append(Search.is_stem >= 1)
     qry = Search.query.filter(*filters).order_by(Search.zvalue.desc())
     if limit:
         qry = qry.limit(int(limit))
