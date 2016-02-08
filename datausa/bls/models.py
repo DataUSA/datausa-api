@@ -113,6 +113,7 @@ class OesYgo(db.Model, Bls):
 
 
 class CesYi(db.Model, Bls):
+    source_title = 'Current Employment Statistics'
     __tablename__ = 'ces_yi'
     median_moe = 1.5
 
