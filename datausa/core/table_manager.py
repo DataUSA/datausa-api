@@ -144,6 +144,10 @@ class TableManager(object):
 
     @classmethod
     def force_1yr_for_big_places(cls, api_obj):
+        # -- if we are trying to look at tracts, that data is only available
+        # -- at 5yr resolution.
+        if api_obj.shows_and_levels and "geo" in api_obj.shows_and_levels and api_obj.shows_and_levels["geo"] == "tract":
+            return api_obj
         if api_obj.vars_and_vals and "geo" in api_obj.vars_and_vals:
             cond_a = "med_earnings" in api_obj.values or "med_earnings_moe" in api_obj.values
             cond_b = "acs_ind" in api_obj.shows_and_levels
