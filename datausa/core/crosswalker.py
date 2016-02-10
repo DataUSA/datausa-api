@@ -1,6 +1,6 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
 from datausa.attrs.models import GeoContainment, Soc
-from datausa.bls.models import BlsCrosswalk, SocCrosswalk, GrowthI, GrowthILookup
+from datausa.bls.models import BlsCrosswalk, SocCrosswalk, GrowthI, GrowthILookup, CesYi
 from datausa.pums.abstract_models import BasePums, BasePums5
 from datausa.attrs.consts import OR
 from datausa import cache
@@ -122,7 +122,7 @@ def crosswalk(table, api_obj):
         {"column": "industry_iocode", "schema": "bea", "mapping": industry_iocode_func},
         {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
         {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
-        {"column": "naics", "schema": "bls", "mapping": pums_to_growth_map, "table": GrowthI},
+        {"column": "naics", "schema": "bls", "mapping": pums_to_growth_map, "table": GrowthI, "avoid": CesYi},
         {"column": "soc", "schema": "bls", "mapping": pums_to_bls_soc_map},
         {"column": "soc", "schema": "onet", "mapping": onet_parents},
         {"column": "cip", "schema": "onet", "mapping": onet_cip_parents},
@@ -145,6 +145,11 @@ def crosswalk(table, api_obj):
         schema = rcrosswalk['schema']
         mapping = rcrosswalk['mapping']
         target_table = rcrosswalk['table'] if 'table' in rcrosswalk else None
+        avoid = rcrosswalk['avoid'] if 'avoid' in rcrosswalk else None
+
+        if avoid:
+            if table.full_name() == avoid.full_name():
+                continue
 
         if column in api_obj.vars_and_vals.keys() and table.__table_args__['schema'] == schema:
             if table in exclusives and (not target_table or target_table.__tablename__ != table.__tablename__):
