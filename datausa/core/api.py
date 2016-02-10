@@ -57,6 +57,8 @@ def parse_method_and_val(cond):
         return "endswith", cond[:-1], False
     elif cond.endswith("~$"):
         return "endswith", cond[:-2], True
+    elif cond.startswith("str!"):
+        return "ne", str(cond[1:]), False
     elif cond.startswith("!"):
         return "ne", int(cond[1:]), False
     elif cond.startswith(">"):
