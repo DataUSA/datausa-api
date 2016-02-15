@@ -400,7 +400,7 @@ class Conflict(BaseAttr):
 
 
 class Search(BaseAttr):
-    __tablename__ = 'search'
+    __tablename__ = 'search_v2'
     id = db.Column(db.String, primary_key=True)
     zvalue = db.Column(db.Float)
     kind = db.Column(db.String, primary_key=True)

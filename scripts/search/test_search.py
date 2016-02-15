@@ -18,7 +18,7 @@ class CWeighting(scoring.Weighting):
         name = searcher.stored_fields(docnum).get("name")
         zvalue = searcher.stored_fields(docnum).get("zvalue")
         if name == self.fullterm:
-            return score_me * 30 + (2 * zvalue)
+            return score_me * 30 + (25 * abs(zvalue))
         elif name.startswith(self.fullterm):
             if zvalue > 0:
                 return (score_me * 5.75) + (25 * zvalue)
@@ -50,8 +50,11 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10):
     q = qp.parse(txt)
 
     with ix.searcher(weighting=CWeighting(txt)) as s:
-        corrector = s.corrector("display")
-        suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
+        if len(txt) > 2:
+            corrector = s.corrector("display")
+            suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
+        else:
+            suggs = []
         results = s.search_page(q, 1, sortedby=[scores], pagelen=20, filter=my_filter)
         data = [[r["id"], r["name"], r["zvalue"],
                  r["kind"], r["display"], r["sumlevel"] if "sumlevel" in r else ""]
@@ -114,6 +117,25 @@ class TestStringMethods(unittest.TestCase):
         data,suggs,tries = do_search("educat", kind="naics")
         self.assertTrue(data[0][0])
 
+  def test_ma(self):
+        data,suggs,tries = do_search("ma")
+        self.assertEqual(data[0][0], '04000US25')
+
+  def test_ak(self):
+        data,suggs,tries = do_search("ak")
+        self.assertEqual(data[0][0], '04000US02')
+
+  def test_pa(self):
+        data,suggs,tries = do_search("pa")
+        self.assertEqual(data[0][0], '04000US42')
+
+  def test_al(self):
+        data,suggs,tries = do_search("al")
+        self.assertEqual(data[0][0], '04000US01')
+
+  def test_dc(self):
+        data,suggs,tries = do_search("dc")
+        self.assertEqual(data[0][0], '16000US1150000')
 
 if __name__ == '__main__':
     unittest.main()

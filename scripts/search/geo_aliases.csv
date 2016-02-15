@@ -1,0 +1,65 @@
+geo,name,short,zval
+01000US,United States,"united states, us, usa",150
+16000US3651000,"New York, NY",nyc,124.7253778
+16000US0644000,"Los Angeles, CA",la,57.66425865
+16000US4260000,"Philadelphia, PA",philly,23.08155342
+05000US06059,"Orange County, CA",oc,19.442103262
+16000US1150000,"Washington, DC",dc,19.231709584
+16000US3240000,"Las Vegas, NV",vegas,18.810854347
+16000US4055000,"Oklahoma City, OK",okc,18.803290277
+16000US2255000,"New Orleans, LA",nola,15.270642743
+04000US06,California,"Cali, CA",14.616604426
+16000US3915000,"Cincinnati, OH",cinci,14.366834419
+04000US48,Texas,tx,13.860417732
+04000US36,New York,ny,12.961516308
+04000US12,Florida,fl,12.903672701
+04000US17,Illinois,il,10
+04000US42,Pennsylvania,pa,10
+79500US2000500,"Kansas City PUMA, KS",kc,1
+04000US39,Ohio,oh,10
+04000US26,Michigan,mi,10
+04000US13,Georgia,ga,10
+04000US37,North Carolina,nc,10
+04000US34,New Jersey,nj,10
+04000US51,Virginia,va,10
+04000US53,Washington,wa,10
+04000US25,Massachusetts,ma,10
+04000US18,Indiana,in,10
+04000US04,Arizona,az,10
+04000US47,Tennessee,tn,10
+04000US29,Missouri,mo,10
+16000US0931270,"Glastonbury Center, CT",gbury,0.5
+04000US24,Maryland,md,10
+04000US55,Wisconsin,wi,10
+04000US27,Minnesota,mn,10
+04000US08,Colorado,co,10
+04000US01,Alabama,al,10
+04000US45,South Carolina,sc,10
+04000US22,Louisiana,la,10
+04000US21,Kentucky,ky,10
+04000US41,Oregon,or,10
+04000US40,Oklahoma,ok,10
+04000US72,Puerto Rico,pr,10
+04000US09,Connecticut,ct,10
+04000US19,Iowa,ia,10
+04000US28,Mississippi,ms,10
+04000US05,Arkansas,ar,10
+04000US20,Kansas,ks,10
+04000US49,Utah,ut,10
+04000US32,Nevada,nv,10
+04000US35,New Mexico,nm,10
+04000US54,West Virginia,wv,10
+04000US31,Nebraska,ne,10
+04000US16,Idaho,id,10
+04000US15,Hawaii,hi,10
+04000US23,Maine,me,10
+04000US33,New Hampshire,nh,10
+04000US44,Rhode Island,ri,10
+04000US30,Montana,mt,10
+04000US10,Delaware,de,10
+04000US46,South Dakota,sd,10
+04000US02,Alaska,ak,10
+04000US38,North Dakota,nd,10
+04000US50,Vermont,vt,10
+04000US11,District of Columbia,dc,10
+04000US56,Wyoming,wy,10

@@ -32,7 +32,7 @@ class CWeighting(scoring.Weighting):
         name = searcher.stored_fields(docnum).get("name")
         zvalue = searcher.stored_fields(docnum).get("zvalue")
         if name == self.fullterm:
-            return score_me * 30 + (2 * zvalue)
+            return score_me * 30 + (25 * abs(zvalue))
         elif name.startswith(self.fullterm):
             if zvalue > 0:
                 return (score_me * 5.75) + (25 * zvalue)
@@ -155,8 +155,11 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
     q = qp.parse(txt)
 
     with ix.searcher(weighting=CWeighting(txt)) as s:
-        corrector = s.corrector("display")
-        suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
+        if len(txt) > 2:
+            corrector = s.corrector("display")
+            suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
+        else:
+            suggs = []
         results = s.search_page(q, 1, sortedby=[scores], pagelen=20, filter=my_filter)
         data = [[r["id"], r["name"], r["zvalue"],
                  r["kind"], r["display"],
@@ -179,7 +182,7 @@ def search():
 
     if txt and re.match('^[0-9]{1,5}$', txt):
         return zip_search(txt, limit=limit)
-    elif not txt or len(txt) <= 2:
+    elif not txt or len(txt) <= 1:
         return search_old()
 
     data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit, is_stem=is_stem)
@@ -212,7 +215,9 @@ def search_old():
     if offset:
         qry = qry.offset(int(offset))
     qry = qry.all()
+
     data = [[a.id, a.name, a.zvalue, a.kind, a.display, a.sumlevel, a.is_stem, a.url_name] for a in qry]
+
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "is_stem", "url_name"]
     return jsonify(data=data, headers=headers)
 

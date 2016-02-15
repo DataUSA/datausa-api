@@ -6,11 +6,12 @@ from whoosh.fields import BOOLEAN
 from config import SEARCH_INDEX_DIR
 
 
-def manual_add(writer, name, display, orig_id, is_stem=False, url_name=None):
+def manual_add(writer, name, display, orig_id, is_stem=False, url_name=None, zoverride=None):
     from datausa.attrs.models import Search
     doc_obj = Search.query.filter_by(id=orig_id).first()
+    zval = doc_obj.zvalue * 1.5 if not zoverride else zoverride
     writer.add_document(id=doc_obj.id, name=name,
-                        display=display, zvalue=doc_obj.zvalue*1.5,
+                        display=display, zvalue=zval,
                         kind=doc_obj.kind, sumlevel=doc_obj.sumlevel,
                         is_stem=is_stem, url_name=url_name)
 
@@ -49,8 +50,15 @@ if __name__ == '__main__':
                             is_stem=stem, url_name=obj.url_name)
 
     # Custom synonyms to help with search
-    manual_add(writer, u'nyc', u'New York', '16000US3651000', url_name=u'new-york-ny')
-    manual_add(writer, u'la', u'Los Angeles', '16000US0644000', url_name=u'los-angeles-ca')
+    import pandas as pd
+    target_path = os.path.join(SEARCH_INDEX_DIR, "..", "scripts", "search", "geo_aliases.csv")
+    df = pd.read_csv(target_path)
+    for geo, name, short, zval in df.values:
+        for alias in short.split(","):
+            alias = alias.strip()
+            manual_add(writer, unicode(alias), unicode(name), unicode(geo), zoverride=zval)
+
+    # --
     manual_add(writer, u'garbagemen', u'Garbagemen', '537081')
     manual_add(writer, u'doctors', u'Doctors', '291060')
     manual_add(writer, u'manhattan', u'Manhattan, NY', '05000US36061')
