@@ -9,14 +9,6 @@ from datausa.attrs.models import *
 from datausa.attrs.consts import NATION, STATE, PUMA, ALL, GEO, COUNTY
 
 
-def geo_sumlevel_filter(table, show_colname, sumlevel):
-    sumlevel_codes = {NATION: "010", STATE: "040",
-                      PUMA: "795"}
-    if not sumlevel in sumlevel_codes:
-        raise DataUSAException("Invalid sumlevel", sumlevel)
-    start_code = sumlevel_codes[sumlevel]
-    return table.geo.startswith(start_code)
-
 class BasePums(db.Model, BaseModel):
     __abstract__ = True
     __table_args__ = {"schema": "pums_1yr"}
