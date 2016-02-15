@@ -25,16 +25,6 @@ class BasePums(db.Model, BaseModel):
     source_org = 'Census Bureau'
     num_records =  db.Column(db.Integer)
 
-    @classmethod
-    def gen_show_level_filters(cls, shows_and_levels):
-        result = []
-        for show_colname, sumlevel in shows_and_levels.items():
-            if sumlevel != ALL:
-                if show_colname == "geo":
-                    filt = geo_sumlevel_filter(cls, show_colname, sumlevel)
-                    result.append(filt)
-
-        return result
 
     def __repr__(self):
         return '<{}>'.format(self.__class__)

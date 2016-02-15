@@ -183,10 +183,6 @@ def query(table, api_obj, stream=False):
         cols = [col for col in cols
                if (isinstance(col, basestring) and col not in exclude) or col.key not in exclude]
 
-    needs_show_filter = any([v != consts.ALL for v in shows_and_levels.values()])
-
-    if needs_show_filter and hasattr(table, "gen_show_level_filters"):
-        filters += table.gen_show_level_filters(shows_and_levels)
 
     # qry = table.query.with_entities(*cols)
     qry = table.query
