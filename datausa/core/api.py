@@ -39,9 +39,10 @@ def stream_format(table, cols, qry, api_obj):
 
 def simple_format(table, cols, data, api_obj):
     headers = [col if isinstance(col, basestring) else col.key for col in cols]
+    inf = float('inf')
     data = {
             "headers": list(headers),
-            "data": [ list(row) for row in data],
+            "data": [ [x if x != inf else None for x in row] for row in data] ,
             "source": table.info(api_obj),
             "subs": api_obj.subs,
             "logic": [table.info(api_obj) for table in api_obj.table_list]
