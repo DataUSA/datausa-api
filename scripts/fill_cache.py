@@ -16,7 +16,9 @@ def url_to_json(url):
 
 def crawl_page(moi):
     display_id,attr_kind = moi
-    page = 'http://beta.datausa.io/profile/{}/{}/'.format( attr_kind, display_id)
+    if not display_id:
+        print "skipping", display_id, attr_kind
+    page = u'http://beta.datausa.io/profile/{}/{}/'.format( attr_kind, display_id)
     print page, "getting..."
     r = requests.get(page, auth=HTTPBasicAuth('datausa', os.environ.get('DATAUSA_WEB_PW', '')))
     if r.status_code != 200:
@@ -27,9 +29,14 @@ def crawl_page(moi):
 def crawl_attr(base_url, attr_kind='country'):
     data, headers = url_to_json('{}/attrs/search?q=&kind={}&limit=100000'.format(base_url, attr_kind))
     data = sorted(data, key=lambda obj: obj[headers.index('zvalue')], reverse=True)
-    mydata = [[country[headers.index('id')], attr_kind] for country in data]
-    pool = Pool(5)
-    pool.map(crawl_page, mydata)
+    if attr_kind != 'geo':
+        mydata = [[country[headers.index('id')], attr_kind] for country in data]
+    else:
+        mydata = [[country[headers.index('url_name')], attr_kind] for country in data]
+    #pool = Pool(5)
+    #pool.map(crawl_page, mydata)
+    for x in mydata:
+        crawl_page(x)
 
 
 
