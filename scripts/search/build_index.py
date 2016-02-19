@@ -10,6 +10,8 @@ def manual_add(writer, name, display, orig_id, is_stem=False, url_name=None, zov
     from datausa.attrs.models import Search
     doc_obj = Search.query.filter_by(id=orig_id).first()
     zval = doc_obj.zvalue * 1.5 if not zoverride else zoverride
+    if not url_name:
+        url_name = doc_obj.url_name
     writer.add_document(id=doc_obj.id, name=name,
                         display=display, zvalue=zval,
                         kind=doc_obj.kind, sumlevel=doc_obj.sumlevel,

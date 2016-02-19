@@ -1,6 +1,7 @@
 geo,name,short,zval
 01000US,United States,"united states, us, usa",150
 16000US3651000,"New York, NY",nyc,124.7253778
+05000US36047,"Kings County (Brooklyn), NY",brooklyn,15
 16000US0644000,"Los Angeles, CA",la,57.66425865
 16000US4260000,"Philadelphia, PA",philly,23.08155342
 05000US06059,"Orange County, CA",oc,19.442103262
