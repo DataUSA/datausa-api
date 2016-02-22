@@ -8,6 +8,7 @@ from datausa.attrs import consts
 from datausa.attrs.views import attr_map
 from sqlalchemy.orm import aliased
 from datausa.util.inmem import splitter
+from datausa.core.exceptions import DataUSAException
 
 def use_attr_names(table, qry, cols):
     new_cols = []
@@ -198,6 +199,11 @@ def query(table, api_obj, stream=False):
 
     if api_obj.order:
         sort = "desc" if api_obj.sort == "desc" else "asc"
+        if api_obj.order not in TableManager.possible_variables:
+            if api_obj.order == 'abs(pct_change)':
+                pass # allow this
+            else:
+                raise DataUSAException("Bad order parameter", api_obj.order)
         qry = qry.order_by("{} {} NULLS LAST".format(api_obj.order, sort))
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
