@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from flask.ext.compress import Compress
 # from flask.ext.cors import CORS
 from flask.ext.cache import Cache
@@ -15,3 +15,7 @@ from datausa.core.views import mod as core_module
 app.register_blueprint(attrs_module)
 app.register_blueprint(core_module)
 # CORS(app)
+
+@app.errorhandler(500)
+def error_page(err):
+    return jsonify(error=str(err)), 500
