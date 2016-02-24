@@ -53,8 +53,10 @@ class Employees(Personal):
     num_ppl_ft_moe =  db.Column(db.Float)
     num_ppl_pt_moe =  db.Column(db.Float)
 
+    avg_hrs = db.Column(db.Float)
     avg_hrs_ft = db.Column(db.Float)
     avg_hrs_pt = db.Column(db.Float)
+    avg_hrs_moe = db.Column(db.Float)
     avg_hrs_ft_moe = db.Column(db.Float)
     avg_hrs_pt_moe = db.Column(db.Float)
 
