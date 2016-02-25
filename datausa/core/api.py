@@ -18,6 +18,8 @@ def use_attr_names(table, qry, cols):
         orig_str = col_str
         col_str = "iocode" if "_iocode" in col_str else col_str
         col_str = "pums_degree" if "pums" in table.__table_args__["schema"] and col_str == "degree" else col_str
+        if table.__table_args__["schema"] == 'bls' and col_str in ['naics', 'soc']:
+            col_str = "bls_{}".format(col_str)
         if col_str in attr_map:
             attr_obj = attr_map[col_str]
             attr_alias = aliased(attr_obj)
