@@ -38,3 +38,12 @@ class Ygor5(BasePums5, Employees, Year, GeoId, SocId, RaceId):
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS,
                 "race": [ALL]}
+
+class Ygos5(BasePums5, Employees, Year, GeoId, SocId, SexId):
+    __tablename__ = "ygos"
+    median_moe = 2.9
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS,
+                "sex": [ALL]}
