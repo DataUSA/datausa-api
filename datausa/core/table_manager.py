@@ -130,6 +130,8 @@ class TableManager(object):
         vars_needed = api_obj.vars_needed
         candidates = []
         for table in registered_models:
+            if api_obj.order and api_obj.order in cls.possible_variables:
+                vars_needed = vars_needed + [api_obj.order]
             if TableManager.table_has_cols(table, vars_needed):
                 if TableManager.table_can_show(table, api_obj):
                     candidates.append(table)
