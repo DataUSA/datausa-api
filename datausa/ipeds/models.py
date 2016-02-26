@@ -139,6 +139,19 @@ class GradsYgs(Grads, GeoId, SectorId):
         return {"sector": [ALL], GEO: GeoId.LEVELS}
 
 
+class GradsYgd(Grads, GeoId, DegreeId):
+    __tablename__ = "grads_ygd"
+    median_moe = 2
+
+    year = db.Column(db.Integer(), primary_key=True)
+    grads_total_growth = db.Column(db.Float)
+    grads_total_rca = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {GEO: GeoId.LEVELS, "degree": [ALL]}
+
+
 class GradsYgcd(Grads, GeoId, CipId, DegreeId):
     __tablename__ = "grads_ygcd"
     median_moe = 3
