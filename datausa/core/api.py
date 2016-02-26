@@ -1,5 +1,6 @@
 import flask
 import sqlalchemy
+from sqlalchemy import and_
 from flask import Response
 
 from datausa.core import get_columns
@@ -69,6 +70,10 @@ def parse_method_and_val(cond):
         return "gt", int(cond[1:]), False
     elif cond.startswith("<"):
         return "lt", int(cond[1:]), False
+    elif cond.startswith("R<"):
+        return "rt", float(cond[2:]), False
+    elif cond.startswith("R>"):
+        return "rg", float(cond[2:]), False
     else:
         return "like", cond, False
 
@@ -80,7 +85,11 @@ def where_filters(table, where_str):
     wheres = splitter(where_str)
     for where in wheres:
         colname, cond = where.split(":")
-        col = getattr(table, colname)
+        cols = None
+        if "/" in colname:
+            cols = [getattr(table, c) for c in colname.split("/")]
+        else:
+            col = getattr(table, colname)
         method, value, negate = parse_method_and_val(cond)
         if method == "ne":
             expr = col != value
@@ -88,6 +97,10 @@ def where_filters(table, where_str):
             expr = col > value
         elif method == "lt":
             expr = col < value
+        elif method == "rt":
+            expr = and_(cols[1] != 0, cols[0] / cols[1] < value)
+        elif method == "rg":
+            expr = and_(cols[1] != 0, cols[0] / cols[1] > value)
         else:
             expr = getattr(col, method)(value)
         if negate:
