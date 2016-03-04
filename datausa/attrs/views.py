@@ -136,6 +136,8 @@ def get_children(kind, attr_id):
 
 
 def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
+    txt = txt.replace(",", "")
+
     my_filter = None
     if kind and sumlevel:
         kf = query.Term("kind", kind)

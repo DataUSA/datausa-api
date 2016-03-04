@@ -36,6 +36,8 @@ scores = sorting.ScoreFacet()
 
 
 def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10):
+    txt = txt.replace(",", "")
+
     my_filter = None
     if kind and sumlevel:
         kf = query.Term("kind", kind)
@@ -136,6 +138,14 @@ class TestStringMethods(unittest.TestCase):
   def test_dc(self):
         data,suggs,tries = do_search("dc")
         self.assertEqual(data[0][0], '16000US1150000')
+
+  def test_rny(self):
+        data,suggs,tries = do_search("rochester, ny")
+        self.assertEqual(data[0][0], '16000US3663000')
+
+  def test_cpmd(self):
+        data,suggs,tries = do_search("college park, md")
+        self.assertEqual(data[0][0], '16000US2418750')
 
 if __name__ == '__main__':
     unittest.main()
