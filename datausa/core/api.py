@@ -2,6 +2,7 @@ import flask
 import sqlalchemy
 from sqlalchemy import and_
 from flask import Response
+import json
 
 from datausa.core import get_columns
 from datausa.core.table_manager import TableManager, table_name
@@ -10,6 +11,8 @@ from datausa.attrs.views import attr_map
 from sqlalchemy.orm import aliased
 from datausa.util.inmem import splitter
 from datausa.core.exceptions import DataUSAException
+
+MAX_LIMIT = 4
 
 def use_attr_names(table, qry, cols):
     new_cols = []
@@ -29,28 +32,77 @@ def use_attr_names(table, qry, cols):
 
         new_cols.append(col)
     for col_str, j in joins.items():
-        qry = qry.join(*j)
+        qry = qry.join(*j, isouter=True)
     return qry, new_cols
 
 
 def stream_format(table, cols, qry, api_obj):
     def generate():
         yield ','.join([col if isinstance(col, basestring) else col.key for col in cols]) + '\n'
-        for row in qry.all():
-            row = ['"{}"'.format(x) if isinstance(x, basestring) else str(x) for x in list(row)]
-            yield ','.join(row) + '\n'
+        for row in qry:
+            row = [u'"{}"'.format(x) if isinstance(x, basestring) else str(x) for x in list(row)]
+            yield u','.join(row) + u'\n'
     return Response(generate(), mimetype='text/csv')
+
+# def simple_format(table, cols, data, api_obj):
+#     ''' Based on https://github.com/al4/orlo/blob/1b3930bae4aa37eb51aed33a97c088e576cb5a99/orlo/route_api.py#L285-L311'''
+#     def generate(table):
+#         headers = [col if isinstance(col, basestring) else col.key for col in cols]
+#         inf = float('inf')
+#
+#         # counter = 0
+#         """
+#         A lagging generator to stream JSON so we don't have to hold everything in memory
+#         This is a little tricky, as we need to omit the last comma to make valid JSON,
+#         thus we use a lagging generator, similar to http://stackoverflow.com/questions/1630320/
+#         """
+#         yield u'{'
+#         yield u'''"headers": {},
+#                  "source": {},
+#                  "subs": {},
+#                  "logic": {},
+#         '''.format(json.dumps(list(headers)), json.dumps(table.info(api_obj)), json.dumps(api_obj.subs),
+#                    json.dumps([table.info(api_obj) for table in api_obj.table_list]))
+#         # yield '{'
+#         rows = data.__iter__()
+#         try:
+#             prev_row = next(rows)  # get first result
+#         except StopIteration:
+#             # StopIteration here means the length was zero, so yield a valid releases doc and stop
+#             yield u'"data": [] }'
+#             raise StopIteration
+#
+#         # We have some releases. First, yield the opening json
+#         yield u'"data": ['
+#
+#         # Iterate over the releases
+#         for row in rows:
+#             # counter += 1
+#             # if counter + 1 > MAX_LIMIT:
+#             #     yield json.dumps([x if x != inf else None for x in row])
+#             #     yield '], "error": "max row limit exceeded. truncating results set." }' # note the missing comma before error since we already added a coma above
+#             #     raise StopIteration
+#             # else:
+#             yield json.dumps([x if x != inf else None for x in row]) + u', '
+#             prev_row = row
+#
+#
+#         # Now yield the last iteration without comma but with the closing brackets
+#         yield json.dumps([x if x != inf else None for x in prev_row]) + u']}'
+#
+#     return Response(generate(table), content_type='application/json')
 
 def simple_format(table, cols, data, api_obj):
     headers = [col if isinstance(col, basestring) else col.key for col in cols]
     inf = float('inf')
     data = {
             "headers": list(headers),
-            "data": [ [x if x != inf else None for x in row] for row in data] ,
             "source": table.info(api_obj),
             "subs": api_obj.subs,
-            "logic": [table.info(api_obj) for table in api_obj.table_list]
+            "logic": [table.info(api_obj) for table in api_obj.table_list],
+            "data": [ [x if x != inf else None for x in row] for row in data],
     }
+
     return flask.jsonify(data)
 
 def parse_method_and_val(cond):
@@ -226,5 +278,4 @@ def query(table, api_obj, stream=False):
     if stream:
         return stream_format(table, cols, qry, api_obj)
 
-    data = qry.all()
-    return simple_format(table, cols, data, api_obj)
+    return simple_format(table, cols, qry, api_obj)
