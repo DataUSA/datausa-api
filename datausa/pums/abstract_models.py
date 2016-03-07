@@ -29,6 +29,13 @@ class BasePums5(BasePums):
     source_link = 'http://census.gov/programs-surveys/acs/technical-documentation/pums.html'
     source_org = 'Census Bureau'
 
+class PersonalOver5(object):
+    avg_age = db.Column(db.Float)
+    avg_wage =  db.Column(db.Float)
+    num_over5 =  db.Column(db.Integer)
+    avg_age_moe = db.Column(db.Float)
+    avg_wage_moe =  db.Column(db.Float)
+    num_over5_moe =  db.Column(db.Float)
 
 class Personal(object):
     avg_age = db.Column(db.Float)

@@ -305,11 +305,11 @@ class Yocd(BasePums, Employees, Year, SocId, CipId, DegreeId, EmployeesRca):
         return {"cip": ["2", ALL], "soc": SocId.LEVELS, "degree": [ALL]}
 
 
-class Ygb(BasePums, Personal, Year, GeoId, BirthplaceId):
-    __tablename__ = "ygb"
+class Ygb(BasePums, PersonalOver5, Year, GeoId, BirthplaceId):
+    __tablename__ = "ygb_v2"
     median_moe = 2
 
-    num_ppl_rca = db.Column(db.Float)
+    num_over5_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
