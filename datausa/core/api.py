@@ -44,64 +44,65 @@ def stream_format(table, cols, qry, api_obj):
             yield u','.join(row) + u'\n'
     return Response(generate(), mimetype='text/csv')
 
-# def simple_format(table, cols, data, api_obj):
-#     ''' Based on https://github.com/al4/orlo/blob/1b3930bae4aa37eb51aed33a97c088e576cb5a99/orlo/route_api.py#L285-L311'''
-#     def generate(table):
-#         headers = [col if isinstance(col, basestring) else col.key for col in cols]
-#         inf = float('inf')
-#
-#         """
-#         A lagging generator to stream JSON so we don't have to hold everything in memory
-#         This is a little tricky, as we need to omit the last comma to make valid JSON,
-#         thus we use a lagging generator, similar to http://stackoverflow.com/questions/1630320/
-#         """
-#         yield u'{'
-#
-#         rows = data.__iter__()
-#         try:
-#             prev_row = next(rows)  # get first result
-#         except StopIteration:
-#             # StopIteration here means the length was zero, so yield a valid releases doc and stop
-#             yield u'''"data": [],
-#                      "headers": {},
-#                      "source": {},
-#                      "subs": {},
-#                      "logic": {}
-#             '''.format(simplejson.dumps(list(headers)), simplejson.dumps(table.info(api_obj)), simplejson.dumps(api_obj.subs),
-#                        simplejson.dumps([table.info(api_obj) for table in api_obj.table_list])) + u'}'
-#             raise StopIteration
-#
-#         # We have some releases. First, yield the opening json
-#         yield u'"data": ['
-#
-#         # Iterate over the releases
-#         for row in rows:
-#             yield simplejson.dumps([x if x != inf else None for x in row]) + u', '
-#             prev_row = row
-#
-#         # Now yield the last iteration without comma but with the closing brackets
-#         yield simplejson.dumps([x if x != inf else None for x in prev_row]) + u'],'
-#         yield u'''"headers": {},
-#                  "source": {},
-#                  "subs": {},
-#                  "logic": {}
-#         '''.format(simplejson.dumps(list(headers)), simplejson.dumps(table.info(api_obj)), simplejson.dumps(api_obj.subs),
-#                    simplejson.dumps([table.info(api_obj) for table in api_obj.table_list])) + u'}'
-#
-#     return Response(generate(table), content_type='application/json')
-
 def simple_format(table, cols, data, api_obj):
-    headers = [col if isinstance(col, basestring) else col.key for col in cols]
-    inf = float('inf')
-    data = {
-            "headers": list(headers),
-            "source": table.info(api_obj),
-            "subs": api_obj.subs,
-            "logic": [table.info(api_obj) for table in api_obj.table_list],
-            "data": [ [x if x != inf else None for x in row] for row in data],
-    }
+    ''' Based on https://github.com/al4/orlo/blob/1b3930bae4aa37eb51aed33a97c088e576cb5a99/orlo/route_api.py#L285-L311'''
+    def generate(table):
+        headers = [col if isinstance(col, basestring) else col.key for col in cols]
+        inf = float('inf')
 
-    return flask.jsonify(data)
+        """
+        A lagging generator to stream JSON so we don't have to hold everything in memory
+        This is a little tricky, as we need to omit the last comma to make valid JSON,
+        thus we use a lagging generator, similar to http://stackoverflow.com/questions/1630320/
+        """
+        yield u'{'
+
+        rows = data.__iter__()
+        try:
+            prev_row = next(rows)  # get first result
+        except StopIteration:
+            # StopIteration here means the length was zero, so yield a valid releases doc and stop
+            yield u'''"data": [],
+                     "headers": {},
+                     "source": {},
+                     "subs": {},
+                     "logic": {}
+            '''.format(simplejson.dumps(list(headers)), simplejson.dumps(table.info(api_obj)), simplejson.dumps(api_obj.subs),
+                       simplejson.dumps([table.info(api_obj) for table in api_obj.table_list])) + u'}'
+            raise StopIteration
+
+        # We have some releases. First, yield the opening json
+        yield u'"data": ['
+
+        # Iterate over the releases
+        for row in rows:
+            yield simplejson.dumps([x if x != inf else None for x in prev_row]) + u', '
+            prev_row = row
+
+        # Now yield the last iteration without comma
+        yield simplejson.dumps([x if x != inf else None for x in prev_row])
+
+        yield u'''], "headers": {},
+                 "source": {},
+                 "subs": {},
+                 "logic": {}
+        '''.format(simplejson.dumps(list(headers)), simplejson.dumps(table.info(api_obj)), simplejson.dumps(api_obj.subs),
+                   simplejson.dumps([table.info(api_obj) for table in api_obj.table_list])) + u'}'
+
+    return Response(generate(table), content_type='application/json')
+
+# def simple_format(table, cols, data, api_obj):
+#     headers = [col if isinstance(col, basestring) else col.key for col in cols]
+#     inf = float('inf')
+#     data = {
+#             "headers": list(headers),
+#             "source": table.info(api_obj),
+#             "subs": api_obj.subs,
+#             "logic": [table.info(api_obj) for table in api_obj.table_list],
+#             "data": [ [x if x != inf else None for x in row] for row in data],
+#     }
+#
+#     return flask.jsonify(data)
 
 def parse_method_and_val(cond):
     if cond.startswith("^"):
