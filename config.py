@@ -30,7 +30,8 @@ JSONIFY_PRETTYPRINT_REGULAR = False
 
 CACHE_TYPE = 'filesystem'
 CACHE_DIR = os.path.join(basedir, 'cache/')
-CACHE_DEFAULT_TIMEOUT = os.environ.get("CACHE_DEFAULT_TIMEOUT", (60 * 60))
+CACHE_DEFAULT_TIMEOUT = os.environ.get("CACHE_DEFAULT_TIMEOUT", 60 * 60 * 24 * 7 * 4) # 28 days
+CACHE_THRESHOLD = 5000
 
 FLICKR_DIR = os.environ.get("DATAUSA_FLICKR_DIR", os.path.join(basedir, '../datausa-site/datausa/static/img/splash'))
 SEARCH_INDEX_DIR = os.path.join(basedir, 'search_index/')
