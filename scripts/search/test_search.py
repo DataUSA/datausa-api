@@ -5,6 +5,13 @@ from config import SEARCH_INDEX_DIR
 import math
 import unittest
 
+class SimpleWeighter(scoring.BM25F):
+    use_final = True
+
+    def final(self, searcher, docnum, score):
+        zscore = searcher.stored_fields(docnum)['zvalue'] * .04
+        averageScore = (zscore + score) / 2.0
+        return averageScore
 
 class CWeighting(scoring.Weighting):
     def __init__(self, fullterm):
@@ -35,10 +42,11 @@ facet = sorting.FieldFacet("zvalue", reverse=True)
 scores = sorting.ScoreFacet()
 
 
-def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10):
+def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
     txt = txt.replace(",", "")
 
     my_filter = None
+
     if kind and sumlevel:
         kf = query.Term("kind", kind)
         sf = query.Term("sumlevel", sumlevel)
@@ -47,11 +55,16 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10):
         my_filter = query.Term("kind", kind)
     elif sumlevel:
         my_filter = query.Term("sumlevel", sumlevel)
-    if tries > 2:
-        return [],[]
-    q = qp.parse(txt)
+    if is_stem and is_stem > 0 and my_filter is not None:
+        my_filter = my_filter & query.NumericRange("is_stem", 1, is_stem)
+    elif is_stem and is_stem > 0 and my_filter is None:
+        my_filter = query.NumericRange("is_stem", 1, is_stem)
 
-    with ix.searcher(weighting=CWeighting(txt)) as s:
+    if tries > 2:
+        return [],[],[]
+    q = qp.parse(txt)
+    weighter = CWeighting(txt) if "county" not in txt.lower() else SimpleWeighter(B=.45, content_B=1.0, K1=1.5)
+    with ix.searcher(weighting=weighter) as s:
         if len(txt) > 2:
             corrector = s.corrector("display")
             suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
@@ -59,12 +72,14 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10):
             suggs = []
         results = s.search_page(q, 1, sortedby=[scores], pagelen=20, filter=my_filter)
         data = [[r["id"], r["name"], r["zvalue"],
-                 r["kind"], r["display"], r["sumlevel"] if "sumlevel" in r else ""]
+                 r["kind"], r["display"],
+                 r["sumlevel"] if "sumlevel" in r else "",
+                 r["is_stem"] if "is_stem" in r else False,
+                 r["url_name"] if "url_name" in r else None]
                 for r in results]
         if not data and suggs:
-            return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit)
+            return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit, is_stem=is_stem)
         return data, suggs, tries
-
 
 
 class TestStringMethods(unittest.TestCase):
@@ -146,6 +161,10 @@ class TestStringMethods(unittest.TestCase):
   def test_cpmd(self):
         data,suggs,tries = do_search("college park, md")
         self.assertEqual(data[0][0], '16000US2418750')
+
+  def test_moco(self):
+        data,suggs,tries = do_search("montgomery county")
+        self.assertEqual(data[0][0], '05000US24031')
 
 if __name__ == '__main__':
     unittest.main()

@@ -20,6 +20,15 @@ import re
 def to_bool(x):
     return x and x.lower() == "true"
 
+
+class SimpleWeighter(scoring.BM25F):
+    use_final = True
+
+    def final(self, searcher, docnum, score):
+        zscore = searcher.stored_fields(docnum)['zvalue'] * .04
+        averageScore = (zscore + score) / 2.0
+        return averageScore
+
 class CWeighting(scoring.Weighting):
     def __init__(self, fullterm):
         self.termweight = scoring.BM25F()
@@ -139,6 +148,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
     txt = txt.replace(",", "")
 
     my_filter = None
+
     if kind and sumlevel:
         kf = query.Term("kind", kind)
         sf = query.Term("sumlevel", sumlevel)
@@ -155,8 +165,8 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
     if tries > 2:
         return [],[],[]
     q = qp.parse(txt)
-
-    with ix.searcher(weighting=CWeighting(txt)) as s:
+    weighter = CWeighting(txt) if "county" not in txt.lower() else SimpleWeighter(B=.45, content_B=1.0, K1=1.5)
+    with ix.searcher(weighting=weighter) as s:
         if len(txt) > 2:
             corrector = s.corrector("display")
             suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
