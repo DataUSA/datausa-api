@@ -24,21 +24,13 @@ def to_bool(x):
 class SimpleWeighter(scoring.BM25F):
     use_final = True
 
-    def final(self, searcher, docnum, score):
-        zscore = searcher.stored_fields(docnum)['zvalue'] * .04
-        averageScore = (zscore + score) / 2.0
-        return averageScore
-
-class CWeighting(scoring.Weighting):
-    def __init__(self, fullterm):
-        self.termweight = scoring.BM25F()
+    def __init__(self, fullterm, *args, **kwargs):
         self.fullterm = fullterm.lower().strip()
-    def score(self, searcher, fieldnum, text, docnum, weight, qf=1):
-        # Get the BM25 score for this term in this document
-        bm25 = self.termweight.scorer(searcher, fieldnum, text, docnum)
-        q=qp.parse(text)
-        score_me = bm25.score(q.matcher(searcher))
+        super(SimpleWeighter, self).__init__(*args, **kwargs)
+
+    def final(self, searcher, docnum, score_me):
         name = searcher.stored_fields(docnum).get("name")
+        zscore = searcher.stored_fields(docnum)['zvalue'] * .04
         zvalue = searcher.stored_fields(docnum).get("zvalue")
         if name == self.fullterm:
             return score_me * 30 + (25 * abs(zvalue))
@@ -47,9 +39,13 @@ class CWeighting(scoring.Weighting):
                 return (score_me * 5.75) + (25 * zvalue)
             else:
                 return score_me * 5.75 + (1 - abs(zvalue) * 25)
-        elif text.startswith(name):
-            return (score_me * 1.75) + (10 * zvalue)
+        elif self.fullterm.startswith(name[:10]):
+            return score_me * 3 + abs(zvalue)
+        elif self.fullterm.startswith(name[:5]):
+            return score_me * 1.5 + abs(zvalue)
+            # return (score_me * 1.75) + (10 * zvalue)
         return (score_me * 0.75) + (zvalue * 0.25)
+
 
 ix = index.open_dir(SEARCH_INDEX_DIR)
 qp = QueryParser("name", schema=ix.schema, group=qparser.OrGroup)
@@ -165,7 +161,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
     if tries > 2:
         return [],[],[]
     q = qp.parse(txt)
-    weighter = CWeighting(txt) if "county" not in txt.lower() else SimpleWeighter(B=.45, content_B=1.0, K1=1.5)
+    weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)
     with ix.searcher(weighting=weighter) as s:
         if len(txt) > 2:
             corrector = s.corrector("display")
