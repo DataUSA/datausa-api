@@ -7,7 +7,8 @@ from PIL import Image as pillow
 def read_csv():
 
     max_side = 1600
-    thumb_side = 400
+    thumb_side = 425
+    feat_side = 850
     quality = 90
 
     if len(sys.argv) < 3:
@@ -30,11 +31,22 @@ def read_csv():
     input_file = csv.DictReader(open(sys.argv[2]))
     imgdir = os.path.join(FLICKR_DIR, attr_type)
     thumbdir = imgdir.replace("splash", "thumb")
+    featdir = imgdir.replace("splash", "feature")
     badImages = []
     smallImages = []
     goodImages = []
+    removedImages = []
 
     # skip = True
+
+    if not os.path.exists(imgdir):
+        os.makedirs(imgdir)
+
+    if not os.path.exists(thumbdir):
+        os.makedirs(thumbdir)
+
+    if not os.path.exists(featdir):
+        os.makedirs(featdir)
 
     for row in input_file:
         update = False
@@ -68,7 +80,11 @@ def read_csv():
                         image = "http://flic.kr/p/{}".format(short.encode(pid))
 
                     photo = flickr.Photo(pid)
-                    photo._load_properties()
+                    try:
+                        photo._load_properties()
+                    except:
+                        removedImages.append(uid)
+                        continue
 
                     image = {"id": uid, "url": image, "license": photo._Photo__license}
 
@@ -81,14 +97,9 @@ def read_csv():
                         else:
                             download_url = min(sizes, key=lambda item: item["width"])["source"]
 
-                            if not os.path.exists(imgdir):
-                                os.makedirs(imgdir)
-
-                            if not os.path.exists(thumbdir):
-                                os.makedirs(thumbdir)
-
                             imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
                             thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
+                            featpath = os.path.join(featdir, "{}.jpg".format(uid))
 
                             urllib.urlretrieve(download_url, imgpath)
 
@@ -96,6 +107,9 @@ def read_csv():
 
                             img.thumbnail((max_side, max_side), pillow.ANTIALIAS)
                             img.save(imgpath, "JPEG", quality=quality)
+
+                            img.thumbnail((feat_side, feat_side), pillow.ANTIALIAS)
+                            img.save(featpath, "JPEG", quality=quality)
 
                             img.thumbnail((thumb_side, thumb_side), pillow.ANTIALIAS)
                             img.save(thumbpath, "JPEG", quality=quality)
@@ -108,6 +122,21 @@ def read_csv():
                             attr.image_link = image["url"]
                             attr.image_author = image["author"]
                             update = True
+
+                # set False to True to force thumbnails
+                elif False and image:
+
+                    imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
+                    thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
+                    featpath = os.path.join(featdir, "{}.jpg".format(uid))
+
+                    img = pillow.open(imgpath).convert("RGB")
+
+                    img.thumbnail((feat_side, feat_side), pillow.ANTIALIAS)
+                    img.save(featpath, "JPEG", quality=quality)
+
+                    img.thumbnail((thumb_side, thumb_side), pillow.ANTIALIAS)
+                    img.save(thumbpath, "JPEG", quality=quality)
 
             if not image_only:
                 name = row["name"]
@@ -132,6 +161,8 @@ def read_csv():
         print "The following images have bad licenses: {}".format(", ".join([i["id"] for i in badImages]))
     if len(smallImages) > 0:
         print "The following images are too small: {}".format(", ".join([i["id"] for i in smallImages]))
+    if len(removedImages) > 0:
+        print "The following images have been removed: {}".format(", ".join([i for i in removedImages]))
 
 
 
