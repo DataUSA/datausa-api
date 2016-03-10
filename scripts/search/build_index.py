@@ -4,6 +4,8 @@ from whoosh import index
 from whoosh.fields import Schema, ID, TEXT, NUMERIC, KEYWORD, NGRAM, NGRAMWORDS
 from whoosh.fields import BOOLEAN
 from config import SEARCH_INDEX_DIR
+from unidecode import unidecode
+
 
 
 def manual_add(writer, name, display, orig_id, is_stem=False, url_name=None, zoverride=None):
@@ -44,6 +46,9 @@ if __name__ == '__main__':
         dname = obj.display
         stem = False if not hasattr(obj, "is_stem") else obj.is_stem
         if dname:
+            dname = unicode(dname)
+            dname = unidecode(dname)
+            dname = unicode(dname)
             dname = dname.lower().replace(",", "")
             dname = dname.replace(".", "")
         writer.add_document(id=obj.id, name=dname,
