@@ -9,3 +9,4 @@ flask-cache
 pillow
 whoosh
 unidecode
+gunicorn
