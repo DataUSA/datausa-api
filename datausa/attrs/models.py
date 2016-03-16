@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy import or_
 from datausa.attrs.consts import OR
+from sqlalchemy.sql import text
 
 class BaseAttr(db.Model):
     __abstract__ = True
@@ -181,7 +182,7 @@ class Geo(BaseAttr, ImageAttr):
     def parents(cls, geo):
         mysumlevel = geo[:3]
         filters =[GeoContainment.child_geoid == geo]
-        geos = GeoContainment.query.filter(*filters).order_by("percent_covered asc").all()
+        geos = GeoContainment.query.filter(*filters).order_by(text("percent_covered asc")).all()
         geos2 = []
         for g in geos:
             if g.parent_geoid.startswith("795"):
