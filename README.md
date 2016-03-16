@@ -1,5 +1,5 @@
 # DataUSA API
-API for access US data sets
+To learn more about the API, visit the [DataUSA API Wiki page](https://github.com/DataUSA/datausa-api/wiki) or visit the [DataUSA Quick Start Guide](http://beta.datausa.io/about/api/).
 
 #Installation
 
@@ -7,7 +7,6 @@ API for access US data sets
 
 *   Python
 *   Postgres
-*   Redis (at least version 2.8.6)
 
 1.  Clone from Github
         git clone https://github.com/Datawheel/datausa-api.git
