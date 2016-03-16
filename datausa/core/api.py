@@ -1,6 +1,7 @@
 import flask
 import sqlalchemy
 from sqlalchemy import and_
+from sqlalchemy.sql import text
 from flask import Response
 import simplejson
 
@@ -270,7 +271,8 @@ def query(table, api_obj, stream=False):
                 pass # allow this
             else:
                 raise DataUSAException("Bad order parameter", api_obj.order)
-        qry = qry.order_by("{} {} NULLS LAST".format(api_obj.order, sort))
+        sort_stmt = text("{} {} NULLS LAST".format(api_obj.order, sort))
+        qry = qry.order_by(sort_stmt)
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
 
