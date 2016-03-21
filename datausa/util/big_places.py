@@ -7,6 +7,8 @@ from datausa.acs.automap_models import Acs1_Yg
 @cache.memoize()
 def get_big_geos():
     conds = [
+        Acs1_Yg.geo.startswith("010"),
+        Acs1_Yg.geo.startswith("040"),
         Acs1_Yg.geo.startswith("050"),
         Acs1_Yg.geo.startswith("160"),
         Acs1_Yg.geo.startswith("310"),
