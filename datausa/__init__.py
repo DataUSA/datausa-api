@@ -15,8 +15,6 @@ from datausa.core.views import mod as core_module
 app.register_blueprint(attrs_module)
 app.register_blueprint(core_module)
 
-app.url_map.strict_slashes = False
-
 # CORS(app)
 
 @app.errorhandler(500)
