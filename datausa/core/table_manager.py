@@ -69,7 +69,7 @@ class TableManager(object):
                     schema = BaseAcs5.schema_name
                     api_obj.force = "{}.{}".format(schema, tblname)
                     api_obj.subs["force"] = schema
-        if has_force and api_obj.vars_and_vals:
+        if has_force and api_obj.vars_and_vals and not api_obj.force.startswith(BaseAcs5.schema_name): # Applied fix 5.9.16
             if schema and schema in [BaseAcs5.schema_name, BaseAcs3.schema_name]:
                 gvals = api_obj.vars_and_vals["geo"].split(",")
                 nation_state_only = all([v[:3] in ["010", "040"] for v in gvals])
