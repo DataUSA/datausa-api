@@ -19,13 +19,11 @@ class GrowthO(db.Model, Bls):
     median_moe = 1
 
     soc = db.Column(db.String, primary_key=True)
-    emp_2012_thousands = db.Column(db.Float)
-    emp_2022_thousands = db.Column(db.Float)
-    emp_pct_2012 = db.Column(db.Float)
-    emp_pct_2022 = db.Column(db.Float)
+    emp_2014_thousands = db.Column(db.Float)
+    emp_2024_thousands = db.Column(db.Float)
+    emp_pct_2014 = db.Column(db.Float)
+    emp_pct_2024 = db.Column(db.Float)
     change_thousands = db.Column(db.Float)
-    change_thousands = db.Column(db.Float)
-    pct_change = db.Column(db.Float)
     pct_change = db.Column(db.Float)
     openings_thousands = db.Column(db.Float)
 
@@ -42,18 +40,18 @@ class GrowthI(db.Model, Bls):
 
     naics = db.Column(db.String, primary_key=True)
     title = db.Column(db.String)
-    emp_2002_thousands = db.Column(db.Float)
-    emp_2012_thousands = db.Column(db.Float)
-    emp_2022_thousands = db.Column(db.Float)
-    emp_change_2002_2012 = db.Column(db.Float)
-    emp_change_2012_2022 = db.Column(db.Float)
-    output_2002 = db.Column(db.Float)
-    output_2012 = db.Column(db.Float)
-    output_2022 = db.Column(db.Float)
-    output_carc_2002_2012 = db.Column(db.Float)
-    output_carc_2012_2022 = db.Column(db.Float)
-    emp_carc_2002_2012 = db.Column(db.Float)
-    emp_carc_2012_2022 = db.Column(db.Float)
+    emp_2004_thousands = db.Column(db.Float)
+    emp_2014_thousands = db.Column(db.Float)
+    emp_2024_thousands = db.Column(db.Float)
+    emp_change_2004_2014 = db.Column(db.Float)
+    emp_change_2014_2024 = db.Column(db.Float)
+    output_2004 = db.Column(db.Float)
+    output_2014 = db.Column(db.Float)
+    output_2024 = db.Column(db.Float)
+    output_carc_2004_2014 = db.Column(db.Float)
+    output_carc_2014_2024 = db.Column(db.Float)
+    emp_carc_2004_2014 = db.Column(db.Float)
+    emp_carc_2014_2024 = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
