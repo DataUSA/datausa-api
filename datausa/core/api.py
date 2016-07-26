@@ -313,17 +313,14 @@ def multitable_value_filters(tables, api_obj):
 
 def parse_entities(tables, api_obj):
     '''Give a list of tables and required variables, resolve the underlying objects'''
-    values = api_obj.vars_needed
-    # raise Exception(values)
-    # cols = []
-    # if values:
-        # pk = [col for col in table.__table__.columns if col.primary_key and col.key not in values]
-        # cols = pk + values
+    values = set(api_obj.vars_needed)
+
     col_objs = []
     for value in values:
         for table in tables:
             if hasattr(table, value):
-                col_objs.append(getattr(table, value))
+                # TODO use full name only if value appears in multiple tables
+                col_objs.append(getattr(table, value).label("{}_{}".format(table.full_name(), value)))
                 # break
     return col_objs
 
@@ -398,16 +395,17 @@ def make_joins(tables, api_obj, tbl_years):
                 # direct join, (where boston=boston) OR an indirect join
                 # e.g. (so boston=massachusetts) because we need a crosswalk
                 indirs,filts = indirect_joins(tbl1, tbl2, col, api_obj)
-
+                # join_clause = and_(join_clause, direct_join)
                 join_clause = and_(join_clause, or_(indirs, direct_join))
                 # if indirs is not None:
                     # join_clause = or_(join_clause, indirs)
-        my_joins.append([tbl2, join_clause])
+        my_joins.append([tbl1, join_clause])
     return my_joins, filts
 
 def join_query(tables, api_obj, tbl_years):
     from datausa.acs.abstract_models import db
     cols = parse_entities(tables, api_obj)
+
     qry = db.session.query(*tables).with_entities(*cols)
     my_joins, filts = make_joins(tables, api_obj, tbl_years)
 
@@ -425,5 +423,5 @@ def join_query(tables, api_obj, tbl_years):
 
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
-
+    # raise Exception(qry)
     return flask.jsonify(x=list(qry))
