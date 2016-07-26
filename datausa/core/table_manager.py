@@ -129,6 +129,7 @@ class TableManager(object):
         while universe:
             # first find the tables with biggest overlap
             candidates = cls.list_partial_tables(universe, api_obj)
+            # raise Exception(candidates)
             top_choices = sorted(candidates.items(), key=operator.itemgetter(1),
                                  reverse=True)
             # take the table with the biggest overlap
@@ -146,7 +147,6 @@ class TableManager(object):
             table_cols += tmp_cols
             # remove the acquired columns from the universe
             universe = universe - set(tmp_cols)
-        # First pass: pick the table
         return tables_to_use
 
     @classmethod
@@ -154,13 +154,13 @@ class TableManager(object):
         candidates = {}
         for table in registered_models:
             overlap_size = TableManager.table_has_some_cols(table, vars_needed)
-            if overlap_size:
+            if overlap_size > 0:
                 if TableManager.table_can_show(table, api_obj):
                     # to break ties, we'll use median moe to penalize and subtract
                     # since larger values will be chosen first.
                     candidates[table] = overlap_size - (1 - (1.0 / table.median_moe))
         if not candidates:
-            raise DataUSAException("No tables can match the specified query.")
+            raise DataUSAException("No tables2 can match the specified query.")
         return candidates
 
     @classmethod
@@ -172,10 +172,10 @@ class TableManager(object):
         '''
         table_cols = get_columns(table)
         cols = set([col.key for col in table_cols])
-        min_overlap = 2 if len(vars_needed) > 1 else 1
+        # min_overlap = 2 if len(vars_needed) > 1 else 1
         intersection = set(vars_needed).intersection(cols)
-        status = intersection and len(intersection) >= min_overlap
-        if status:
+
+        if intersection:
             return len(intersection)
         return None # TODO review this
 
