@@ -57,6 +57,14 @@ def api_view(csv=None):
     data = api.query(table, api_obj, stream=csv)
     return data
 
+@mod.route("/vars/")
+def api_meta(csv=None):
+    api_obj = build_api_obj()
+    tables = manager.required_tables(api_obj)
+    # api_obj = manager.multi_crosswalk(tables, api_obj)
+    data = api.join_query(tables, api_obj, manager.table_years)
+    return data
+
 
 @mod.route("/logic/")
 def logic_view():

@@ -40,6 +40,9 @@ class BaseModel(object):
     def get_schema_name(cls):
         return cls.__table_args__["schema"]
 
+    @classmethod
+    def col_strs(cls):
+        return [str(col) for col in cls.__table__.columns]
 
 class ApiObject(object):
     def __init__(self, **kwargs):
