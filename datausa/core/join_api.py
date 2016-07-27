@@ -23,12 +23,11 @@ def multitable_value_filters(tables, api_obj):
                 filt = table.year == my_year
                 api_obj.set_year(my_year)
             else:
-                vals = splitter(val)
                 from datausa.core.crosswalker import crosswalk
                 from datausa.core.models import ApiObject
-                api_objs = [crosswalk(table, ApiObject(vars_and_vals={var: val}, limit=None, exclude=None)) for val in vals]
-                vals = [api_obj.vars_and_vals[var] for api_obj in api_objs]
-                filt = getattr(table, var).in_(vals)
+                api_obj = crosswalk(table, ApiObject(vars_and_vals={var: val}, limit=None, exclude=None))
+                new_vals = splitter(api_obj.vars_and_vals[var])
+                filt = getattr(table, var).in_(new_vals)
             filts.append(filt)
     return filts
 
@@ -70,7 +69,6 @@ def indirect_joins(tbl1, tbl2, col, api_obj):
         t1_no_crosswalk = all([a == b for a, b in zip(vals_orig, vals1)])
         t2_no_crosswalk = all([a == b for a, b in zip(vals_orig, vals2)])
 
-
             # raise Exception("here!", vals1, col)
         # elif t2_no_crosswalk:
             # filters.append(
@@ -82,7 +80,6 @@ def indirect_joins(tbl1, tbl2, col, api_obj):
             for a, b in pairs:
                 aeqb = and_(getattr(tbl1, col) == a, getattr(tbl2, col) == b)
                 cond = or_(cond, aeqb)
-                # getattr(tbl1)
 
         cond = and_(cond, getattr(tbl2, col).in_(vals2))
     return cond, filters
@@ -113,19 +110,15 @@ def make_joins(tables, api_obj, tbl_years):
                 continue
             else:
                 direct_join = getattr(tbl1, col) == getattr(tbl2, col)
-                # at this point what we need to be able to do is to either do a
-                # direct join, (where boston=boston) OR an indirect join
-                # e.g. (so boston=massachusetts) because we need a crosswalk
-                # indirs,filts = indirect_joins(tbl1, tbl2, col, api_obj)
-                # join_clause = and_(join_clause, direct_join)
-                join_clause = and_(join_clause, direct_join)
+                indirs, filts = indirect_joins(tbl1, tbl2, col, api_obj)
+                join_clause = and_(join_clause, or_(indirs, direct_join))
 
         my_joins.append([tbl2, join_clause])
     return my_joins, filts
 
 def join_query(tables, api_obj, tbl_years):
     cols = parse_entities(tables, api_obj)
-    qry = db.session.query(*tables).with_entities(*cols)
+    qry = db.session.query(*tables).select_from(tables[0]).with_entities(*cols)
 
     my_joins, filts = make_joins(tables, api_obj, tbl_years)
 
