@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from datausa.attrs.models import Cip, Naics, University
 from datausa.core import table_manager
-from datausa.core import api
+from datausa.core import api, join_api
 from datausa.core.models import ApiObject
 from datausa.core.crosswalker import crosswalk
 from datausa.util.big_places import is_big_geo
@@ -62,7 +62,7 @@ def api_meta(csv=None):
     api_obj = build_api_obj()
     tables = manager.required_tables(api_obj)
     # api_obj = manager.multi_crosswalk(tables, api_obj)
-    data = api.join_query(tables, api_obj, manager.table_years)
+    data = join_api.join_query(tables, api_obj, manager.table_years)
     return data
 
 

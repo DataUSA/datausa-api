@@ -158,7 +158,8 @@ class TableManager(object):
                 if TableManager.table_can_show(table, api_obj):
                     # to break ties, we'll use median moe to penalize and subtract
                     # since larger values will be chosen first.
-                    candidates[table] = overlap_size - (1 - (1.0 / table.median_moe))
+                    penalty = (1 - (1.0 / table.median_moe)) if table.median_moe > 0 else 0
+                    candidates[table] = overlap_size - penalty
         if not candidates:
             raise DataUSAException("No tables2 can match the specified query.")
         return candidates
