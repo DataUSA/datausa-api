@@ -8,6 +8,7 @@ from datausa.core.table_manager import TableManager, table_name
 from datausa.util.inmem import splitter
 from datausa.attrs import consts
 from datausa.acs.abstract_models import db
+from datausa.core.api import sumlevel_filtering, parse_method_and_val
 
 def val_crosswalk(table, var, val):
     api_obj = ApiObject(vars_and_vals={var: val})
@@ -84,6 +85,48 @@ def indirect_joins(tbl1, tbl2, col, api_obj):
         cond = and_(cond, getattr(tbl2, col).in_(vals2))
     return cond, filters
 
+
+def where_filters(tables, where_str):
+    if not where_str:
+        return []
+    filts = []
+
+    wheres = splitter(where_str)
+    for where in wheres:
+        for table in tables:
+            colname, cond = where.split(":")
+            cols = None
+            is_multi_col = "/" in colname
+            if is_multi_col:
+                colnames = colname.split("/")
+                has_all = all([hasattr(table, c) for c in colnames])
+                if not has_all:
+                    continue
+                cols = [getattr(table, c) for c in colnames]
+            else:
+                if not hasattr(table, colname):
+                    continue
+                col = getattr(table, colname)
+
+            method, value, negate = parse_method_and_val(cond)
+            if method == "ne":
+                expr = col != value
+            elif method == "gt":
+                expr = col > value
+            elif method == "lt":
+                expr = col < value
+            elif method == "rt":
+                expr = and_(cols[1] != 0, cols[0] / cols[1] < value)
+            elif method == "rg":
+                expr = and_(cols[1] != 0, cols[0] / cols[1] > value)
+            else:
+                expr = getattr(col, method)(value)
+            if negate:
+                expr = ~expr
+
+            filts.append(expr)
+    return filts
+
 def make_joins(tables, api_obj, tbl_years):
     my_joins = []
     filts = []
@@ -116,7 +159,7 @@ def make_joins(tables, api_obj, tbl_years):
         my_joins.append([tbl2, join_clause])
     return my_joins, filts
 
-def join_query(tables, api_obj, tbl_years):
+def joinable_query(tables, api_obj, tbl_years):
     cols = parse_entities(tables, api_obj)
     qry = db.session.query(*tables).select_from(tables[0]).with_entities(*cols)
 
@@ -127,14 +170,17 @@ def join_query(tables, api_obj, tbl_years):
             qry = qry.join(*join_info)
 
     filts += multitable_value_filters(tables, api_obj)
+    filts += where_filters(tables, api_obj.where)
 
-    #16000US2507000
-    # for table in tables:
-        # filters += sumlevel_filtering(table, api_obj)
+    for table in tables:
+        filts += sumlevel_filtering(table, api_obj)
+
+    # TODO: support ordering
+    # TODO: add option to return names in query
+    # TODO: allow sumlevel all to be optional?
 
     qry = qry.filter(*filts)
 
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
-    # raise Exception(qry)
     return flask.jsonify(x=list(qry))

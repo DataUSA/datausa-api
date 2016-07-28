@@ -45,6 +45,7 @@ def build_api_obj():
     return api_obj
 
 @mod.route("/")
+@mod.route("/v1/")
 @mod.route("/csv/", defaults={'csv': True})
 def api_view(csv=None):
     api_obj = build_api_obj()
@@ -57,12 +58,12 @@ def api_view(csv=None):
     data = api.query(table, api_obj, stream=csv)
     return data
 
-@mod.route("/vars/")
+@mod.route("/join/")
 def api_meta(csv=None):
     api_obj = build_api_obj()
     tables = manager.required_tables(api_obj)
     # api_obj = manager.multi_crosswalk(tables, api_obj)
-    data = join_api.join_query(tables, api_obj, manager.table_years)
+    data = join_api.joinable_query(tables, api_obj, manager.table_years)
     return data
 
 
