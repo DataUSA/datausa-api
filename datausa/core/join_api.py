@@ -159,6 +159,25 @@ def make_joins(tables, api_obj, tbl_years):
         my_joins.append([tbl2, join_clause])
     return my_joins, filts
 
+
+def get_column_from_tables(tables, col, return_first=True):
+    acc = []
+    for table in tables:
+        if hasattr(table, col):
+            if return_first:
+                return getattr(table, col)
+            else:
+                acc.append(getattr(table, col))
+    return acc
+
+def handle_ordering(tables, api_obj):
+    sort = "desc" if api_obj.sort == "desc" else "asc"
+    if api_obj.order not in TableManager.possible_variables:
+        raise DataUSAException("Bad order parameter", api_obj.order)
+    my_col = get_column_from_tables(tables, api_obj.order)
+    sort_expr = getattr(my_col, sort)()
+    return sort_expr.nullslast()
+
 def joinable_query(tables, api_obj, tbl_years):
     cols = parse_entities(tables, api_obj)
     qry = db.session.query(*tables).select_from(tables[0]).with_entities(*cols)
@@ -175,9 +194,12 @@ def joinable_query(tables, api_obj, tbl_years):
     for table in tables:
         filts += sumlevel_filtering(table, api_obj)
 
-    # TODO: support ordering
     # TODO: add option to return names in query
     # TODO: allow sumlevel all to be optional?
+
+    if api_obj.order:
+        sort_expr = handle_ordering(tables, api_obj)
+        qry = qry.order_by(sort_expr)
 
     qry = qry.filter(*filts)
 
