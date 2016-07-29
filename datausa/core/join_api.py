@@ -9,19 +9,44 @@ from datausa.core.table_manager import TableManager, table_name
 from datausa.util.inmem import splitter
 from datausa.attrs import consts
 from datausa.acs.abstract_models import db
-from datausa.core.api import sumlevel_filtering, parse_method_and_val
+from datausa.core.api import parse_method_and_val
 from datausa.core.crosswalker import crosswalk
 from datausa.core.models import ApiObject
+
+def sumlevel_filtering2(table, api_obj):
+    shows_and_levels = api_obj.shows_and_levels
+    filters = []
+    for col, level in shows_and_levels.items():
+        args = (table, "{}_filter".format(col))
+        if hasattr(*args):
+            func = getattr(*args)
+            expr = func(level)
+            if api_obj.auto_crosswalk:
+                filters.append(expr)
+            else:
+                filters.append(or_(expr, getattr(table, col) == None))
+    return filters
 
 def val_crosswalk(table, var, val):
     api_obj = ApiObject(vars_and_vals={var: val})
 
+def find_table(tables, colname):
+    target_table, colname = colname.rsplit(".", 1)
+    lookup = {tbl.full_name(): tbl for tbl in tables}
+    return colname, [lookup[target_table]]
+
+
 def multitable_value_filters(tables, api_obj):
     filts = []
+
     for colname, val in api_obj.vars_and_vals.items():
-        related_tables = tables_by_col(tables, colname)
+        if "." in colname:
+            colname, related_tables = find_table(tables, colname)
+            raise Exception("Aa")
+        else:
+            related_tables = tables_by_col(tables, colname)
         if not api_obj.auto_crosswalk:
-            filts += gen_combos(tables, colname, val)
+            filts += gen_combos(related_tables, colname, val)
         else:
             for table in related_tables:
                 if colname == consts.YEAR and val in [consts.LATEST, consts.OLDEST]:
@@ -102,9 +127,16 @@ def gen_combos(tables, colname, val):
     combos = []
     relevant_tables = tables_by_col(tables, colname)
     for table1, table2 in itertools.combinations(relevant_tables, 2):
-        cond1 = and_(getattr(table1, colname) == val, getattr(table2, colname) == val)
-        cond2 = and_(getattr(table1, colname) == val, getattr(table2, colname) == None)
-        cond3 = and_(getattr(table1, colname) == None, getattr(table2, colname) == val)
+        val1 = splitter(val)
+        val2 = splitter(val)
+        if colname == consts.YEAR and val in [consts.LATEST, consts.OLDEST]:
+            years1 = TableManager.table_years[table1.full_name()]
+            years2 = TableManager.table_years[table2.full_name()]
+            val1 = [years1[val]]
+            val2 = [years2[val]]
+        cond1 = and_(getattr(table1, colname).in_(val1), getattr(table2, colname).in_(val2))
+        cond2 = and_(getattr(table1, colname).in_(val1), getattr(table2, colname) == None)
+        cond3 = and_(getattr(table1, colname) == None, getattr(table2, colname).in_(val2))
         combos.append(or_(cond1, cond2, cond3))
     return combos
 
@@ -256,7 +288,7 @@ def joinable_query(tables, api_obj, tbl_years):
 
 
     for table in tables:
-        filts += sumlevel_filtering(table, api_obj)
+        filts += sumlevel_filtering2(table, api_obj)
 
     # TODO: add option to return names in query
     # TODO: allow sumlevel all to be optional?
