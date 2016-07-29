@@ -93,7 +93,7 @@ def _check_change(api_obj, tbl, col, vals_orig, vals_new):
     did_crosswalk = any([a != b for a, b in zip(vals_orig, vals_new)])
     if did_crosswalk:
         tname = tbl.full_name()
-        api_obj.record_sub(tbl, col, vals_new)
+        api_obj.record_sub(tbl, col, vals_orig, vals_new)
     return api_obj
 
 def indirect_joins(tbl1, tbl2, col, api_obj):

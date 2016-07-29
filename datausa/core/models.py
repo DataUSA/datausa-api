@@ -85,10 +85,12 @@ class ApiObject(object):
     def warn(self, msg):
         self.warnings.append(msg)
 
-    def record_sub(self, tbl, col, new_val):
+    def record_sub(self, tbl, col, orig_val, new_val):
+        deltas = [{"original": ov, "replacement": nv} for ov, nv in zip(orig_val, new_val) if ov != nv]
+
         tbl_name = tbl.full_name()
         if tbl_name not in self.subs:
             self.subs[tbl_name] = {}
         if col not in self.subs[tbl_name]:
             self.subs[tbl_name][col] = {}
-        self.subs[tbl_name][col] = new_val
+        self.subs[tbl_name][col] = deltas
