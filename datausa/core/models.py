@@ -48,7 +48,7 @@ class ApiObject(object):
     def __init__(self, **kwargs):
         allowed = ["vars_needed", "vars_and_vals", "values",
                    "shows_and_levels", "force", "where", "order",
-                   "sort", "limit", "exclude"]
+                   "sort", "limit", "exclude", "auto_crosswalk"]
         self._year = None
         for keyword, value in kwargs.items():
             if keyword in allowed:
@@ -59,6 +59,7 @@ class ApiObject(object):
             self.limit = int(self.limit)
         self.subs = {}
         self.table_list = []
+        self.warnings = []
         if self.exclude:
             self.exclude = self.exclude.split(",")
         if hasattr(self, "year") and self.year != ALL:
@@ -78,3 +79,14 @@ class ApiObject(object):
 
     def capture_logic(self, table_list):
         self.table_list = table_list
+
+    def warn(self, msg):
+        self.warnings.append(msg)
+
+    def record_sub(self, tbl, col, new_val):
+        tbl_name = tbl.full_name()
+        if tbl_name not in self.subs:
+            self.subs[tbl_name] = {}
+        if col not in self.subs[tbl_name]:
+            self.subs[tbl_name][col] = {}
+        self.subs[tbl_name][col] = new_val

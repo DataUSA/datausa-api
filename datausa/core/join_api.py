@@ -17,7 +17,13 @@ def multitable_value_filters(tables, api_obj):
     filts = []
     for var, val in api_obj.vars_and_vals.items():
         for table in tables:
-            if not hasattr(table, var): continue
+            if not hasattr(table, var):
+                full_name = table.full_name()
+                if var.startswith(full_name):
+                    var = var[len(full_name) + 1:]
+                    raise Exception(var) # TODO test this
+                else:
+                    continue
             if var == consts.YEAR and val in [consts.LATEST, consts.OLDEST]:
                 years = TableManager.table_years[table_name(table)]
                 my_year = years[val]
@@ -35,14 +41,21 @@ def multitable_value_filters(tables, api_obj):
 
 def parse_entities(tables, api_obj):
     '''Give a list of tables and required variables, resolve the underlying objects'''
-    values = set(api_obj.vars_needed)
+    values = api_obj.vars_needed
+
+    # force the primary key columns to be returned to avoid potential confusion
+    for table in tables:
+        my_missing_pks = [col for col in table.__table__.columns if col.primary_key and col.key not in values]
+        values += [pkc.key for pkc in my_missing_pks]
+
+    values = set(values)
 
     col_objs = []
     for value in values:
         for table in tables:
             if hasattr(table, value):
                 # TODO use full name only if value appears in multiple tables
-                col_objs.append(getattr(table, value).label("{}_{}".format(table.full_name(), value)))
+                col_objs.append(getattr(table, value).label("{}.{}".format(table.full_name(), value)))
                 # break
     return col_objs
 
@@ -51,6 +64,13 @@ def find_overlap(tbl1, tbl2):
     cols2 = [c.key for c in tbl2.__table__.columns]
     myset = set(cols1).intersection(cols2)
     return myset
+
+def _check_change(api_obj, tbl, col, vals_orig, vals_new):
+    did_crosswalk = any([a != b for a, b in zip(vals_orig, vals_new)])
+    if did_crosswalk:
+        tname = tbl.full_name()
+        api_obj.record_sub(tbl, col, vals_new)
+    return api_obj
 
 def indirect_joins(tbl1, tbl2, col, api_obj):
     # does this column appear in vars and vals?
@@ -61,21 +81,15 @@ def indirect_joins(tbl1, tbl2, col, api_obj):
         from datausa.core.crosswalker import crosswalk
         from datausa.core.models import ApiObject
         api_objs1 = [crosswalk(tbl1, ApiObject(vars_and_vals={col: val}, limit=None, exclude=None)) for val in vals_orig]
-        vals1 = [api_obj.vars_and_vals[col] for api_obj in api_objs1]
+        vals1 = [tmp_api_obj.vars_and_vals[col] for tmp_api_obj in api_objs1]
         api_objs2 = [crosswalk(tbl2, ApiObject(vars_and_vals={col: val}, limit=None, exclude=None)) for val in vals_orig]
-        vals2 = [api_obj.vars_and_vals[col] for api_obj in api_objs2]
+        vals2 = [tmp_api_obj.vars_and_vals[col] for tmp_api_obj in api_objs2]
         pairs = zip(vals1, vals2)
         is_same = all([a == b for a, b in pairs])
 
-        t1_no_crosswalk = all([a == b for a, b in zip(vals_orig, vals1)])
-        t2_no_crosswalk = all([a == b for a, b in zip(vals_orig, vals2)])
-
-            # raise Exception("here!", vals1, col)
-        # elif t2_no_crosswalk:
-            # filters.append(
-                # getattr(tbl2, col).in_(vals2)
-            # )
-            # raise Exception("here!", vals2, col)
+        # logic for warning about subs
+        api_obj = _check_change(api_obj, tbl1, col, vals_orig, vals1)
+        api_obj = _check_change(api_obj, tbl2, col, vals_orig, vals2)
 
         if not is_same:
             for a, b in pairs:
@@ -95,6 +109,13 @@ def where_filters(tables, where_str):
     for where in wheres:
         for table in tables:
             colname, cond = where.split(":")
+            if "." in colname:
+                target_table, target_col = colname.rsplit(".", 1)
+                if "{}.{}".format(table.full_name(), target_col) != colname:
+                    continue
+                else:
+                    colname = target_col
+
             cols = None
             is_multi_col = "/" in colname
             if is_multi_col:
@@ -120,6 +141,8 @@ def where_filters(tables, where_str):
             elif method == "rg":
                 expr = and_(cols[1] != 0, cols[0] / cols[1] > value)
             else:
+                if method == 'like' and "%" not in value:
+                    method = '__eq__'
                 expr = getattr(col, method)(value)
             if negate:
                 expr = ~expr
@@ -145,7 +168,7 @@ def make_joins(tables, api_obj, tbl_years):
         yr_overlap = set(years1range).intersection(years2range)
 
         if not yr_overlap:
-            api_obj.subs["warning"] = "years do not overlap!"
+            api_obj.warn("Years do not overlap between {} and {}!".format(tbl1.full_name(), tbl2.full_name()))
 
         join_clause = True
         for col in overlap:
@@ -191,6 +214,7 @@ def joinable_query(tables, api_obj, tbl_years):
     filts += multitable_value_filters(tables, api_obj)
     filts += where_filters(tables, api_obj.where)
 
+
     for table in tables:
         filts += sumlevel_filtering(table, api_obj)
 
@@ -205,4 +229,4 @@ def joinable_query(tables, api_obj, tbl_years):
 
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
-    return flask.jsonify(x=list(qry))
+    return flask.jsonify(x=list(qry), subs=api_obj.subs, warnings=api_obj.warnings)

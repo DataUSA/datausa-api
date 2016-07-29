@@ -25,7 +25,7 @@ def build_api_obj():
     sort = request.args.get("sort", "")
     limit = request.args.get("limit", None)
     exclude = request.args.get("exclude", None)
-
+    auto_crosswalk = request.args.get("auto_crosswalk", False)
     shows = show.split(",")
     sumlevels = sumlevel.split(",")
     values = required.split(",") if required else []
@@ -41,7 +41,8 @@ def build_api_obj():
     api_obj = ApiObject(vars_needed=vars_needed, vars_and_vals=vars_and_vals,
                         shows_and_levels=shows_and_levels, values=values,
                         where=where, force=force, order=order,
-                        sort=sort, limit=limit, exclude=exclude)
+                        sort=sort, limit=limit, exclude=exclude,
+                        auto_crosswalk=auto_crosswalk)
     return api_obj
 
 @mod.route("/")
