@@ -1,5 +1,6 @@
 import flask
 import sqlalchemy
+import itertools
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import aliased
 
@@ -9,33 +10,31 @@ from datausa.util.inmem import splitter
 from datausa.attrs import consts
 from datausa.acs.abstract_models import db
 from datausa.core.api import sumlevel_filtering, parse_method_and_val
+from datausa.core.crosswalker import crosswalk
+from datausa.core.models import ApiObject
 
 def val_crosswalk(table, var, val):
     api_obj = ApiObject(vars_and_vals={var: val})
 
 def multitable_value_filters(tables, api_obj):
     filts = []
-    for var, val in api_obj.vars_and_vals.items():
-        for table in tables:
-            if not hasattr(table, var):
-                full_name = table.full_name()
-                if var.startswith(full_name):
-                    var = var[len(full_name) + 1:]
-                    raise Exception(var) # TODO test this
+    for colname, val in api_obj.vars_and_vals.items():
+        related_tables = tables_by_col(tables, colname)
+        if not api_obj.auto_crosswalk:
+            filts += gen_combos(tables, colname, val)
+        else:
+            for table in related_tables:
+                if colname == consts.YEAR and val in [consts.LATEST, consts.OLDEST]:
+                    years = TableManager.table_years[table_name(table)]
+                    my_year = years[val]
+                    filt = or_(table.year == my_year, table.year == None)
+                    api_obj.set_year(my_year)
                 else:
-                    continue
-            if var == consts.YEAR and val in [consts.LATEST, consts.OLDEST]:
-                years = TableManager.table_years[table_name(table)]
-                my_year = years[val]
-                filt = table.year == my_year
-                api_obj.set_year(my_year)
-            else:
-                from datausa.core.crosswalker import crosswalk
-                from datausa.core.models import ApiObject
-                api_obj = crosswalk(table, ApiObject(vars_and_vals={var: val}, limit=None, exclude=None))
-                new_vals = splitter(api_obj.vars_and_vals[var])
-                filt = getattr(table, var).in_(new_vals)
-            filts.append(filt)
+                    api_obj_tmp = crosswalk(table, ApiObject(vars_and_vals={colname: val}, limit=None, exclude=None))
+                    new_vals = splitter(api_obj_tmp.vars_and_vals[colname])
+                    mycol = getattr(table, colname)
+                    filt = mycol.in_(new_vals)
+                filts.append(filt)
     return filts
 
 
@@ -99,8 +98,30 @@ def indirect_joins(tbl1, tbl2, col, api_obj):
         cond = and_(cond, getattr(tbl2, col).in_(vals2))
     return cond, filters
 
+def gen_combos(tables, colname, val):
+    combos = []
+    relevant_tables = tables_by_col(tables, colname)
+    for table1, table2 in itertools.combinations(relevant_tables, 2):
+        cond1 = and_(getattr(table1, colname) == val, getattr(table2, colname) == val)
+        cond2 = and_(getattr(table1, colname) == val, getattr(table2, colname) == None)
+        cond3 = and_(getattr(table1, colname) == None, getattr(table2, colname) == val)
+        combos.append(or_(cond1, cond2, cond3))
+    return combos
 
-def where_filters(tables, where_str):
+def where_filters2(tables, api_obj):
+    where_str = api_obj.where
+    if not where_str:
+        return []
+    wheres = splitter(where_str)
+    filts = []
+
+    for where in wheres:
+        colname, val = where.split(":")
+        filts += gen_combos(tables, colname, val)
+    return filts
+
+def where_filters(tables, api_obj):
+    where_str = api_obj.where
     if not where_str:
         return []
     filts = []
@@ -177,11 +198,26 @@ def make_joins(tables, api_obj, tbl_years):
             else:
                 direct_join = getattr(tbl1, col) == getattr(tbl2, col)
                 indirs, filts = indirect_joins(tbl1, tbl2, col, api_obj)
-                join_clause = and_(join_clause, or_(indirs, direct_join))
+                if api_obj.auto_crosswalk:
+                    # raise Exception("yoohoo")
+                    join_clause = and_(join_clause, or_(indirs, direct_join))
+                else:
+                    join_clause = and_(join_clause, direct_join)
+
 
         my_joins.append([tbl2, join_clause])
     return my_joins, filts
 
+
+def tables_by_col(tables, col, return_first=False):
+    acc = []
+    for table in tables:
+        if hasattr(table, col):
+            if return_first:
+                return table
+            else:
+                acc.append(table)
+    return acc
 
 def get_column_from_tables(tables, col, return_first=True):
     acc = []
@@ -209,10 +245,14 @@ def joinable_query(tables, api_obj, tbl_years):
 
     if my_joins:
         for join_info in my_joins:
-            qry = qry.join(*join_info)
+            qry = qry.join(*join_info, full=True, isouter=True)
 
     filts += multitable_value_filters(tables, api_obj)
-    filts += where_filters(tables, api_obj.where)
+
+    # if api_obj.auto_crosswalk:
+        # filts += where_filters(tables, api_obj)
+    # else:
+        # filts += where_filters2(tables, api_obj)
 
 
     for table in tables:
@@ -229,4 +269,4 @@ def joinable_query(tables, api_obj, tbl_years):
 
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
-    return flask.jsonify(x=list(qry), subs=api_obj.subs, warnings=api_obj.warnings)
+    return flask.jsonify(data=list(qry), subs=api_obj.subs, warnings=api_obj.warnings)
