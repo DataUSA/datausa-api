@@ -161,7 +161,7 @@ class TableManager(object):
                     penalty = (1 - (1.0 / table.median_moe)) if table.median_moe > 0 else 0
                     candidates[table] = overlap_size - penalty
         if not candidates:
-            raise DataUSAException("No tables2 can match the specified query.")
+            raise DataUSAException("No tables can match the specified query.")
         return candidates
 
     @classmethod
