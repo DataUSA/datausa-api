@@ -63,3 +63,9 @@ def logic_view():
     api_obj = build_api_obj()
     table_list = manager.all_tables(api_obj)
     return jsonify(tables=[table.info(api_obj) for table in table_list])
+
+
+@mod.route("/years/")
+def years_view():
+    years_data = manager.table_years_set
+    return jsonify(data=years_data)

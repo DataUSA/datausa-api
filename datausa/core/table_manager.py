@@ -5,6 +5,7 @@ from datausa.core import crosswalker
 from datausa.attrs import consts
 from operator import attrgetter
 from sqlalchemy.sql import func
+from sqlalchemy import distinct
 from datausa import cache
 
 from datausa.acs.abstract_models import BaseAcs5, BaseAcs3, BaseAcs1
@@ -14,6 +15,20 @@ def table_name(tbl):
     return "{}.{}".format(tbl.__table_args__["schema"],
                           tbl.__tablename__)
 
+
+@cache.memoize()
+def tbl_years_set():
+    years_set = {}
+    for tbl in registered_models:
+        tbl_name = table_name(tbl)
+        if hasattr(tbl, "year"):
+            qry = tbl.query.with_entities(
+                distinct(tbl.year).label("year"),
+            )
+            years_set[tbl_name] = [res.year for res in qry]
+        else:
+            years_set[tbl_name] = None
+    return years_set
 
 @cache.memoize()
 def tbl_years():
@@ -49,7 +64,10 @@ def tbl_sizes():
 class TableManager(object):
     possible_variables = [col.key for t in registered_models
                           for col in get_columns(t)]
+
+    table_years_set = tbl_years_set()
     table_years = tbl_years()
+
     # table_sizes = tbl_sizes()
     @classmethod
     def schema_selector(cls, api_obj):
