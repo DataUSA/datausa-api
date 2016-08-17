@@ -48,7 +48,8 @@ class ApiObject(object):
     def __init__(self, **kwargs):
         allowed = ["vars_needed", "vars_and_vals", "values",
                    "shows_and_levels", "force", "where", "order",
-                   "sort", "limit", "exclude", "auto_crosswalk"]
+                   "sort", "limit", "exclude", "auto_crosswalk",
+                   "complex_filters"]
         self._year = None
         self.auto_crosswalk = False
         for keyword, value in kwargs.items():

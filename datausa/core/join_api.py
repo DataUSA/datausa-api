@@ -269,6 +269,22 @@ def handle_ordering(tables, api_obj):
     sort_expr = getattr(my_col, sort)()
     return sort_expr.nullslast()
 
+def complex_filters(tables, api_obj):
+    '''The complex filters are provided to the api in the format:
+        <variable name>.<associated variable to filter>=<value>
+        e.g.
+        grads_total.year=2013
+    '''
+    filts = []
+    for key, value in api_obj.complex_filters.items():
+        target_var, filt_col = key.split(".")
+        cols = get_column_from_tables(tables, target_var, False)
+        for col in cols:
+            # if hasattr(table, filt_col):
+            table = col.class_
+            filts.append(getattr(table, filt_col) == value)
+    return filts
+
 def joinable_query(tables, api_obj, tbl_years):
     cols = parse_entities(tables, api_obj)
     qry = db.session.query(*tables).select_from(tables[0]).with_entities(*cols)
@@ -280,7 +296,7 @@ def joinable_query(tables, api_obj, tbl_years):
             qry = qry.join(*join_info, full=True, isouter=True)
 
     filts += multitable_value_filters(tables, api_obj)
-
+    filts += complex_filters(tables, api_obj)
     # if api_obj.auto_crosswalk:
         # filts += where_filters(tables, api_obj)
     # else:
