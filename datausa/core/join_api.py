@@ -40,11 +40,7 @@ def multitable_value_filters(tables, api_obj):
     filts = []
 
     for colname, val in api_obj.vars_and_vals.items():
-        if "." in colname:
-            colname, related_tables = find_table(tables, colname)
-            raise Exception("Aa")
-        else:
-            related_tables = tables_by_col(tables, colname)
+        related_tables = tables_by_col(tables, colname)
         if not api_obj.auto_crosswalk:
             filts += gen_combos(related_tables, colname, val)
         else:
@@ -100,10 +96,8 @@ def indirect_joins(tbl1, tbl2, col, api_obj):
     # does this column appear in vars and vals?
     cond = False
     filters = []
-    if col in api_obj.vars_and_vals:
+    if col in api_obj.vars_and_vals and api_obj.auto_crosswalk:
         vals_orig = splitter(api_obj.vars_and_vals[col])
-        from datausa.core.crosswalker import crosswalk
-        from datausa.core.models import ApiObject
         api_objs1 = [crosswalk(tbl1, ApiObject(vars_and_vals={col: val}, limit=None, exclude=None)) for val in vals_orig]
         vals1 = [tmp_api_obj.vars_and_vals[col] for tmp_api_obj in api_objs1]
         api_objs2 = [crosswalk(tbl2, ApiObject(vars_and_vals={col: val}, limit=None, exclude=None)) for val in vals_orig]
@@ -126,18 +120,25 @@ def indirect_joins(tbl1, tbl2, col, api_obj):
 def gen_combos(tables, colname, val):
     combos = []
     relevant_tables = tables_by_col(tables, colname)
-    for table1, table2 in itertools.combinations(relevant_tables, 2):
-        val1 = splitter(val)
-        val2 = splitter(val)
-        if colname == consts.YEAR and val in [consts.LATEST, consts.OLDEST]:
-            years1 = TableManager.table_years[table1.full_name()]
-            years2 = TableManager.table_years[table2.full_name()]
-            val1 = [years1[val]]
-            val2 = [years2[val]]
-        cond1 = and_(getattr(table1, colname).in_(val1), getattr(table2, colname).in_(val2))
-        cond2 = and_(getattr(table1, colname).in_(val1), getattr(table2, colname) == None)
-        cond3 = and_(getattr(table1, colname) == None, getattr(table2, colname).in_(val2))
-        combos.append(or_(cond1, cond2, cond3))
+
+    possible_combos = list(itertools.combinations(relevant_tables, 2))
+    if len(possible_combos) > 0:
+        for table1, table2 in possible_combos:
+            val1 = splitter(val)
+            val2 = splitter(val)
+            if colname == consts.YEAR and val in [consts.LATEST, consts.OLDEST]:
+                years1 = TableManager.table_years[table1.full_name()]
+                years2 = TableManager.table_years[table2.full_name()]
+                val1 = [years1[val]]
+                val2 = [years2[val]]
+            cond1 = and_(getattr(table1, colname).in_(val1), getattr(table2, colname).in_(val2))
+            cond2 = and_(getattr(table1, colname).in_(val1), getattr(table2, colname) == None)
+            cond3 = and_(getattr(table1, colname) == None, getattr(table2, colname).in_(val2))
+            combos.append(or_(cond1, cond2, cond3))
+    elif not len(possible_combos) and len(relevant_tables) == 1:
+        # if we're just referencing a single table
+        safe_colname = colname.rsplit(".", 1)[-1]
+        combos.append(getattr(relevant_tables[0], safe_colname) == val)
     return combos
 
 def where_filters2(tables, api_obj):
@@ -249,6 +250,14 @@ def tables_by_col(tables, col, return_first=False):
                 return table
             else:
                 acc.append(table)
+        elif "." in col:
+            table_name, colname = col.rsplit(".", 1)
+            if table_name == table.full_name() and hasattr(table, colname):
+                if return_first:
+                    return table
+                else:
+                    acc.append(table)
+
     return acc
 
 def get_column_from_tables(tables, col, return_first=True):
@@ -297,11 +306,11 @@ def joinable_query(tables, api_obj, tbl_years):
 
     filts += multitable_value_filters(tables, api_obj)
     filts += complex_filters(tables, api_obj)
-    # if api_obj.auto_crosswalk:
-        # filts += where_filters(tables, api_obj)
-    # else:
-        # filts += where_filters2(tables, api_obj)
 
+    if api_obj.auto_crosswalk:
+        filts += where_filters(tables, api_obj)
+    else:
+        filts += where_filters2(tables, api_obj)
 
     for table in tables:
         filts += sumlevel_filtering2(table, api_obj)
