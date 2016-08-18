@@ -70,11 +70,11 @@ def api_view(csv=None):
     return data
 
 @mod.route("/join/")
-def api_meta(csv=None):
+@mod.route("/join/csv/", defaults={'csv': True})
+def api_join_view(csv=None):
     api_obj = build_api_obj()
     tables = manager.required_tables(api_obj)
-    # api_obj = manager.multi_crosswalk(tables, api_obj)
-    data = join_api.joinable_query(tables, api_obj, manager.table_years)
+    data = join_api.joinable_query(tables, api_obj, manager.table_years, csv_format=csv)
     return data
 
 

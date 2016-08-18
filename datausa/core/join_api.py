@@ -13,7 +13,7 @@ from datausa.core.api import parse_method_and_val
 from datausa.core.crosswalker import crosswalk
 from datausa.core.models import ApiObject
 from datausa.attrs.views import attr_map
-
+from datausa.core.streaming import stream_qry, stream_qry_csv
 
 def use_attr_names(qry, cols):
     new_cols = []
@@ -322,7 +322,7 @@ def complex_filters(tables, api_obj):
             filts.append(getattr(table, filt_col) == value)
     return filts
 
-def joinable_query(tables, api_obj, tbl_years):
+def joinable_query(tables, api_obj, tbl_years, csv_format=False):
     cols = parse_entities(tables, api_obj)
     qry = db.session.query(*tables)
     qry = qry.select_from(tables[0])
@@ -349,9 +349,6 @@ def joinable_query(tables, api_obj, tbl_years):
     for table in tables:
         filts += sumlevel_filtering2(table, api_obj)
 
-    # TODO: add option to return names in query
-    # TODO: allow sumlevel all to be optional?
-
     if api_obj.order:
         sort_expr = handle_ordering(tables, api_obj)
         qry = qry.order_by(sort_expr)
@@ -360,4 +357,7 @@ def joinable_query(tables, api_obj, tbl_years):
 
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
-    return flask.jsonify(data=list(qry), subs=api_obj.subs, warnings=api_obj.warnings)
+
+    if csv_format:
+        return stream_qry_csv(cols, qry, api_obj)
+    return stream_qry(tables, cols, qry, api_obj)
