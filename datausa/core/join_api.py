@@ -12,6 +12,34 @@ from datausa.acs.abstract_models import db
 from datausa.core.api import parse_method_and_val
 from datausa.core.crosswalker import crosswalk
 from datausa.core.models import ApiObject
+from datausa.attrs.views import attr_map
+
+
+def use_attr_names(qry, cols):
+    new_cols = []
+    joins = {}
+    for col in cols:
+        full_name = str(col)
+        full_table_name, var_name = full_name.rsplit(".", 1)
+        # TODO THIS LOGIC:
+        # col_str = "pums_degree" if "pums" in table.__table_args__["schema"] and col_str == "degree" else col_str
+        if full_name.startswith("pums") and full_name.endswith(".degree"):
+            var_name = "pums_degree"
+        elif full_name.startswith("bls") and (full_name.endswith(".naics") or full_name.endswith(".soc")):
+            var_name = "bls_{}".format(var_name)
+        # if table.__table_args__["schema"] == 'bls' and col_str in ['naics', 'soc']:
+            # col_str = "bls_{}".format(col_str)
+
+        if var_name in attr_map:
+            attr_obj = attr_map[var_name]
+            attr_alias = aliased(attr_obj)
+            joins[full_name] = [attr_alias, col == attr_alias.id]
+            new_cols.append(attr_alias.name.label(full_name + "_name"))
+
+        new_cols.append(col)
+    for col_str, j in joins.items():
+        qry = qry.join(*j, isouter=True)
+    return qry, new_cols
 
 def sumlevel_filtering2(table, api_obj):
     shows_and_levels = api_obj.shows_and_levels
@@ -296,13 +324,19 @@ def complex_filters(tables, api_obj):
 
 def joinable_query(tables, api_obj, tbl_years):
     cols = parse_entities(tables, api_obj)
-    qry = db.session.query(*tables).select_from(tables[0]).with_entities(*cols)
+    qry = db.session.query(*tables)
+    qry = qry.select_from(tables[0])
 
     my_joins, filts = make_joins(tables, api_obj, tbl_years)
 
     if my_joins:
         for join_info in my_joins:
             qry = qry.join(*join_info, full=True, isouter=True)
+
+    if api_obj.display_names:
+        qry, cols = use_attr_names(qry, cols)
+
+    qry = qry.with_entities(*cols)
 
     filts += multitable_value_filters(tables, api_obj)
     filts += complex_filters(tables, api_obj)

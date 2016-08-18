@@ -26,6 +26,8 @@ def build_api_obj():
     limit = request.args.get("limit", None)
     exclude = request.args.get("exclude", None)
     auto_crosswalk = request.args.get("auto_crosswalk", False)
+    display_names = request.args.get("display_names", False)
+
     shows = show.split(",")
     sumlevels = sumlevel.split(",")
     values = required.split(",") if required else []
@@ -49,6 +51,7 @@ def build_api_obj():
                         where=where, force=force, order=order,
                         sort=sort, limit=limit, exclude=exclude,
                         auto_crosswalk=auto_crosswalk,
+                        display_names=display_names,
                         complex_filters=complex_filters)
     return api_obj
 

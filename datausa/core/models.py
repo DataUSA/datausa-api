@@ -49,9 +49,10 @@ class ApiObject(object):
         allowed = ["vars_needed", "vars_and_vals", "values",
                    "shows_and_levels", "force", "where", "order",
                    "sort", "limit", "exclude", "auto_crosswalk",
-                   "complex_filters"]
+                   "complex_filters", "display_names"]
         self._year = None
         self.auto_crosswalk = False
+        self.display_names = False
         for keyword, value in kwargs.items():
             if keyword in allowed:
                 setattr(self, keyword, value)
@@ -68,6 +69,7 @@ class ApiObject(object):
             self._year = self.year
         self.force_schema = None
         self.auto_crosswalk = self.auto_crosswalk in ['true', '1']
+        self.display_names = self.display_names in ['true', '1']
         # if not "geo" in self.shows_and_levels and "geo" in self.vars_and_vals:
         #     if self.vars_and_vals["geo"]:
         #         prefix = self.vars_and_vals["geo"][:3]
