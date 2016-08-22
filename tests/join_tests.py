@@ -44,5 +44,37 @@ class JoinAPITestCases(unittest.TestCase):
         first_row = data[0]
         assert first_row[target_index] == 'Massachusetts'
 
+    def test_limit(self):
+        req = self.app.get('/api/join/?required=grads_total&sumlevel=state&show=geo&limit=3')
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        assert len(data) == 3
+
+    def test_no_subs(self):
+        req = self.app.get('/api/join/?required=adult_obesity,income&sumlevel=all&show=geo&geo=16000US2507000&auto_crosswalk=0')
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        assert 'subs' in result
+        assert not result['subs']
+
+    def test_subs(self):
+        req = self.app.get('/api/join/?required=adult_obesity,income&sumlevel=all&show=geo&geo=16000US2507000&auto_crosswalk=1')
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        assert 'subs' in result
+        assert 'chr.yg' in result['subs']
+        assert 'geo' in result['subs']['chr.yg']
+        geo_subs = result['subs']['chr.yg']['geo']
+        assert len(geo_subs) == 1
+        geo_sub = geo_subs[0]
+        assert 'original' in geo_sub
+        assert 'replacement' in geo_sub
+        assert geo_sub['original'] == '16000US2507000'
+        assert geo_sub['replacement'] == '05000US25025'
+
+
 if __name__ == '__main__':
     unittest.main()
