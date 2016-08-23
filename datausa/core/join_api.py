@@ -21,14 +21,10 @@ def use_attr_names(qry, cols):
     for col in cols:
         full_name = str(col)
         full_table_name, var_name = full_name.rsplit(".", 1)
-        # TODO THIS LOGIC:
-        # col_str = "pums_degree" if "pums" in table.__table_args__["schema"] and col_str == "degree" else col_str
         if full_name.startswith("pums") and full_name.endswith(".degree"):
             var_name = "pums_degree"
         elif full_name.startswith("bls") and (full_name.endswith(".naics") or full_name.endswith(".soc")):
             var_name = "bls_{}".format(var_name)
-        # if table.__table_args__["schema"] == 'bls' and col_str in ['naics', 'soc']:
-            # col_str = "bls_{}".format(col_str)
 
         if var_name in attr_map:
             attr_obj = attr_map[var_name]
@@ -102,7 +98,6 @@ def parse_entities(tables, api_obj):
     for value in values:
         for table in tables:
             if hasattr(table, value):
-                # TODO use full name only if value appears in multiple tables
                 col_objs.append(getattr(table, value).label("{}.{}".format(table.full_name(), value)))
                 # break
     return col_objs
