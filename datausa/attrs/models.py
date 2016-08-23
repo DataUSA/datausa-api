@@ -1,7 +1,7 @@
 from datausa.database import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from sqlalchemy import or_
+from sqlalchemy import or_, asc
 from datausa.attrs.consts import OR
 from sqlalchemy.sql import text
 
@@ -144,7 +144,7 @@ class Cip(BaseAttr, ImageAttr):
             cips.append(cip_id[:4])
         if not show_all:
             cips = [cips[-1]]
-        cips = Cip.query.filter(Cip.id.in_(cips)).all()
+        cips = Cip.query.filter(Cip.id.in_(cips)).order_by(asc(func.length(Cip.id))).all()
         return [attr.data_serialize() for attr in cips], Cip.HEADERS
 
     @classmethod
