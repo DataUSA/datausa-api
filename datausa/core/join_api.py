@@ -1,8 +1,7 @@
-import flask
-import sqlalchemy
 import itertools
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import aliased
+from sqlalchemy.sql.expression import join
 
 from datausa.core.table_manager import TableManager, table_name
 
@@ -16,6 +15,8 @@ from datausa.attrs.views import attr_map
 from datausa.core.streaming import stream_qry, stream_qry_csv
 
 def use_attr_names(qry, cols):
+    '''This method will return a query object with outer joins to include
+    description names for all columns which have attribute data'''
     new_cols = []
     joins = {}
     for col in cols:
@@ -38,6 +39,10 @@ def use_attr_names(qry, cols):
     return qry, new_cols
 
 def sumlevel_filtering2(table, api_obj):
+    '''This method provides the logic to handle sumlevel filtering.
+    If auto-crosswalk mode is true the conditions will be simple, otherwise
+    NULLs will be allowed so that NULL rows can be retained for the result sent back to
+    the users'''
     shows_and_levels = api_obj.shows_and_levels
     filters = []
     for col, level in shows_and_levels.items():
@@ -51,16 +56,23 @@ def sumlevel_filtering2(table, api_obj):
                 filters.append(or_(expr, getattr(table, col) == None))
     return filters
 
-def val_crosswalk(table, var, val):
-    api_obj = ApiObject(vars_and_vals={var: val})
-
 def find_table(tables, colname):
+    '''Given a list of tables and the name of a fully qualified column
+    (e.g. chr.yg.geo) return the shortened column name (e.g geo)
+    and the table to which it belongs
+    '''
     target_table, colname = colname.rsplit(".", 1)
     lookup = {tbl.full_name(): tbl for tbl in tables}
     return colname, [lookup[target_table]]
 
-
 def multitable_value_filters(tables, api_obj):
+    '''This method examines the values pased in query args (e.g. year=2014 or
+    geo=04000US25), and applies the logic depending on the crosswalk mode.
+    If the auto-crosswalk is not enabled, special logic (gen_combos) is required
+    to preserve null values so the user will see that no value is available.
+    Otherwise, if auto-crosswalk is enabled, treat each filter as an AND conjunction.
+    Return the list of filters to be applied.
+    '''
     filts = []
 
     for colname, val in api_obj.vars_and_vals.items():
@@ -103,12 +115,16 @@ def parse_entities(tables, api_obj):
     return col_objs
 
 def find_overlap(tbl1, tbl2):
+    '''Given two table objects, determine the set of intersecting columns by
+    column name'''
     cols1 = [c.key for c in tbl1.__table__.columns]
     cols2 = [c.key for c in tbl2.__table__.columns]
     myset = set(cols1).intersection(cols2)
     return myset
 
 def _check_change(api_obj, tbl, col, vals_orig, vals_new):
+    '''Check if any subsitutions occured by examining whether original values (pre-crosswalk)
+    equal new values (post-crosswalk)'''
     did_crosswalk = any([a != b for a, b in zip(vals_orig, vals_new)])
     if did_crosswalk:
         tname = tbl.full_name()
@@ -230,7 +246,6 @@ def where_filters(tables, api_obj):
 def make_joins(tables, api_obj, tbl_years):
     my_joins = []
     filts = []
-    from sqlalchemy.sql.expression import join
     for idx, tbl1 in enumerate(tables[:-1]):
         tbl2 = tables[idx + 1]
         overlap = find_overlap(tbl1, tbl2)
