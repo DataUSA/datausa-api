@@ -12,6 +12,7 @@ from datausa.core.api import parse_method_and_val
 from datausa.core.crosswalker import crosswalk
 from datausa.core.models import ApiObject
 from datausa.attrs.views import attr_map
+from datausa.attrs.models import GeoContainment
 from datausa.core.streaming import stream_qry, stream_qry_csv
 
 def use_attr_names(qry, cols):
@@ -48,6 +49,8 @@ def sumlevel_filtering2(table, api_obj):
     for col, level in shows_and_levels.items():
         args = (table, "{}_filter".format(col))
         if hasattr(*args):
+            if api_obj.auto_crosswalk:
+                raise Exception(col, level)
             func = getattr(*args)
             expr = func(level)
             if api_obj.auto_crosswalk:
@@ -131,7 +134,72 @@ def _check_change(api_obj, tbl, col, vals_orig, vals_new):
         api_obj.record_sub(tbl, col, vals_orig, vals_new)
     return api_obj
 
+def has_same_levels(tbl1, tbl2, col):
+    levels1 = tbl1.get_supported_levels()[col]
+    levels2 = tbl2.get_supported_levels()[col]
+    return set(levels1) == set(levels2)
+
+def geo_crosswalk_join(tbl1, tbl2, col, already_geo_joined):
+    my_joins = []
+    granular_table, broad_table = table_depths(tbl1, tbl2, col)
+    if tbl1 is broad_table:
+        if not already_geo_joined:
+            # TODO verify and test this!!!!
+            raise Exception("test me!")
+            j1 = [
+                GeoContainment, GeoContainment.parent_geoid == broad_table.geo
+            ]
+            j1 = [j1, {"full": False, "isouter": False}]
+            my_joins.append(j1)
+
+        j2_cond = or_(and_(
+                        GeoContainment.parent_geoid == broad_table.geo,
+                        GeoContainment.child_geoid == granular_table.geo),
+                      granular_table.geo == broad_table.geo)
+        j2 = [tbl2, j2_cond]
+        j2 = [j2, {"full": False, "isouter": False}]
+        my_joins.append(j2)
+        # if not already_geo_joined:
+            # j1 = [
+        #         GeoContainment, and_(
+        #             GeoContainment.parent_geoid == broad_table.geo,
+        #             GeoContainment.child_geoid == granular_table.geo)
+        #     ]
+        #     j1 = [j1, {"full": False, "isouter": False}]
+        #     my_joins.append(j1)
+        #     j2_cond = GeoContainment.child_geoid == granular_table.geo
+        # else:
+        #     j2_cond = or_(GeoContainment.child_geoid == granular_table.geo,
+        #                 granular_table.geo == broad_table.geo)
+        # j2 = [tbl2, j2_cond]
+        # j2 = [j2, {"full": False, "isouter": False}]
+        # my_joins.append(j2)
+    else:
+        '''
+        tbl1 is the granular_table! so  we need to join it to the geo table first
+        '''
+        if not already_geo_joined:
+            j1 = [
+                GeoContainment, GeoContainment.child_geoid == granular_table.geo
+            ]
+            j1 = [j1, {"full": False, "isouter": False}]
+            my_joins.append(j1)
+
+        j2_cond = or_(and_(
+                        GeoContainment.parent_geoid == broad_table.geo,
+                        GeoContainment.child_geoid == granular_table.geo),
+                      granular_table.geo == broad_table.geo)
+        j2 = [tbl2, j2_cond]
+        j2 = [j2, {"full": False, "isouter": False}]
+        my_joins.append(j2)
+        already_geo_joined = True
+
+    return my_joins, already_geo_joined
+
 def indirect_joins(tbl1, tbl2, col, api_obj):
+    '''When joining tables in auto-crosswalk mode, a simple a.x=b.x will not work
+    since, if values are crosswalked, the values may be different for each table.
+    The varying values based on crosswalking are taken into account during the join process.'''
     # does this column appear in vars and vals?
     cond = False
     filters = []
@@ -243,9 +311,15 @@ def where_filters(tables, api_obj):
             filts.append(expr)
     return filts
 
+def table_depths(tbl1, tbl2, col):
+    size1 = len(tbl1.get_supported_levels()[col])
+    size2 = len(tbl2.get_supported_levels()[col])
+    return [tbl1, tbl2] if size1 >= size2 else [tbl2, tbl1]
+
 def make_joins(tables, api_obj, tbl_years):
     my_joins = []
     filts = []
+    already_geo_joined = False
     for idx, tbl1 in enumerate(tables[:-1]):
         tbl2 = tables[idx + 1]
         overlap = find_overlap(tbl1, tbl2)
@@ -263,20 +337,31 @@ def make_joins(tables, api_obj, tbl_years):
             api_obj.warn("Years do not overlap between {} and {}!".format(tbl1.full_name(), tbl2.full_name()))
 
         join_clause = True
+        # for col in overlap:
+        #     if col == 'year' and not yr_overlap:
+        #         continue
+        #     else:
+        #         direct_join = getattr(tbl1, col) == getattr(tbl2, col)
+        #         if api_obj.auto_crosswalk:
+        #             # raise Exception("yoohoo")
+        #             indirs, filts = indirect_joins(tbl1, tbl2, col, api_obj)
+        #             join_clause = and_(join_clause, or_(indirs, direct_join))
+        #         else:
+        #             join_clause = and_(join_clause, direct_join)
+
         for col in overlap:
-            if col == 'year' and not yr_overlap:
+            if col == 'year': # or has_same_levels(tbl1, tbl2, col):
                 continue
-            else:
-                direct_join = getattr(tbl1, col) == getattr(tbl2, col)
-                indirs, filts = indirect_joins(tbl1, tbl2, col, api_obj)
-                if api_obj.auto_crosswalk:
-                    # raise Exception("yoohoo")
-                    join_clause = and_(join_clause, or_(indirs, direct_join))
+            if col == consts.GEO:
+                if not has_same_levels(tbl1, tbl2, col):
+                    new_joins, result = geo_crosswalk_join(tbl1, tbl2, col, already_geo_joined)
+                    if result:
+                        already_geo_joined = True
+                    my_joins += new_joins
                 else:
-                    join_clause = and_(join_clause, direct_join)
-
-
-        my_joins.append([tbl2, join_clause])
+                    raise Exception("same levels", tbl1, tbl2)
+            else:
+                raise Exception("Not yet implemented!")
     return my_joins, filts
 
 
@@ -316,6 +401,22 @@ def handle_ordering(tables, api_obj):
     sort_expr = getattr(my_col, sort)()
     return sort_expr.nullslast()
 
+def build_filter(table, filt_col, value):
+    method, value, negate = parse_method_and_val(value)
+    col = getattr(table, filt_col)
+    if method == 'like' and "%" not in value:
+        if consts.OR in value:
+            value = splitter(value)
+            method = "in_"
+        else:
+            method = '__eq__'
+
+    if hasattr(col, method):
+        expr = getattr(col, method)(value)
+    else:
+        raise DataUSAException("bad parameter", value)
+    return expr
+
 def complex_filters(tables, api_obj):
     '''The complex filters are provided to the api in the format:
         <variable name>.<associated variable to filter>=<value>
@@ -329,19 +430,22 @@ def complex_filters(tables, api_obj):
         for col in cols:
             # if hasattr(table, filt_col):
             table = col.class_
-            filts.append(getattr(table, filt_col) == value)
+            filt = build_filter(table, filt_col, value)
+            filts.append(filt)
+            # filts.append(getattr(table, filt_col) == value)
     return filts
 
 def joinable_query(tables, api_obj, tbl_years, csv_format=False):
     cols = parse_entities(tables, api_obj)
+    tables = sorted(tables, key=lambda x: x.full_name())
     qry = db.session.query(*tables)
     qry = qry.select_from(tables[0])
 
     my_joins, filts = make_joins(tables, api_obj, tbl_years)
 
     if my_joins:
-        for join_info in my_joins:
-            qry = qry.join(*join_info, full=True, isouter=True)
+        for join_info, kwargs in my_joins:
+            qry = qry.join(*join_info, **kwargs)
 
     if api_obj.display_names:
         qry, cols = use_attr_names(qry, cols)
@@ -356,8 +460,8 @@ def joinable_query(tables, api_obj, tbl_years, csv_format=False):
     else:
         filts += where_filters2(tables, api_obj)
 
-    for table in tables:
-        filts += sumlevel_filtering2(table, api_obj)
+    # for table in tables:
+        # filts += sumlevel_filtering2(table, api_obj)
 
     if api_obj.order:
         sort_expr = handle_ordering(tables, api_obj)
