@@ -120,7 +120,7 @@ class Yow(BasePums, Employees, Year, SocId, WageId):
 
 class Yiw(BasePums, Employees, Year, NaicsId, WageId):
     __tablename__ = "yiw"
-    median_moe = 1
+    median_moe = 1.5
 
     @classmethod
     def get_supported_levels(cls):
