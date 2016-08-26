@@ -14,6 +14,7 @@ from datausa.core.models import ApiObject
 from datausa.attrs.views import attr_map
 from datausa.attrs.models import GeoContainment
 from datausa.core.streaming import stream_qry, stream_qry_csv
+from datausa.core.naics_crosswalking import naics_crosswalk_join
 
 def use_attr_names(qry, cols):
     '''This method will return a query object with outer joins to include
@@ -145,9 +146,9 @@ def geo_crosswalk_join(tbl1, tbl2, col, already_geo_joined):
     if tbl1 is broad_table:
         if not already_geo_joined:
             # TODO verify and test this!!!!
-            raise Exception("test me!")
+            # raise Exception("test me!")
             j1 = [
-                GeoContainment, GeoContainment.parent_geoid == broad_table.geo
+                GeoContainment, GeoContainment.child_geoid == broad_table.geo
             ]
             j1 = [j1, {"full": False, "isouter": False}]
             my_joins.append(j1)
@@ -320,6 +321,7 @@ def make_joins(tables, api_obj, tbl_years):
     my_joins = []
     filts = []
     already_geo_joined = False
+    already_naics_joined = {}
     for idx, tbl1 in enumerate(tables[:-1]):
         tbl2 = tables[idx + 1]
         overlap = find_overlap(tbl1, tbl2)
@@ -360,6 +362,8 @@ def make_joins(tables, api_obj, tbl_years):
                     my_joins += new_joins
                 else:
                     raise Exception("same levels", tbl1, tbl2)
+            elif col == 'naics':
+                my_joins += naics_crosswalk_join(tbl1, tbl2, col, already_naics_joined)
             else:
                 raise Exception("Not yet implemented!")
     return my_joins, filts
