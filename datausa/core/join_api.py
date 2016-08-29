@@ -140,47 +140,28 @@ def has_same_levels(tbl1, tbl2, col):
     levels2 = tbl2.get_supported_levels()[col]
     return set(levels1) == set(levels2)
 
-def geo_crosswalk_join(tbl1, tbl2, col, already_geo_joined):
+def geo_crosswalk_join(tbl1, tbl2, col):
     my_joins = []
-    granular_table, broad_table = table_depths(tbl1, tbl2, col)
-    if tbl1 is broad_table:
-        if not already_geo_joined:
-            # TODO verify and test this!!!!
-            # raise Exception("test me!")
-            j1 = [
-                GeoContainment, GeoContainment.parent_geoid == broad_table.geo
-            ]
-            j1 = [j1, {"full": False, "isouter": False}]
-            my_joins.append(j1)
+    tbl1_mode, tbl2_mode = table_depths(tbl1, tbl2, col)
+    '''
+    tbl1 is the granular_table! so  we need to join it to the geo table first
+    '''
+    gc_alias = aliased(GeoContainment)
+    j1 = [
+        gc_alias, getattr(gc_alias, tbl1_mode) == tbl1.geo
+    ]
+    j1 = [j1, {"full": False, "isouter": False}]
+    my_joins.append(j1)
 
-        j2_cond = or_(and_(
-                        GeoContainment.parent_geoid == broad_table.geo,
-                        GeoContainment.child_geoid == granular_table.geo),
-                      granular_table.geo == broad_table.geo)
-        j2 = [tbl2, j2_cond]
-        j2 = [j2, {"full": False, "isouter": False}]
-        my_joins.append(j2)
-    else:
-        '''
-        tbl1 is the granular_table! so  we need to join it to the geo table first
-        '''
-        if not already_geo_joined:
-            j1 = [
-                GeoContainment, GeoContainment.child_geoid == granular_table.geo
-            ]
-            j1 = [j1, {"full": False, "isouter": False}]
-            my_joins.append(j1)
+    j2_cond = or_(and_(
+                    getattr(gc_alias, tbl1_mode) == tbl1.geo,
+                    getattr(gc_alias, tbl2_mode) == tbl2.geo),
+                  tbl1.geo == tbl2.geo)
+    j2 = [tbl2, j2_cond]
+    j2 = [j2, {"full": False, "isouter": False}]
+    my_joins.append(j2)
 
-        j2_cond = or_(and_(
-                        GeoContainment.parent_geoid == broad_table.geo,
-                        GeoContainment.child_geoid == granular_table.geo),
-                      granular_table.geo == broad_table.geo)
-        j2 = [tbl2, j2_cond]
-        j2 = [j2, {"full": False, "isouter": False}]
-        my_joins.append(j2)
-        already_geo_joined = True
-
-    return my_joins, already_geo_joined
+    return my_joins
 
 def indirect_joins(tbl1, tbl2, col, api_obj):
     '''When joining tables in auto-crosswalk mode, a simple a.x=b.x will not work
@@ -299,14 +280,18 @@ def where_filters(tables, api_obj):
     return filts
 
 def table_depths(tbl1, tbl2, col):
-    size1 = len(tbl1.get_supported_levels()[col])
-    size2 = len(tbl2.get_supported_levels()[col])
-    return [tbl1, tbl2] if size1 >= size2 else [tbl2, tbl1]
+    if tbl1.get_schema_name() == 'chr' and tbl2.get_schema_name().startswith('pums'):
+        return "child_geoid", "parent_geoid"
+    else:
+        # raise Exception("Not yet implemented!!!", tbl1, tbl2)
+        size1 = len(tbl1.get_supported_levels()[col])
+        size2 = len(tbl2.get_supported_levels()[col])
+        return ["child_geoid", "parent_geoid"] if size1 > size2 else ["parent_geoid", "child_geoid"]
+    # return [tbl1, tbl2] if size1 >= size2 else [tbl2, tbl1]
 
 def make_joins(tables, api_obj, tbl_years):
     my_joins = []
     filts = []
-    already_geo_joined = False
     already_naics_joined = {}
     for idx, tbl1 in enumerate(tables[:-1]):
         tbl2 = tables[idx + 1]
@@ -344,10 +329,7 @@ def make_joins(tables, api_obj, tbl_years):
                 continue
             if col == consts.GEO:
                 if not has_same_levels(tbl1, tbl2, col):
-                    new_joins, result = geo_crosswalk_join(tbl1, tbl2, col, already_geo_joined)
-                    if result:
-                        already_geo_joined = True
-                    my_joins += new_joins
+                    my_joins += geo_crosswalk_join(tbl1, tbl2, col)
                 else:
                     direct_join = getattr(tbl1, col) == getattr(tbl2, col)
                     join_clause = and_(join_clause, direct_join)
