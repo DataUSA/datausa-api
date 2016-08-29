@@ -49,7 +49,7 @@ class ApiObject(object):
         allowed = ["vars_needed", "vars_and_vals", "values",
                    "shows_and_levels", "force", "where", "order",
                    "sort", "limit", "exclude", "auto_crosswalk",
-                   "complex_filters", "display_names"]
+                   "display_names", "offset"]
         self._year = None
         self.auto_crosswalk = False
         self.display_names = False
@@ -60,6 +60,8 @@ class ApiObject(object):
                 raise DataUSAException("Invalid ApiObject attribute")
         if self.limit:
             self.limit = int(self.limit)
+        if self.offset:
+            self.offset = int(self.offset)
         self.subs = {}
         self.table_list = []
         self.warnings = []

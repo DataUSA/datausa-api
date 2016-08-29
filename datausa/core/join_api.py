@@ -148,7 +148,7 @@ def geo_crosswalk_join(tbl1, tbl2, col, already_geo_joined):
             # TODO verify and test this!!!!
             # raise Exception("test me!")
             j1 = [
-                GeoContainment, GeoContainment.child_geoid == broad_table.geo
+                GeoContainment, GeoContainment.parent_geoid == broad_table.geo
             ]
             j1 = [j1, {"full": False, "isouter": False}]
             my_joins.append(j1)
@@ -160,21 +160,6 @@ def geo_crosswalk_join(tbl1, tbl2, col, already_geo_joined):
         j2 = [tbl2, j2_cond]
         j2 = [j2, {"full": False, "isouter": False}]
         my_joins.append(j2)
-        # if not already_geo_joined:
-            # j1 = [
-        #         GeoContainment, and_(
-        #             GeoContainment.parent_geoid == broad_table.geo,
-        #             GeoContainment.child_geoid == granular_table.geo)
-        #     ]
-        #     j1 = [j1, {"full": False, "isouter": False}]
-        #     my_joins.append(j1)
-        #     j2_cond = GeoContainment.child_geoid == granular_table.geo
-        # else:
-        #     j2_cond = or_(GeoContainment.child_geoid == granular_table.geo,
-        #                 granular_table.geo == broad_table.geo)
-        # j2 = [tbl2, j2_cond]
-        # j2 = [j2, {"full": False, "isouter": False}]
-        # my_joins.append(j2)
     else:
         '''
         tbl1 is the granular_table! so  we need to join it to the geo table first
@@ -261,6 +246,30 @@ def where_filters2(tables, api_obj):
         filts += gen_combos(tables, colname, val)
     return filts
 
+
+def make_filter(table, col, cond):
+    cols = None
+
+    method, value, negate = parse_method_and_val(cond)
+    if method == "ne":
+        expr = col != value
+    elif method == "gt":
+        expr = col > value
+    elif method == "lt":
+        expr = col < value
+    # elif method == "rt":
+        # expr = and_(cols[1] != 0, cols[0] / cols[1] < value)
+    # elif method == "rg":
+        # expr = and_(cols[1] != 0, cols[0] / cols[1] > value)
+    else:
+        if method == 'like' and "%" not in value:
+            method = '__eq__'
+        expr = getattr(col, method)(value)
+    if negate:
+        expr = ~expr
+
+    return expr
+
 def where_filters(tables, api_obj):
     where_str = api_obj.where
     if not where_str:
@@ -269,47 +278,24 @@ def where_filters(tables, api_obj):
 
     wheres = splitter(where_str)
     for where in wheres:
-        for table in tables:
-            colname, cond = where.split(":")
-            if "." in colname:
-                target_table, target_col = colname.rsplit(".", 1)
-                if "{}.{}".format(table.full_name(), target_col) != colname:
-                    continue
-                else:
-                    colname = target_col
+        colname, cond = where.split(":")
+        target_var, filt_col = colname.rsplit(".", 1)
 
-            cols = None
-            is_multi_col = "/" in colname
-            if is_multi_col:
-                colnames = colname.split("/")
-                has_all = all([hasattr(table, c) for c in colnames])
-                if not has_all:
-                    continue
-                cols = [getattr(table, c) for c in colnames]
-            else:
-                if not hasattr(table, colname):
-                    continue
-                col = getattr(table, colname)
-
-            method, value, negate = parse_method_and_val(cond)
-            if method == "ne":
-                expr = col != value
-            elif method == "gt":
-                expr = col > value
-            elif method == "lt":
-                expr = col < value
-            elif method == "rt":
-                expr = and_(cols[1] != 0, cols[0] / cols[1] < value)
-            elif method == "rg":
-                expr = and_(cols[1] != 0, cols[0] / cols[1] > value)
-            else:
-                if method == 'like' and "%" not in value:
-                    method = '__eq__'
-                expr = getattr(col, method)(value)
-            if negate:
-                expr = ~expr
-
-            filts.append(expr)
+        if filt_col == 'sumlevel':
+            filt_col = api_obj.shows_and_levels.keys()[0]
+            cols = get_column_from_tables(tables, target_var, False)
+            table = tables_by_col(tables, target_var, return_first=True)
+            args = (table, "{}_filter".format(filt_col))
+            if hasattr(*args):
+                func = getattr(*args)
+                filts.append(func(cond))
+        else:
+            cols = get_column_from_tables(tables, target_var, False)
+            for col in cols:
+                table = col.class_
+                filt_col = getattr(table, filt_col)
+                filt = make_filter(table, filt_col, cond)
+                filts.append(filt)
     return filts
 
 def table_depths(tbl1, tbl2, col):
@@ -339,6 +325,8 @@ def make_joins(tables, api_obj, tbl_years):
             api_obj.warn("Years do not overlap between {} and {}!".format(tbl1.full_name(), tbl2.full_name()))
 
         join_clause = True
+        # TODO test direct joins
+
         # for col in overlap:
         #     if col == 'year' and not yr_overlap:
         #         continue
@@ -361,11 +349,14 @@ def make_joins(tables, api_obj, tbl_years):
                         already_geo_joined = True
                     my_joins += new_joins
                 else:
-                    raise Exception("same levels", tbl1, tbl2)
+                    direct_join = getattr(tbl1, col) == getattr(tbl2, col)
+                    join_clause = and_(join_clause, direct_join)
             elif col == 'naics':
                 my_joins += naics_crosswalk_join(tbl1, tbl2, col, already_naics_joined)
             else:
                 raise Exception("Not yet implemented!")
+        if join_clause != True:
+            my_joins.append([[tbl2, direct_join], {}])
     return my_joins, filts
 
 
@@ -421,24 +412,6 @@ def build_filter(table, filt_col, value):
         raise DataUSAException("bad parameter", value)
     return expr
 
-def complex_filters(tables, api_obj):
-    '''The complex filters are provided to the api in the format:
-        <variable name>.<associated variable to filter>=<value>
-        e.g.
-        grads_total.year=2013
-    '''
-    filts = []
-    for key, value in api_obj.complex_filters.items():
-        target_var, filt_col = key.split(".")
-        cols = get_column_from_tables(tables, target_var, False)
-        for col in cols:
-            # if hasattr(table, filt_col):
-            table = col.class_
-            filt = build_filter(table, filt_col, value)
-            filts.append(filt)
-            # filts.append(getattr(table, filt_col) == value)
-    return filts
-
 def joinable_query(tables, api_obj, tbl_years, csv_format=False):
     cols = parse_entities(tables, api_obj)
     tables = sorted(tables, key=lambda x: x.full_name())
@@ -457,12 +430,7 @@ def joinable_query(tables, api_obj, tbl_years, csv_format=False):
     qry = qry.with_entities(*cols)
 
     filts += multitable_value_filters(tables, api_obj)
-    filts += complex_filters(tables, api_obj)
-
-    if api_obj.auto_crosswalk:
-        filts += where_filters(tables, api_obj)
-    else:
-        filts += where_filters2(tables, api_obj)
+    filts += where_filters(tables, api_obj)
 
     # for table in tables:
         # filts += sumlevel_filtering2(table, api_obj)
@@ -475,6 +443,9 @@ def joinable_query(tables, api_obj, tbl_years, csv_format=False):
 
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
+
+    if api_obj.offset:
+        qry = qry.offset(api_obj.offset)
 
     if csv_format:
         return stream_qry_csv(cols, qry, api_obj)

@@ -24,6 +24,7 @@ def build_api_obj():
     order = request.args.get("order", "")
     sort = request.args.get("sort", "")
     limit = request.args.get("limit", None)
+    offset = request.args.get("offset", None)
     exclude = request.args.get("exclude", None)
     auto_crosswalk = request.args.get("auto_crosswalk", False)
     display_names = request.args.get("display_names", False)
@@ -38,12 +39,6 @@ def build_api_obj():
     vars_and_vals = {var:request.args.get(var, None) for var in variables}
     vars_and_vals = {k:v for k,v in vars_and_vals.items() if v}
 
-    complex_filters = {}
-    for col_key in request.args.keys():
-        if "." in col_key:
-            var_name, col_name = col_key.split(".")
-            if col_name in variables:
-                complex_filters[col_key] = request.args.get(col_key, None)
 
     vars_needed = vars_and_vals.keys() + shows + values
     api_obj = ApiObject(vars_needed=vars_needed, vars_and_vals=vars_and_vals,
@@ -52,7 +47,7 @@ def build_api_obj():
                         sort=sort, limit=limit, exclude=exclude,
                         auto_crosswalk=auto_crosswalk,
                         display_names=display_names,
-                        complex_filters=complex_filters)
+                        offset=offset)
     return api_obj
 
 @mod.route("/")
