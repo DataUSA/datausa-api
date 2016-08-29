@@ -53,6 +53,13 @@ class JoinAPITestCases(unittest.TestCase):
         data = result['data']
         assert len(data) == 3
 
+    def test_geos_crosswalk_3vars(self):
+        req = self.app.get('http://localhost:5000/api/join/?required=adult_obesity,avg_wage,income&sumlevel=all&show=geo&where=income.geo:16000US2507000,adult_obesity.sumlevel:county,grads_total.sumlevel:county&year=latest')
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        headers = result['headers']
+        assert len(data) >= 1
 
 if __name__ == '__main__':
     unittest.main()
