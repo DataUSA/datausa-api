@@ -53,6 +53,7 @@ class ApiObject(object):
         self._year = None
         self.auto_crosswalk = False
         self.display_names = False
+        self.offset = None
         for keyword, value in kwargs.items():
             if keyword in allowed:
                 setattr(self, keyword, value)
