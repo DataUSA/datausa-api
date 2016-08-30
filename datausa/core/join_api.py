@@ -332,6 +332,9 @@ def make_joins(tables, api_obj, tbl_years):
                     join_clause = and_(join_clause, direct_join)
             elif col == 'naics':
                 my_joins += naics_crosswalk_join(tbl1, tbl2, col, already_naics_joined)
+            elif col == 'cip':
+                direct_join = getattr(tbl1, col) == getattr(tbl2, col)
+                join_clause = and_(join_clause, direct_join)
             else:
                 raise Exception("Not yet implemented!")
         if join_clause != True:

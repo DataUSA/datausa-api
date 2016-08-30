@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 
 class EnrollmentYcu(Enrollment, CipId, UniversityId):
     __tablename__ = "enrollment_ycu"
-    median_moe = 1
+    median_moe = 2.1
 
     year = db.Column(db.Integer(), primary_key=True)
     grads_total = db.Column(db.Integer())
