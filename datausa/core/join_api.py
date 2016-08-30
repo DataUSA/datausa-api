@@ -392,17 +392,6 @@ def build_filter(table, filt_col, value):
     return expr
 
 
-def pk_cols_not_selected(tables, cols):
-    '''This method takes a list of tables and a list of columns to be selected.
-    The method returns the list of primary key columns from all tables that are
-    not currently in the selected cols.'''
-    col_names = {col.key: True for col in cols}
-    missing = []
-    for table in tables:
-        for col in table.__table__.columns:
-            if col.primary_key and col.key not in col_names:
-                missing.append(col)
-    return missing
 
 def joinable_query(tables, api_obj, tbl_years, csv_format=False):
     cols = parse_entities(tables, api_obj)
@@ -419,8 +408,6 @@ def joinable_query(tables, api_obj, tbl_years, csv_format=False):
     if api_obj.display_names:
         qry, cols = use_attr_names(qry, cols)
 
-    missing_cols = pk_cols_not_selected(tables, cols)
-    cols += missing_cols
 
     qry = qry.with_entities(*cols)
 
