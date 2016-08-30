@@ -14,7 +14,7 @@ from datausa.core.models import ApiObject
 from datausa.attrs.views import attr_map
 from datausa.attrs.models import GeoContainment
 from datausa.core.streaming import stream_qry, stream_qry_csv
-from datausa.core.naics_crosswalking import naics_crosswalk_join
+from datausa.core.attr_crosswalking import naics_crosswalk_join, soc_crosswalk_join
 
 def use_attr_names(qry, cols):
     '''This method will return a query object with outer joins to include
@@ -295,13 +295,16 @@ def make_joins(tables, api_obj, tbl_years):
         overlap = find_overlap(tbl1, tbl2)
 
         # check if years overlap
-        years1 = sorted([int(v) for v in tbl_years[tbl1.full_name()].values()])
-        years1[-1] += 1
-        years2 = sorted([int(v) for v in tbl_years[tbl2.full_name()].values()])
-        years2[-1] += 1
-        years1range = range(*years1)
-        years2range = range(*years2)
-        yr_overlap = set(years1range).intersection(years2range)
+        if hasattr(tbl1, "year") and hasattr(tbl2, "year"):
+            years1 = sorted([int(v) for v in tbl_years[tbl1.full_name()].values()])
+            years1[-1] += 1
+            years2 = sorted([int(v) for v in tbl_years[tbl2.full_name()].values()])
+            years2[-1] += 1
+            years1range = range(*years1)
+            years2range = range(*years2)
+            yr_overlap = set(years1range).intersection(years2range)
+        else:
+            yr_overlap = False
 
         if not yr_overlap:
             api_obj.warn("Years do not overlap between {} and {}!".format(tbl1.full_name(), tbl2.full_name()))
@@ -324,19 +327,16 @@ def make_joins(tables, api_obj, tbl_years):
         for col in overlap:
             if col == 'year': # or has_same_levels(tbl1, tbl2, col):
                 continue
-            if col == consts.GEO:
-                if not has_same_levels(tbl1, tbl2, col):
+            if col == consts.GEO and not has_same_levels(tbl1, tbl2, col):
                     my_joins += geo_crosswalk_join(tbl1, tbl2, col)
-                else:
-                    direct_join = getattr(tbl1, col) == getattr(tbl2, col)
-                    join_clause = and_(join_clause, direct_join)
             elif col == 'naics':
                 my_joins += naics_crosswalk_join(tbl1, tbl2, col, already_naics_joined)
-            elif col == 'cip':
+            elif col == 'soc':
+                my_joins += soc_crosswalk_join(tbl1, tbl2, col)
+            else:
                 direct_join = getattr(tbl1, col) == getattr(tbl2, col)
                 join_clause = and_(join_clause, direct_join)
-            else:
-                raise Exception("Not yet implemented!")
+
         if join_clause != True:
             my_joins.append([[tbl2, direct_join], {}])
     return my_joins, filts
