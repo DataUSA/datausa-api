@@ -31,6 +31,8 @@ def build_api_obj():
 
     shows = show.split(",")
     sumlevels = sumlevel.split(",")
+    if shows and not sumlevel:
+        sumlevels = ["all" for show in shows]
     values = required.split(",") if required else []
 
     shows_and_levels = {val:sumlevels[idx] for idx, val in enumerate(shows)}
