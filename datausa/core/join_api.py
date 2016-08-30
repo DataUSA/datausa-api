@@ -143,9 +143,7 @@ def has_same_levels(tbl1, tbl2, col):
 def geo_crosswalk_join(tbl1, tbl2, col):
     my_joins = []
     tbl1_mode, tbl2_mode = table_depths(tbl1, tbl2, col)
-    '''
-    tbl1 is the granular_table! so  we need to join it to the geo table first
-    '''
+
     gc_alias = aliased(GeoContainment)
     j1 = [
         gc_alias, getattr(gc_alias, tbl1_mode) == tbl1.geo
@@ -287,7 +285,6 @@ def table_depths(tbl1, tbl2, col):
         size1 = len(tbl1.get_supported_levels()[col])
         size2 = len(tbl2.get_supported_levels()[col])
         return ["child_geoid", "parent_geoid"] if size1 > size2 else ["parent_geoid", "child_geoid"]
-    # return [tbl1, tbl2] if size1 >= size2 else [tbl2, tbl1]
 
 def make_joins(tables, api_obj, tbl_years):
     my_joins = []
