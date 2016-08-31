@@ -30,7 +30,7 @@ class SkillByCip(BaseOnet, SkillId, CipId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2", "4", "6"], "skill": ["all"]}
+        return {"cip": ["2", "4", "6", "all"], "skill": ["all"]}
 
 class SkillBySoc(BaseOnet, SkillId):
     __tablename__ = "skills_by_soc"
