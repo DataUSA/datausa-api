@@ -10,7 +10,7 @@ class JoinAPITestCases(unittest.TestCase):
         self.app = datausa.app.test_client()
 
     def test_geo_crosswalk(self):
-        req = self.app.get('http://localhost:5000/api/join/?required=adult_obesity,income&sumlevel=all&show=geo&where=income.geo:16000US2507000,adult_obesity.sumlevel:county&year=latest')
+        req = self.app.get('/api/join/?required=adult_obesity,income&sumlevel=all&show=geo&where=income.geo:16000US2507000,adult_obesity.sumlevel:county&year=latest')
         result = json.loads(req.data)
         assert 'data' in result
         data = result['data']
@@ -23,7 +23,7 @@ class JoinAPITestCases(unittest.TestCase):
         assert first_row[chr_geo_index] == '05000US25025'
 
     def test_join_but_no_geo_crosswalk(self):
-        req = self.app.get('http://localhost:5000/api/join/?required=pop_black,pop_white,income&sumlevel=all&show=geo&where=income.geo:16000US2511000&year=latest')
+        req = self.app.get('/api/join/?required=pop_black,pop_white,income&sumlevel=all&show=geo&where=income.geo:16000US2511000&year=latest')
         result = json.loads(req.data)
         assert 'data' in result
         data = result['data']
@@ -54,7 +54,7 @@ class JoinAPITestCases(unittest.TestCase):
         assert len(data) == 3
 
     def test_geos_crosswalk_3vars(self):
-        req = self.app.get('http://localhost:5000/api/join/?required=adult_obesity,avg_wage,income&sumlevel=all&show=geo&where=income.geo:16000US2507000,adult_obesity.sumlevel:county,grads_total.sumlevel:county&year=latest')
+        req = self.app.get('/api/join/?required=adult_obesity,avg_wage,income&sumlevel=all&show=geo&where=income.geo:16000US2507000,adult_obesity.sumlevel:county,grads_total.sumlevel:county&year=latest')
         result = json.loads(req.data)
         assert 'data' in result
         data = result['data']
