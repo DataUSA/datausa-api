@@ -51,7 +51,7 @@ class ApiObject(object):
                    "sort", "limit", "exclude", "auto_crosswalk",
                    "display_names", "offset"]
         self._year = None
-        self.auto_crosswalk = False
+        self.auto_crosswalk = True
         self.display_names = False
         self.offset = None
         for keyword, value in kwargs.items():
@@ -71,7 +71,7 @@ class ApiObject(object):
         if hasattr(self, "year") and self.year != ALL:
             self._year = self.year
         self.force_schema = None
-        self.auto_crosswalk = self.auto_crosswalk in ['true', '1']
+        self.auto_crosswalk = self.auto_crosswalk in [True, 'true', '1']
         self.display_names = self.display_names in ['true', '1']
         # if not "geo" in self.shows_and_levels and "geo" in self.vars_and_vals:
         #     if self.vars_and_vals["geo"]:

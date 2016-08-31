@@ -26,7 +26,7 @@ def build_api_obj():
     limit = request.args.get("limit", None)
     offset = request.args.get("offset", None)
     exclude = request.args.get("exclude", None)
-    auto_crosswalk = request.args.get("auto_crosswalk", False)
+    auto_crosswalk = request.args.get("auto_crosswalk", True)
     display_names = request.args.get("display_names", False)
 
     shows = show.split(",")
