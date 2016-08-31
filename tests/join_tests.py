@@ -61,5 +61,12 @@ class JoinAPITestCases(unittest.TestCase):
         headers = result['headers']
         assert len(data) >= 1
 
+    def test_cip_crosswalk(self):
+        req = self.app.get('/api/join/?required=avg_wage,value&sumlevel=all&show=cip&where=value.cip:010000')
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        assert len(data) >= 1
+
 if __name__ == '__main__':
     unittest.main()
