@@ -15,6 +15,7 @@ from datausa.attrs.views import attr_map
 from datausa.attrs.models import GeoContainment
 from datausa.core.streaming import stream_qry, stream_qry_csv
 from datausa.core.attr_crosswalking import naics_crosswalk_join, soc_crosswalk_join
+from datausa.core.attr_crosswalking import cip_crosswalk_join
 
 def use_attr_names(qry, cols):
     '''This method will return a query object with outer joins to include
@@ -333,6 +334,8 @@ def make_joins(tables, api_obj, tbl_years):
                 my_joins += naics_crosswalk_join(tbl1, tbl2, col, already_naics_joined)
             elif col == 'soc':
                 my_joins += soc_crosswalk_join(tbl1, tbl2, col)
+            elif col == 'cip':
+                my_joins += cip_crosswalk_join(tbl1, tbl2, col)
             else:
                 direct_join = getattr(tbl1, col) == getattr(tbl2, col)
                 join_clause = and_(join_clause, direct_join)

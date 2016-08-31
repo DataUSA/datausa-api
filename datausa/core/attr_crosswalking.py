@@ -1,6 +1,6 @@
 '''naics crosswalker'''
 from datausa.bls.models import BlsCrosswalk, GrowthILookup, SocCrosswalk
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import aliased
 
 
@@ -30,10 +30,11 @@ def naics_crosswalk_join(tbl1, tbl2, col, already_joined):
     return my_joins
 
 def soc_crosswalk_join(tbl1, tbl2, col):
-    # pums_to_bls_soc_map
     my_joins = []
     cond1 = True
-
+    pums_table = None
+    bls_table = None
+    # TODO support onet_table
     if tbl1.get_schema_name() == "bls":
         bls_table = tbl1
     elif tbl2.get_schema_name() == "bls":
@@ -54,4 +55,22 @@ def soc_crosswalk_join(tbl1, tbl2, col):
         my_joins.append(j2)
     else:
         raise Exception("not yet implemented")
+    return my_joins
+
+def cip_crosswalk_join(tbl1, tbl2, col):
+    if tbl1.get_schema_name().startswith('pums'):
+        pums_table = tbl1
+    elif tbl2.get_schema_name().startswith('pums'):
+        pums_table = tbl2
+    if tbl1.get_schema_name() == 'ipeds':
+        deeper_table = tbl1
+    elif tbl2.get_schema_name() == 'ipeds':
+        deeper_table = tbl2
+    if tbl1.get_schema_name() == 'onet':
+        deeper_table = tbl1
+    elif tbl1.get_schema_name() == 'onet':
+        deeper_table = tbl2
+    direct_join = getattr(pums_table, col) == func.left(getattr(deeper_table, col), 2)
+
+    my_joins = [[[tbl2, direct_join], {"full": False, "isouter": False}]]
     return my_joins

@@ -35,7 +35,7 @@ class TuitionYc(Tuition, CipId):
 
 class TuitionYcu(Tuition, CipId, UniversityId):
     __tablename__ = "tuition_ycu"
-    median_moe = 1
+    median_moe = 2
 
     year = db.Column(db.Integer(), primary_key=True)
     grads_total = db.Column(db.Integer())
