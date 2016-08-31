@@ -328,13 +328,14 @@ def make_joins(tables, api_obj, tbl_years):
         for col in overlap:
             if col == 'year': # or has_same_levels(tbl1, tbl2, col):
                 continue
-            if col == consts.GEO and not has_same_levels(tbl1, tbl2, col):
+            lvls_are_eq = has_same_levels(tbl1, tbl2, col)
+            if col == consts.GEO and not lvls_are_eq:
                     my_joins += geo_crosswalk_join(tbl1, tbl2, col)
-            elif col == 'naics':
+            elif col == 'naics' and not lvls_are_eq:
                 my_joins += naics_crosswalk_join(tbl1, tbl2, col, already_naics_joined)
-            elif col == 'soc':
+            elif col == 'soc' and not lvls_are_eq:
                 my_joins += soc_crosswalk_join(tbl1, tbl2, col)
-            elif col == 'cip':
+            elif col == 'cip' and not lvls_are_eq:
                 my_joins += cip_crosswalk_join(tbl1, tbl2, col)
             else:
                 direct_join = getattr(tbl1, col) == getattr(tbl2, col)
