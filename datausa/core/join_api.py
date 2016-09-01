@@ -231,7 +231,7 @@ def where_filters2(tables, api_obj):
     return filts
 
 
-def make_filter(table, col, cond):
+def make_filter(col, cond):
     cols = None
 
     method, value, negate = parse_method_and_val(cond)
@@ -278,7 +278,7 @@ def where_filters(tables, api_obj):
             for col in cols:
                 table = col.class_
                 filt_col = getattr(table, filt_col)
-                filt = make_filter(table, filt_col, cond)
+                filt = make_filter(filt_col, cond)
                 filts.append(filt)
     return filts
 
