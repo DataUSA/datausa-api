@@ -1,7 +1,9 @@
+'''
+Implementation of logic for joining variables across tables
+'''
 import itertools
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import aliased
-from sqlalchemy.sql.expression import join
 
 from datausa.core.table_manager import TableManager, table_name
 
@@ -16,6 +18,7 @@ from datausa.attrs.models import GeoContainment
 from datausa.core.streaming import stream_qry, stream_qry_csv
 from datausa.core.attr_crosswalking import naics_crosswalk_join, soc_crosswalk_join
 from datausa.core.attr_crosswalking import cip_crosswalk_join
+from datausa.core.exceptions import DataUSAException
 
 def use_attr_names(qry, cols):
     '''This method will return a query object with outer joins to include
@@ -27,7 +30,8 @@ def use_attr_names(qry, cols):
         full_table_name, var_name = full_name.rsplit(".", 1)
         if full_name.startswith("pums") and full_name.endswith(".degree"):
             var_name = "pums_degree"
-        elif full_name.startswith("bls") and (full_name.endswith(".naics") or full_name.endswith(".soc")):
+        elif full_name.startswith("bls") and (full_name.endswith(".naics")
+                                              or full_name.endswith(".soc")):
             var_name = "bls_{}".format(var_name)
 
         if var_name in attr_map:
@@ -153,8 +157,8 @@ def geo_crosswalk_join(tbl1, tbl2, col):
     my_joins.append(j1)
 
     j2_cond = or_(and_(
-                    getattr(gc_alias, tbl1_mode) == tbl1.geo,
-                    getattr(gc_alias, tbl2_mode) == tbl2.geo),
+        getattr(gc_alias, tbl1_mode) == tbl1.geo,
+        getattr(gc_alias, tbl2_mode) == tbl2.geo),
                   tbl1.geo == tbl2.geo)
     j2 = [tbl2, j2_cond]
     j2 = [j2, {"full": False, "isouter": False}]
@@ -330,7 +334,7 @@ def make_joins(tables, api_obj, tbl_years):
                 continue
             lvls_are_eq = has_same_levels(tbl1, tbl2, col)
             if col == consts.GEO and not lvls_are_eq:
-                    my_joins += geo_crosswalk_join(tbl1, tbl2, col)
+                my_joins += geo_crosswalk_join(tbl1, tbl2, col)
             elif col == 'naics' and not lvls_are_eq:
                 my_joins += naics_crosswalk_join(tbl1, tbl2, col, already_naics_joined)
             elif col == 'soc' and not lvls_are_eq:
@@ -355,8 +359,8 @@ def tables_by_col(tables, col, return_first=False):
             else:
                 acc.append(table)
         elif "." in col:
-            table_name, colname = col.rsplit(".", 1)
-            if table_name == table.full_name() and hasattr(table, colname):
+            my_table_name, colname = col.rsplit(".", 1)
+            if my_table_name == table.full_name() and hasattr(table, colname):
                 if return_first:
                     return table
                 else:
