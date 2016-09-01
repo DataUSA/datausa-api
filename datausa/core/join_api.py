@@ -396,10 +396,12 @@ def build_filter(table, filt_col, value):
         else:
             method = '__eq__'
 
-    if hasattr(col, method):
-        expr = getattr(col, method)(value)
-    else:
-        raise DataUSAException("bad parameter", value)
+    if not hasattr(col, method):
+        raise DataUSAException("Bad filter parameter", value)
+
+    expr = getattr(col, method)(value)
+    if negate:
+        expr = ~expr
     return expr
 
 
