@@ -1,13 +1,24 @@
 from datausa.database import db
-
+from datausa import cache
 from datausa.acs.abstract_models import BaseAcs1, BaseAcs5, GeoId, GeoId5, GeoId1
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import MetaData
 
-metadata = MetaData(schema=BaseAcs5.schema_name)
+metadata = cache.get("acs5_metadata")
+if not metadata:
+    metadata = MetaData(schema=BaseAcs5.schema_name, bind=db.engine)
+    metadata.reflect()
+    cache.set("acs5_metadata", metadata)
+
 AutomapBase = automap_base(bind=db.engine, metadata=metadata)
 
-metadata_1yr = MetaData(schema=BaseAcs1.schema_name)
+metadata_1yr = cache.get("acs1_metadata")
+if not metadata:
+    metadata_1yr = MetaData(schema=BaseAcs1.schema_name, bind=db.engine)
+    metadata_1yr.reflect()
+    cache.set("acs1_metadata", metadata_1yr)
+
+metadata_1yr = MetaData(schema=BaseAcs1.schema_name, bind=db.engine)
 AutomapBase_1yr = automap_base(bind=db.engine, metadata=metadata_1yr)
 
 # 1 year
@@ -134,5 +145,5 @@ class Acs5_Yg_Vehicles(AutomapBase, BaseAcs5, GeoId5):
     __tablename__ = 'yg_vehicles'
     median_moe = 1
 
-AutomapBase_1yr.prepare(db.engine, reflect=True)
-AutomapBase.prepare(db.engine, reflect=True)
+AutomapBase_1yr.prepare(db.engine, reflect=False)
+AutomapBase.prepare(db.engine, reflect=False)

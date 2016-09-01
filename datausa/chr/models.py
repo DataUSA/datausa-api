@@ -1,18 +1,24 @@
 from datausa.database import db
 from datausa.attrs import consts
 from datausa.attrs.models import University
+from datausa import cache
 
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, ALL
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import MetaData
 
-metadata = MetaData(schema='chr')
+metadata = cache.get("chr_metadata")
+if not metadata:
+    metadata = MetaData(schema='chr', bind=db.engine)
+    metadata.reflect()
+    cache.set("chr_metadata", metadata)
+
 AutomapBase = automap_base(bind=db.engine, metadata=metadata)
 
 
 class HealthYg(AutomapBase, db.Model, BaseModel):
-    __table_args__ = {"schema": "chr"}
+    __table_args__ = {"schema": "chr", "extend_existing": True}
     source_title = 'County Health Rankings'
     source_link = 'http://www.countyhealthrankings.org/'
     source_org = 'University of Wisconsin'
@@ -34,4 +40,4 @@ class HealthYg(AutomapBase, db.Model, BaseModel):
         level_code = level_map[level]
         return cls.geo.startswith(level_code)
 
-AutomapBase.prepare(db.engine, reflect=True)
+AutomapBase.prepare(db.engine, reflect=False)
