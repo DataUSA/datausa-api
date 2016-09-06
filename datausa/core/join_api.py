@@ -145,6 +145,21 @@ def has_same_levels(tbl1, tbl2, col):
     levels2 = tbl2.get_supported_levels()[col]
     return set(levels1) == set(levels2)
 
+def deepest_geo_level(tbl):
+    lvls = tbl.get_supported_levels()["geo"]
+    if consts.PLACE in lvls:
+        return 10
+    elif consts.PUMA in lvls:
+        return 8
+    elif consts.COUNTY in lvls:
+        return 6
+    elif consts.MSA in lvls:
+        return 4
+    elif consts.STATE in lvls:
+        return 2
+    else:
+        return 0
+
 def geo_crosswalk_join(tbl1, tbl2, col):
     my_joins = []
     parent_col, child_col = "parent_geoid", "child_geoid"
@@ -156,7 +171,7 @@ def geo_crosswalk_join(tbl1, tbl2, col):
     j1 = [j1, {"full": False, "isouter": False}]
     my_joins.append(j1)
 
-    if len(tbl1.get_supported_levels()['geo']) < len(tbl2.get_supported_levels()['geo']):
+    if deepest_geo_level(tbl1) > deepest_geo_level(tbl2):
         j2_cond = and_(gc_alias.parent_geoid == tbl1.geo, gc_alias.child_geoid == tbl2.geo)
     else:
         j2_cond = and_(gc_alias.child_geoid == tbl1.geo, gc_alias.parent_geoid == tbl2.geo)
@@ -299,7 +314,8 @@ def make_joins(tables, api_obj, tbl_years):
     my_joins = []
     filts = []
     already_naics_joined = {}
-    for idx, tbl1 in enumerate(tables[:-1]):
+    tbl1 = tables[0]
+    for idx, _ in enumerate(tables[:-1]):
         tbl2 = tables[idx + 1]
         overlap = find_overlap(tbl1, tbl2)
 

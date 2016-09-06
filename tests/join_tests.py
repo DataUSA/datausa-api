@@ -85,5 +85,23 @@ class JoinAPITestCases(unittest.TestCase):
         headers = result['headers']
         assert len(data) == 1
 
+    def test_puma_to_state(self):
+        url = '/api/join/?required=avg_wage,grads_total,income&show=geo&where=avg_wage.sumlevel:puma,grads_total.geo:04000US25,avg_wage.geo:79500US2500100,income.sumlevel:state&year=latest'
+        req = self.app.get(url)
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        headers = result['headers']
+        assert len(data) == 1
+
+    def test_puma_to_state_and_county(self):
+        url = '/api/join/?required=avg_wage,grads_total,income&show=geo&where=avg_wage.geo:79500US2500506,grads_total.sumlevel:state,income.sumlevel:county&year=latest'
+        req = self.app.get(url)
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        headers = result['headers']
+        assert len(data) == 1
+
 if __name__ == '__main__':
     unittest.main()
