@@ -36,7 +36,7 @@ class JoinAPITestCases(unittest.TestCase):
         assert first_row[yg_race_geo_index] == '16000US2511000'
 
     def test_display_names(self):
-        req = self.app.get('/api/join/?required=adult_obesity,income&sumlevel=all&show=geo&geo=04000US25&display_names=1')
+        req = self.app.get('/api/join/?required=adult_obesity,income&sumlevel=all&show=geo&where=adult_obesity.geo:04000US25&display_names=1')
         result = json.loads(req.data)
         assert 'data' in result
         data = result['data']
@@ -67,6 +67,23 @@ class JoinAPITestCases(unittest.TestCase):
         assert 'data' in result
         data = result['data']
         assert len(data) >= 1
+
+    def test_geos_2vars_latest(self):
+        req = self.app.get('/api/join/?required=adult_obesity,income&sumlevel=all&show=geo&where=income.geo:04000US25,adult_obesity.geo:04000US25&year=latest')
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        headers = result['headers']
+        assert len(data) == 1
+
+    def test_ipeds_acs_geo_join(self):
+        url = '/api/join/?required=grads_total,income&sumlevel=all&show=geo&where=income.geo:16000US2507000,grads_total.sumlevel:state&year=latest'
+        req = self.app.get(url)
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        headers = result['headers']
+        assert len(data) == 1
 
 if __name__ == '__main__':
     unittest.main()
