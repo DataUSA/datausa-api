@@ -349,7 +349,7 @@ class IoCode(BaseAttr):
 
 
 class GeoContainment(db.Model):
-    __tablename__ = 'crosswalk_containment'
+    __tablename__ = 'crosswalk_geo_containment'
     __table_args__ = {"schema": "attrs"}
     child_geoid = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
     parent_geoid = db.Column(db.String, db.ForeignKey(Geo.id),
