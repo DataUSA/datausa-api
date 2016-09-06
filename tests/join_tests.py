@@ -103,5 +103,24 @@ class JoinAPITestCases(unittest.TestCase):
         headers = result['headers']
         assert len(data) == 1
 
+    def test_bug(self):
+        url = '/api/join/?required=grads_total,adult_obesity&sumlevel=all&show=geo&where=grads_total.geo:16000US2511000,adult_obesity.sumlevel:state&year=latest'
+        req = self.app.get(url)
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        headers = result['headers']
+        assert len(data) == 1
+
+    def test_bug2(self):
+        url = '/api/join/?required=avg_wage,income&show=geo&where=avg_wage.geo:79500US2500506,income.sumlevel:state&year=latest'
+        req = self.app.get(url)
+        result = json.loads(req.data)
+        assert 'data' in result
+        data = result['data']
+        headers = result['headers']
+        assert len(data) == 1
+
+
 if __name__ == '__main__':
     unittest.main()
