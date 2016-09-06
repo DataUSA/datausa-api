@@ -156,10 +156,14 @@ def geo_crosswalk_join(tbl1, tbl2, col):
     j1 = [j1, {"full": False, "isouter": False}]
     my_joins.append(j1)
 
-    j2_cond = or_(
-        and_(gc_alias.parent_geoid == tbl1.geo, gc_alias.child_geoid == tbl2.geo),
-        and_(gc_alias.child_geoid == tbl1.geo, gc_alias.parent_geoid == tbl2.geo)
-    )
+    if len(tbl1.get_supported_levels()['geo']) < len(tbl2.get_supported_levels()['geo']):
+        j2_cond = and_(gc_alias.parent_geoid == tbl1.geo, gc_alias.child_geoid == tbl2.geo)
+    else:
+        j2_cond = and_(gc_alias.child_geoid == tbl1.geo, gc_alias.parent_geoid == tbl2.geo)
+    # j2_cond = or_(
+        # and_(gc_alias.parent_geoid == tbl1.geo, gc_alias.child_geoid == tbl2.geo),
+        # and_(gc_alias.child_geoid == tbl1.geo, gc_alias.parent_geoid == tbl2.geo)
+    # )
     j2 = [tbl2, j2_cond]
     j2 = [j2, {"full": False, "isouter": False}]
     my_joins.append(j2)
