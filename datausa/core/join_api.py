@@ -147,19 +147,19 @@ def has_same_levels(tbl1, tbl2, col):
 
 def geo_crosswalk_join(tbl1, tbl2, col):
     my_joins = []
-    tbl1_mode, tbl2_mode = table_depths(tbl1, tbl2, col)
-
+    parent_col, child_col = "parent_geoid", "child_geoid"
     gc_alias = aliased(GeoContainment)
     j1 = [
-        gc_alias, getattr(gc_alias, tbl1_mode) == tbl1.geo
+        gc_alias, or_(gc_alias.parent_geoid == tbl1.geo,
+                      gc_alias.child_geoid == tbl1.geo)
     ]
     j1 = [j1, {"full": False, "isouter": False}]
     my_joins.append(j1)
 
-    j2_cond = or_(and_(
-        getattr(gc_alias, tbl1_mode) == tbl1.geo,
-        getattr(gc_alias, tbl2_mode) == tbl2.geo),
-                  tbl1.geo == tbl2.geo)
+    j2_cond = or_(
+        and_(gc_alias.parent_geoid == tbl1.geo, gc_alias.child_geoid == tbl2.geo),
+        and_(gc_alias.child_geoid == tbl1.geo, gc_alias.parent_geoid == tbl2.geo)
+    )
     j2 = [tbl2, j2_cond]
     j2 = [j2, {"full": False, "isouter": False}]
     my_joins.append(j2)
