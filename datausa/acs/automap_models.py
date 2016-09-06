@@ -13,12 +13,11 @@ if not metadata:
 AutomapBase = automap_base(bind=db.engine, metadata=metadata)
 
 metadata_1yr = cache.get("acs1_metadata")
-if not metadata:
+if not metadata_1yr:
     metadata_1yr = MetaData(schema=BaseAcs1.schema_name, bind=db.engine)
     metadata_1yr.reflect()
     cache.set("acs1_metadata", metadata_1yr)
 
-metadata_1yr = MetaData(schema=BaseAcs1.schema_name, bind=db.engine)
 AutomapBase_1yr = automap_base(bind=db.engine, metadata=metadata_1yr)
 
 # 1 year
