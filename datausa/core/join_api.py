@@ -162,7 +162,6 @@ def deepest_geo_level(tbl):
 
 def geo_crosswalk_join(tbl1, tbl2, col):
     my_joins = []
-    parent_col, child_col = "parent_geoid", "child_geoid"
     gc_alias = aliased(GeoCrosswalker)
     j1 = [
         gc_alias, or_(gc_alias.geo_a == tbl1.geo,
@@ -170,10 +169,7 @@ def geo_crosswalk_join(tbl1, tbl2, col):
     ]
     j1 = [j1, {"full": False, "isouter": False}]
     my_joins.append(j1)
-    # if deepest_geo_level(tbl1) > deepest_geo_level(tbl2):
-        # j2_cond = and_(gc_alias.parent_geoid == tbl1.geo, gc_alias.child_geoid == tbl2.geo)
-    # else:
-        # j2_cond = and_(gc_alias.child_geoid == tbl1.geo, gc_alias.parent_geoid == tbl2.geo)
+
     j2_cond = or_(
         and_(gc_alias.geo_a == tbl1.geo, gc_alias.geo_b == tbl2.geo),
         and_(gc_alias.geo_b == tbl1.geo, gc_alias.geo_a == tbl2.geo)
