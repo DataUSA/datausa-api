@@ -99,6 +99,10 @@ class JoinAPITestCases(unittest.TestCase):
         data, _ = self.get_data(url)
         assert len(data) == 1
 
+    def test_national_containment(self):
+        url='/api/join/?required=grads_total,adult_obesity&sumlevel=all&show=geo&limit=5&where=grads_total.geo:01000US,adult_obesity.sumlevel:county'
+        data, _ = self.get_data(url)
+        assert len(data) >= 1
 
 if __name__ == '__main__':
     unittest.main()
