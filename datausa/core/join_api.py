@@ -330,38 +330,31 @@ def make_joins(tables, api_obj, tbl_years):
             api_obj.warn("Years do not overlap between {} and {}!".format(tbl1.full_name(), tbl2.full_name()))
 
         join_clause = True
-        # TODO test direct joins
-
-        # for col in overlap:
-        #     if col == 'year' and not yr_overlap:
-        #         continue
-        #     else:
-        #         direct_join = getattr(tbl1, col) == getattr(tbl2, col)
-        #         if api_obj.auto_crosswalk:
-        #             # raise Exception("yoohoo")
-        #             indirs, filts = indirect_joins(tbl1, tbl2, col, api_obj)
-        #             join_clause = and_(join_clause, or_(indirs, direct_join))
-        #         else:
-        #             join_clause = and_(join_clause, direct_join)
 
         for col in overlap:
             if col == 'year': # or has_same_levels(tbl1, tbl2, col):
                 continue
-            lvls_are_eq = has_same_levels(tbl1, tbl2, col)
-            if col == consts.GEO and not lvls_are_eq:
-                my_joins += geo_crosswalk_join(tbl1, tbl2, col)
-            elif col == 'naics' and not lvls_are_eq:
-                my_joins += naics_crosswalk_join(tbl1, tbl2, col, already_naics_joined)
-            elif col == 'soc' and not lvls_are_eq:
-                my_joins += soc_crosswalk_join(tbl1, tbl2, col)
-            elif col == 'cip' and not lvls_are_eq:
-                my_joins += cip_crosswalk_join(tbl1, tbl2, col)
+            if api_obj.auto_crosswalk:
+                lvls_are_eq = has_same_levels(tbl1, tbl2, col)
+                if col == consts.GEO and not lvls_are_eq:
+                    my_joins += geo_crosswalk_join(tbl1, tbl2, col)
+                elif col == 'naics' and not lvls_are_eq:
+                    my_joins += naics_crosswalk_join(tbl1, tbl2, col, already_naics_joined)
+                elif col == 'soc' and not lvls_are_eq:
+                    my_joins += soc_crosswalk_join(tbl1, tbl2, col)
+                elif col == 'cip' and not lvls_are_eq:
+                    my_joins += cip_crosswalk_join(tbl1, tbl2, col)
+                else:
+                    direct_join = getattr(tbl1, col) == getattr(tbl2, col)
+                    join_clause = and_(join_clause, direct_join)
             else:
                 direct_join = getattr(tbl1, col) == getattr(tbl2, col)
                 join_clause = and_(join_clause, direct_join)
 
         if join_clause != True:
-            my_joins.append([[tbl2, direct_join], {}])
+            join_params = {} if api_obj.auto_crosswalk else {"isouter": True, "full": True}
+            my_joins.append([[tbl2, direct_join], join_params])
+
     return my_joins, filts
 
 
