@@ -104,5 +104,12 @@ class JoinAPITestCases(unittest.TestCase):
         data, _ = self.get_data(url)
         assert len(data) >= 1
 
+    def test_geo_non_crosswalk(self):
+        url='/api/join/?required=grads_total,adult_obesity&show=geo&limit=1&where=grads_total.geo:16000US2511000&auto_crosswalk=0'
+        data, headers = self.get_data(url)
+        target_index = headers.index('chr.yg.geo')
+        first_row = data[0]
+        assert first_row[target_index] is None
+
 if __name__ == '__main__':
     unittest.main()
