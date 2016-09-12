@@ -54,7 +54,14 @@ def soc_crosswalk_join(tbl1, tbl2, col):
         j2 = [[tbl2, j2_cond], {"full": False, "isouter": False}]
         my_joins.append(j2)
     else:
-        raise Exception("not yet implemented")
+        onet_table = tbl1 if tbl1.get_schema_name() == 'onet' else tbl2
+        other_table = pums_table or bls_table
+        j2_cond = or_(onet_table.soc == other_table.soc,
+                     onet_table.soc == func.left(other_table.soc, 2) + '0000',
+                     onet_table.soc == func.left(other_table.soc, 3) + '000',
+                     onet_table.soc == func.left(other_table.soc, 3) + '100',
+                     onet_table.soc == func.left(other_table.soc, 5) + '0')
+        my_joins.append([[tbl2, j2_cond], {}])
     return my_joins
 
 def cip_crosswalk_join(tbl1, tbl2, col):
