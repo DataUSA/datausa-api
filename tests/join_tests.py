@@ -111,5 +111,19 @@ class JoinAPITestCases(unittest.TestCase):
         first_row = data[0]
         assert first_row[target_index] is None
 
+    def test_cip_crosswalk(self):
+        url='/api/join/?required=avg_wage,grads_total&show=cip&limit=1&where=grads_total.cip:090401&auto_crosswalk=1'
+        data, headers = self.get_data(url)
+        target_index = headers.index('pums_1yr.yc.cip')
+        first_row = data[0]
+        assert first_row[target_index] == '09'
+
+    def test_cip_no_crosswalk(self):
+        url='/api/join/?required=avg_wage,grads_total&show=cip&limit=1&where=grads_total.cip:090401&auto_crosswalk=0'
+        data, headers = self.get_data(url)
+        target_index = headers.index('pums_1yr.yc.cip')
+        first_row = data[0]
+        assert first_row[target_index] is None
+
 if __name__ == '__main__':
     unittest.main()
