@@ -125,5 +125,24 @@ class JoinAPITestCases(unittest.TestCase):
         first_row = data[0]
         assert first_row[target_index] is None
 
+    def test_onet_soc_crosswalk(self):
+        url='/api/join/?required=avg_wage,value&sumlevel=all&show=soc&limit=5&auto_crosswalk=1&where=avg_wage.soc:1110XX'
+        data, headers = self.get_data(url)
+        onet_index = headers.index('onet.skills_by_soc.soc')
+        pums_index = headers.index('pums_1yr.yo.soc')
+        first_row = data[0]
+        assert first_row[onet_index] in ['111000', '110000']
+        assert first_row[pums_index] == '1110XX'
+
+    def test_onet_soc_no_crosswalk(self):
+        url='/api/join/?required=avg_wage,value&sumlevel=all&show=soc&limit=5&auto_crosswalk=0&where=avg_wage.soc:1110XX'
+        data, headers = self.get_data(url)
+        onet_index = headers.index('onet.skills_by_soc.soc')
+        pums_index = headers.index('pums_1yr.yo.soc')
+        first_row = data[0]
+        assert first_row[onet_index] is None
+        assert first_row[pums_index] == '1110XX'
+
+
 if __name__ == '__main__':
     unittest.main()
