@@ -1,8 +1,29 @@
-'''naics crosswalker'''
-from datausa.bls.models import BlsCrosswalk, GrowthILookup, SocCrosswalk
-from sqlalchemy import and_, or_, func
+'''Attribute crosswalker for join API'''
 from sqlalchemy.orm import aliased
+from sqlalchemy import and_, or_, func
 
+from datausa.bls.models import BlsCrosswalk, GrowthILookup, SocCrosswalk
+from datausa.attrs.models import GeoCrosswalker
+
+def geo_crosswalk_join(tbl1, tbl2, col):
+    my_joins = []
+    gc_alias = aliased(GeoCrosswalker)
+    j1 = [
+        gc_alias, or_(gc_alias.geo_a == tbl1.geo,
+                      gc_alias.geo_b == tbl1.geo)
+    ]
+    j1 = [j1, {"full": False, "isouter": False}]
+    my_joins.append(j1)
+
+    j2_cond = or_(
+        and_(gc_alias.geo_a == tbl1.geo, gc_alias.geo_b == tbl2.geo),
+        and_(gc_alias.geo_b == tbl1.geo, gc_alias.geo_a == tbl2.geo)
+    )
+    j2 = [tbl2, j2_cond]
+    j2 = [j2, {"full": False, "isouter": False}]
+    my_joins.append(j2)
+
+    return my_joins
 
 def naics_crosswalk_join(tbl1, tbl2, col, already_joined):
     my_joins = []
@@ -34,7 +55,7 @@ def soc_crosswalk_join(tbl1, tbl2, col):
     cond1 = True
     pums_table = None
     bls_table = None
-    # TODO support onet_table
+
     if tbl1.get_schema_name() == "bls":
         bls_table = tbl1
     elif tbl2.get_schema_name() == "bls":

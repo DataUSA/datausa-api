@@ -14,10 +14,9 @@ from datausa.core.api import parse_method_and_val
 from datausa.core.crosswalker import crosswalk
 from datausa.core.models import ApiObject
 from datausa.attrs.views import attr_map
-from datausa.attrs.models import GeoCrosswalker
 from datausa.core.streaming import stream_qry, stream_qry_csv
 from datausa.core.attr_crosswalking import naics_crosswalk_join, soc_crosswalk_join
-from datausa.core.attr_crosswalking import cip_crosswalk_join
+from datausa.core.attr_crosswalking import cip_crosswalk_join, geo_crosswalk_join
 from datausa.core.exceptions import DataUSAException
 
 def use_attr_names(qry, cols):
@@ -160,25 +159,6 @@ def deepest_geo_level(tbl):
     else:
         return 0
 
-def geo_crosswalk_join(tbl1, tbl2, col):
-    my_joins = []
-    gc_alias = aliased(GeoCrosswalker)
-    j1 = [
-        gc_alias, or_(gc_alias.geo_a == tbl1.geo,
-                      gc_alias.geo_b == tbl1.geo)
-    ]
-    j1 = [j1, {"full": False, "isouter": False}]
-    my_joins.append(j1)
-
-    j2_cond = or_(
-        and_(gc_alias.geo_a == tbl1.geo, gc_alias.geo_b == tbl2.geo),
-        and_(gc_alias.geo_b == tbl1.geo, gc_alias.geo_a == tbl2.geo)
-    )
-    j2 = [tbl2, j2_cond]
-    j2 = [j2, {"full": False, "isouter": False}]
-    my_joins.append(j2)
-
-    return my_joins
 
 def indirect_joins(tbl1, tbl2, col, api_obj):
     '''When joining tables in auto-crosswalk mode, a simple a.x=b.x will not work
