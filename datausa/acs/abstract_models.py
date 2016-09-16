@@ -56,7 +56,8 @@ class GeoId(object):
     LEVELS_5YR = LEVELS
 
     JOINED_FILTER = {"geo": {
-                            "triggers": [("tract", "160"), ("county", "310")],
+                            "triggers": [("tract", "160"), ("tract", "310"),
+                                         ("tract", "050"), ("county", "310")],
                             "table": GeoContainment.parent,
                             "column": GeoContainment.parent_geoid,
                             "id": GeoContainment.child_geoid,
