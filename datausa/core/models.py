@@ -100,3 +100,14 @@ class ApiObject(object):
         if col not in self.subs[tbl_name]:
             self.subs[tbl_name][col] = {}
         self.subs[tbl_name][col] = deltas
+
+    def where_vars(self):
+        if not hasattr(self, "where") or not self.where:
+            return []
+        # split by commas
+        wheres = self.where.split(",")
+        # then split by colons, and take the last item after period e.g.
+        var_names = [x.split(":")[0].split(".")[-1] for x in wheres]
+        var_names = [x for x in var_names if x != 'sumlevel']
+        # so where=year:2014,grads_total.degree:5 => ['year', 'degree']
+        return var_names

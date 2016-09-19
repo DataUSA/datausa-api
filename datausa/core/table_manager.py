@@ -119,7 +119,7 @@ class TableManager(object):
     @classmethod
     def required_tables(cls, api_obj):
         '''Given a list of X, do Y'''
-        vars_needed = api_obj.vars_needed
+        vars_needed = api_obj.vars_needed + api_obj.where_vars()
         if api_obj.order and api_obj.order in cls.possible_variables:
             vars_needed = vars_needed + [api_obj.order]
         universe = set(vars_needed)
