@@ -143,6 +143,10 @@ class JoinAPITestCases(unittest.TestCase):
         assert first_row[onet_index] is None
         assert first_row[pums_index] == '1110XX'
 
+    def where_bug(self):
+        url = 'api/join/?required=income,grads_total&sumlevel=county&show=geo&where=grads_total.degree:5&limit=5'
+        data, headers = self.get_data(url)
+        assert len(data) == 5
 
 if __name__ == '__main__':
     unittest.main()
