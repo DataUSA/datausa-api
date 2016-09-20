@@ -80,3 +80,20 @@ def logic_view():
     api_obj = build_api_obj()
     table_list = manager.all_tables(api_obj)
     return jsonify(tables=[table.info(api_obj) for table in table_list])
+
+@mod.route("/variables/")
+def vars_view():
+    return jsonify(vars=list(set(manager.possible_variables)))
+
+@mod.route("/join/preview/")
+def join_preview():
+    api_obj = build_api_obj()
+    tables = manager.required_tables(api_obj)
+    vars_dict = {table.full_name(): table.col_strs(short_name=True) for table in tables}
+    return jsonify(metadata=vars_dict)
+
+@mod.route('/table/variables/')
+def all_table_vars():
+    '''show all available data tables and contained variables'''
+    results = {table.full_name(): table.col_strs(short_name=True) for table in table_manager.registered_models}
+    return jsonify(metadata=results)

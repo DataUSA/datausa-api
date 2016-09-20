@@ -41,8 +41,11 @@ class BaseModel(object):
         return cls.__table_args__["schema"]
 
     @classmethod
-    def col_strs(cls):
-        return [str(col) for col in cls.__table__.columns]
+    def col_strs(cls, short_name=False):
+        results = [str(col) for col in cls.__table__.columns]
+        if short_name:
+            results = [col_name.split(".")[-1] for col_name in results]
+        return results
 
 class ApiObject(object):
     def __init__(self, **kwargs):
