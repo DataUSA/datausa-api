@@ -32,8 +32,10 @@ def stream_qry(tables, cols, data, api_obj):
                      "headers": {},
                      "source": {},
                      "subs": {},
+                     "limit": {},
                      "warnings": {}
             '''.format(simplejson.dumps(list(headers)), simplejson.dumps([table.info(api_obj) for table in tables]), simplejson.dumps(api_obj.subs),
+                       api_obj.limit,
                        simplejson.dumps(api_obj.warnings)) + u'}'
             raise StopIteration
 
@@ -51,8 +53,10 @@ def stream_qry(tables, cols, data, api_obj):
         yield u'''], "headers": {},
                  "source": {},
                  "subs": {},
+                 "limit": {},
                  "warnings": {}
         '''.format(simplejson.dumps(list(headers)), simplejson.dumps([table.info(api_obj) for table in tables]), simplejson.dumps(api_obj.subs),
+                   api_obj.limit,
                    simplejson.dumps(api_obj.warnings)) + u'}'
 
     return Response(generate(tables), content_type='application/json')
