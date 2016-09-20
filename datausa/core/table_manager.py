@@ -49,8 +49,8 @@ def tbl_sizes():
 
 
 class TableManager(object):
-    possible_variables = [col.key for t in registered_models
-                          for col in get_columns(t)]
+    possible_variables = list(set([col.key for t in registered_models
+                          for col in get_columns(t)]))
     table_years = tbl_years()
     # table_sizes = tbl_sizes()
     @classmethod
