@@ -15,7 +15,7 @@ def show_attrs(attr_obj):
     data = [a.serialize() for a in attrs]
     return jsonify(data=data)
 
-def build_api_obj():
+def build_api_obj(default_limit=None):
     show = request.args.get("show", "")
     sumlevel = request.args.get("sumlevel", "").lower()
     required = request.args.get("required", "")
@@ -23,10 +23,10 @@ def build_api_obj():
     where = request.args.get("where", "")
     order = request.args.get("order", "")
     sort = request.args.get("sort", "")
-    limit = request.args.get("limit", None)
+    limit = request.args.get("limit", default_limit)
     offset = request.args.get("offset", None)
     exclude = request.args.get("exclude", None)
-    auto_crosswalk = request.args.get("auto_crosswalk", True)
+    auto_crosswalk = request.args.get("auto_crosswalk", False)
     display_names = request.args.get("display_names", False)
 
     shows = show.split(",")
@@ -69,7 +69,7 @@ def api_view(csv=None):
 @mod.route("/join/")
 @mod.route("/join/csv/", defaults={'csv': True})
 def api_join_view(csv=None):
-    api_obj = build_api_obj()
+    api_obj = build_api_obj(default_limit=100)
     tables = manager.required_tables(api_obj)
     data = join_api.joinable_query(tables, api_obj, manager.table_years, csv_format=csv)
     return data

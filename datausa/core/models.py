@@ -51,7 +51,7 @@ class ApiObject(object):
                    "sort", "limit", "exclude", "auto_crosswalk",
                    "display_names", "offset"]
         self._year = None
-        self.auto_crosswalk = True
+        self.auto_crosswalk = False
         self.display_names = False
         self.offset = None
         for keyword, value in kwargs.items():
