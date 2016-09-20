@@ -83,7 +83,7 @@ def logic_view():
 
 @mod.route("/variables/")
 def vars_view():
-    return jsonify(vars=list(set(manager.possible_variables)))
+    return jsonify(metadata=table_manager.possible_variables)
 
 @mod.route("/join/preview/")
 def join_preview():
