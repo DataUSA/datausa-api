@@ -415,8 +415,9 @@ def joinable_query(tables, api_obj, tbl_years, csv_format=False):
     filts += multitable_value_filters(tables, api_obj)
     filts += where_filters(tables, api_obj)
 
-    # for table in tables:
-        # filts += sumlevel_filtering2(table, api_obj)
+    if not api_obj.auto_crosswalk:
+        for table in tables:
+            filts += sumlevel_filtering2(table, api_obj)
 
     if api_obj.order:
         sort_expr = handle_ordering(tables, api_obj)
