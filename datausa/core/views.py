@@ -82,15 +82,18 @@ def logic_view():
     return jsonify(tables=[table.info(api_obj) for table in table_list])
 
 @mod.route("/variables/")
-def vars_view():
-    return jsonify(metadata=table_manager.possible_variables)
+def view_variables():
+    '''show available data tables and contained variables'''
+    shows = request.args.get("show", "").split(",")
+    sumlevels = request.args.get("sumlevel", "").split(",")
+    list_all = sumlevels == [""] and shows == [""]
+    if sumlevels == [""]:
+        sumlevels = ["all"] * len(shows)
+    combos = zip(shows, sumlevels)
+    results = {table.full_name(): table.col_strs(short_name=True) for table in table_manager.registered_models
+               if list_all or all([table.can_show(show, sumlevel) for show,sumlevel in combos])}
+    return jsonify(metadata=results)
 
-@mod.route("/join/preview/")
-def join_preview():
-    api_obj = build_api_obj()
-    tables = manager.required_tables(api_obj)
-    vars_dict = {table.full_name(): table.col_strs(short_name=True) for table in tables}
-    return jsonify(metadata=vars_dict)
 
 @mod.route('/table/variables/')
 def all_table_vars():
