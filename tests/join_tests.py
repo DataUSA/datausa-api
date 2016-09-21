@@ -148,5 +148,15 @@ class JoinAPITestCases(unittest.TestCase):
         data, headers = self.get_data(url)
         assert len(data) == 5
 
+    def test_naics_xwalk(self):
+        url = '/api/join/?required=employees_thousands,num_ppl,avg_wage&sumlevel=0&show=naics&limit=5&naics=23&year=latest'
+        data, headers = self.get_data(url)
+        bls_index = headers.index('bls.ces_yi.naics')
+        pums_index = headers.index('pums_1yr.yi.naics')
+        first_row = data[0]
+        assert len(data) == 1
+        assert first_row[bls_index] is not None
+        assert first_row[pums_index] is not None
+
 if __name__ == '__main__':
     unittest.main()
