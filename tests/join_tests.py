@@ -158,6 +158,17 @@ class JoinAPITestCases(unittest.TestCase):
         assert first_row[bls_index] is not None
         assert first_row[pums_index] is not None
 
+    def test_naics_auto_xwalk(self):
+        url = '/api/join/?required=employees_thousands,num_ppl&show=naics&auto_crosswalk=1&where=num_ppl.naics:71-72&year=latest'
+        data, headers = self.get_data(url)
+        bls_index = headers.index('bls.ces_yi.naics')
+        pums_index = headers.index('pums_1yr.yi.naics')
+        first_row = data[0]
+        assert len(data) == 1
+        assert first_row[bls_index] == '71'
+        assert first_row[pums_index] == '71-72'
+
+
     def test_pums_names(self):
         url = '/api/join/?required=num_ppl&sumlevel=all&show=naics&naics=23&display_names=1'
         data, headers = self.get_data(url)
