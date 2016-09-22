@@ -179,5 +179,12 @@ class JoinAPITestCases(unittest.TestCase):
         first_row = data[0]
         assert first_row[pums_index] == "Professional, Scientific, and Technical Services"
 
+    def test_offset_sort(self):
+        url = '/api/join/?required=pop&sumlevel=state&show=geo&limit=1&offset=1&display_names=1&year=2014&sort=desc&order=pop'
+        data, headers = self.get_data(url)
+        pums_index = headers.index('acs_5yr.yg.geo_name')
+        first_row = data[0]
+        assert first_row[pums_index] == "Texas"
+
 if __name__ == '__main__':
     unittest.main()
