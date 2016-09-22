@@ -158,5 +158,13 @@ class JoinAPITestCases(unittest.TestCase):
         assert first_row[bls_index] is not None
         assert first_row[pums_index] is not None
 
+    def test_pums_names(self):
+        url = '/api/join/?required=num_ppl&sumlevel=all&show=naics&naics=23&display_names=1'
+        data, headers = self.get_data(url)
+        pums_index = headers.index('pums_1yr.yi.naics_name')
+        first_row = data[0]
+        assert first_row[pums_index] == 'Construction'
+
+
 if __name__ == '__main__':
     unittest.main()
