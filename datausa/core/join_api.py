@@ -26,7 +26,7 @@ def use_attr_names(qry, cols):
     joins = {}
     for col in cols:
         full_name = str(col)
-        full_table_name, var_name = full_name.rsplit(".", 1)
+        _, var_name = full_name.rsplit(".", 1)
         if full_name.startswith("pums") and full_name.endswith(".degree"):
             var_name = "pums_degree"
         elif full_name.startswith("bls") and (full_name.endswith(".naics")
@@ -40,8 +40,8 @@ def use_attr_names(qry, cols):
             new_cols.append(attr_alias.name.label(full_name + "_name"))
 
         new_cols.append(col)
-    for col_str, j in joins.items():
-        qry = qry.join(*j, isouter=True)
+    for my_joins in joins.values():
+        qry = qry.join(*my_joins, isouter=True)
     return qry, new_cols
 
 def sumlevel_filtering2(table, api_obj):
@@ -111,7 +111,8 @@ def parse_entities(tables, api_obj):
 
     # force the primary key columns to be returned to avoid potential confusion
     for table in tables:
-        my_missing_pks = [col for col in table.__table__.columns if col.primary_key and col.key not in values]
+        my_missing_pks = [col for col in table.__table__.columns
+                          if col.primary_key and col.key not in values]
         values += [pkc.key for pkc in my_missing_pks]
 
     values = set(values)
@@ -120,8 +121,8 @@ def parse_entities(tables, api_obj):
     for value in values:
         for table in tables:
             if hasattr(table, value):
-                col_objs.append(getattr(table, value).label("{}.{}".format(table.full_name(), value)))
-                # break
+                val_label = "{}.{}".format(table.full_name(), value)
+                col_objs.append(getattr(table, value).label(val_label))
     return col_objs
 
 def find_overlap(tbl1, tbl2):
@@ -132,63 +133,11 @@ def find_overlap(tbl1, tbl2):
     myset = set(cols1).intersection(cols2)
     return myset
 
-def _check_change(api_obj, tbl, col, vals_orig, vals_new):
-    '''Check if any subsitutions occured by examining whether original values (pre-crosswalk)
-    equal new values (post-crosswalk)'''
-    did_crosswalk = any([a != b for a, b in zip(vals_orig, vals_new)])
-    if did_crosswalk:
-        tname = tbl.full_name()
-        api_obj.record_sub(tbl, col, vals_orig, vals_new)
-    return api_obj
-
 def has_same_levels(tbl1, tbl2, col):
+    '''Check if two tables have the same exact sumlevels for the given column'''
     levels1 = tbl1.get_supported_levels()[col]
     levels2 = tbl2.get_supported_levels()[col]
     return set(levels1) == set(levels2)
-
-def deepest_geo_level(tbl):
-    lvls = tbl.get_supported_levels()["geo"]
-    if consts.PLACE in lvls:
-        return 10
-    elif consts.PUMA in lvls:
-        return 8
-    elif consts.COUNTY in lvls:
-        return 6
-    elif consts.MSA in lvls:
-        return 4
-    elif consts.STATE in lvls:
-        return 2
-    else:
-        return 0
-
-
-def indirect_joins(tbl1, tbl2, col, api_obj):
-    '''When joining tables in auto-crosswalk mode, a simple a.x=b.x will not work
-    since, if values are crosswalked, the values may be different for each table.
-    The varying values based on crosswalking are taken into account during the join process.'''
-    # does this column appear in vars and vals?
-    cond = False
-    filters = []
-    if col in api_obj.vars_and_vals and api_obj.auto_crosswalk:
-        vals_orig = splitter(api_obj.vars_and_vals[col])
-        api_objs1 = [crosswalk(tbl1, ApiObject(vars_and_vals={col: val}, limit=None, exclude=None)) for val in vals_orig]
-        vals1 = [tmp_api_obj.vars_and_vals[col] for tmp_api_obj in api_objs1]
-        api_objs2 = [crosswalk(tbl2, ApiObject(vars_and_vals={col: val}, limit=None, exclude=None)) for val in vals_orig]
-        vals2 = [tmp_api_obj.vars_and_vals[col] for tmp_api_obj in api_objs2]
-        pairs = zip(vals1, vals2)
-        is_same = all([a == b for a, b in pairs])
-
-        # logic for warning about subs
-        api_obj = _check_change(api_obj, tbl1, col, vals_orig, vals1)
-        api_obj = _check_change(api_obj, tbl2, col, vals_orig, vals2)
-
-        if not is_same:
-            for a, b in pairs:
-                aeqb = and_(getattr(tbl1, col) == a, getattr(tbl2, col) == b)
-                cond = or_(cond, aeqb)
-
-        cond = and_(cond, getattr(tbl2, col).in_(vals2))
-    return cond, filters
 
 def gen_combos(tables, colname, val):
     combos = []
@@ -309,7 +258,8 @@ def make_joins(tables, api_obj, tbl_years):
             yr_overlap = False
 
         if not yr_overlap:
-            api_obj.warn("Years do not overlap between {} and {}!".format(tbl1.full_name(), tbl2.full_name()))
+            api_obj.warn("Years do not overlap between {} and {}!".format(
+                tbl1.full_name(), tbl2.full_name()))
 
         join_clause = True
 
