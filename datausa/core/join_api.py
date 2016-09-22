@@ -189,12 +189,11 @@ def make_filter(col, cond):
 
 def where_filters(tables, api_obj):
     '''Process the where query argument from an API call'''
-    where_str = api_obj.where
-    if not where_str:
+    if not api_obj.where:
         return []
     filts = []
 
-    wheres = splitter(where_str)
+    wheres = splitter(api_obj.where)
     for where in wheres:
         colname, cond = where.split(":")
         target_var, filt_col = colname.rsplit(".", 1)
