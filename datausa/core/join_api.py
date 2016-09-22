@@ -54,14 +54,9 @@ def sumlevel_filtering2(table, api_obj):
     for col, level in shows_and_levels.items():
         args = (table, "{}_filter".format(col))
         if hasattr(*args):
-            if api_obj.auto_crosswalk:
-                raise Exception(col, level)
             func = getattr(*args)
             expr = func(level)
-            if api_obj.auto_crosswalk:
-                filters.append(expr)
-            else:
-                filters.append(or_(expr, getattr(table, col) == None))
+            filters.append(or_(expr, getattr(table, col) == None))
     return filters
 
 def find_table(tables, colname):
