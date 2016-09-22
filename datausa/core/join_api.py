@@ -59,15 +59,6 @@ def sumlevel_filtering2(table, api_obj):
             filters.append(or_(expr, getattr(table, col) == None))
     return filters
 
-def find_table(tables, colname):
-    '''Given a list of tables and the name of a fully qualified column
-    (e.g. chr.yg.geo) return the shortened column name (e.g geo)
-    and the table to which it belongs
-    '''
-    target_table, colname = colname.rsplit(".", 1)
-    lookup = {tbl.full_name(): tbl for tbl in tables}
-    return colname, [lookup[target_table]]
-
 def multitable_value_filters(tables, api_obj):
     '''This method examines the values pased in query args (e.g. year=2014 or
     geo=04000US25), and applies the logic depending on the crosswalk mode.
