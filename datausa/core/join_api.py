@@ -140,6 +140,8 @@ def has_same_levels(tbl1, tbl2, col):
     return set(levels1) == set(levels2)
 
 def gen_combos(tables, colname, val):
+    '''Generate the required logical condition combinations to optionally
+    join two tables'''
     combos = []
     relevant_tables = tables_by_col(tables, colname)
 
@@ -163,22 +165,8 @@ def gen_combos(tables, colname, val):
         combos.append(getattr(relevant_tables[0], safe_colname) == val)
     return combos
 
-def where_filters2(tables, api_obj):
-    where_str = api_obj.where
-    if not where_str:
-        return []
-    wheres = splitter(where_str)
-    filts = []
-
-    for where in wheres:
-        colname, val = where.split(":")
-        filts += gen_combos(tables, colname, val)
-    return filts
-
-
 def make_filter(col, cond):
-    cols = None
-
+    '''Generate SQLAlchemy filter based on string'''
     method, value, negate = parse_method_and_val(cond)
     if method == "ne":
         expr = col != value
@@ -200,6 +188,7 @@ def make_filter(col, cond):
     return expr
 
 def where_filters(tables, api_obj):
+    '''Process the where query argument from an API call'''
     where_str = api_obj.where
     if not where_str:
         return []
@@ -227,16 +216,8 @@ def where_filters(tables, api_obj):
                 filts.append(filt)
     return filts
 
-def table_depths(tbl1, tbl2, col):
-    if tbl1.get_schema_name() == 'chr' and tbl2.get_schema_name().startswith('pums'):
-        return "child_geoid", "parent_geoid"
-    else:
-        # raise Exception("Not yet implemented!!!", tbl1, tbl2)
-        size1 = len(tbl1.get_supported_levels()[col])
-        size2 = len(tbl2.get_supported_levels()[col])
-        return ["child_geoid", "parent_geoid"] if size1 > size2 else ["parent_geoid", "child_geoid"]
-
 def make_joins(tables, api_obj, tbl_years):
+    '''Generate the joins required to combine tables'''
     my_joins = []
     filts = []
     already_naics_joined = {}
@@ -291,6 +272,7 @@ def make_joins(tables, api_obj, tbl_years):
 
 
 def tables_by_col(tables, col, return_first=False):
+    '''Return a table or a list of tables that contain the given column'''
     acc = []
     for table in tables:
         if hasattr(table, col):
@@ -309,6 +291,8 @@ def tables_by_col(tables, col, return_first=False):
     return acc
 
 def get_column_from_tables(tables, col, return_first=True):
+    '''Given a list of tables return the reference to the column in a
+    list of tables'''
     acc = []
     for table in tables:
         if hasattr(table, col):
@@ -319,6 +303,7 @@ def get_column_from_tables(tables, col, return_first=True):
     return acc
 
 def handle_ordering(tables, api_obj):
+    '''Process sort and order parameters from the API'''
     sort = "desc" if api_obj.sort == "desc" else "asc"
     if api_obj.order not in TableManager.possible_variables:
         raise DataUSAException("Bad order parameter", api_obj.order)
@@ -326,27 +311,9 @@ def handle_ordering(tables, api_obj):
     sort_expr = getattr(my_col, sort)()
     return sort_expr.nullslast()
 
-def build_filter(table, filt_col, value):
-    method, value, negate = parse_method_and_val(value)
-    col = getattr(table, filt_col)
-    if method == 'like' and "%" not in value:
-        if consts.OR in value:
-            value = splitter(value)
-            method = "in_"
-        else:
-            method = '__eq__'
-
-    if not hasattr(col, method):
-        raise DataUSAException("Bad filter parameter", value)
-
-    expr = getattr(col, method)(value)
-    if negate:
-        expr = ~expr
-    return expr
-
-
 
 def joinable_query(tables, api_obj, tbl_years, csv_format=False):
+    '''Entry point from the view for processing join query'''
     cols = parse_entities(tables, api_obj)
     tables = sorted(tables, key=lambda x: x.full_name())
     qry = db.session.query(*tables)
