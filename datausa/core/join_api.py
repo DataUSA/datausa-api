@@ -95,7 +95,9 @@ def multitable_value_filters(tables, api_obj):
                     filt = or_(table.year == my_year, table.year == None)
                     api_obj.set_year(my_year)
                 else:
-                    api_obj_tmp = crosswalk(table, ApiObject(vars_and_vals={colname: val}, limit=None, exclude=None))
+                    api_obj_tmp = crosswalk(table,
+                                            ApiObject(vars_and_vals={colname: val},
+                                                      limit=None, exclude=None))
                     new_vals = splitter(api_obj_tmp.vars_and_vals[colname])
                     mycol = getattr(table, colname)
                     filt = mycol.in_(new_vals)
