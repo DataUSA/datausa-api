@@ -165,6 +165,12 @@ class JoinAPITestCases(unittest.TestCase):
         first_row = data[0]
         assert first_row[pums_index] == 'Construction'
 
+    def test_pums_degree_name(self):
+        url = '/api/join/?required=num_ppl&sumlevel=all&show=degree&naics=54&display_names=1&degree=21'
+        data, headers = self.get_data(url)
+        pums_index = headers.index('pums_1yr.yid.degree_name')
+        first_row = data[0]
+        assert first_row[pums_index] == "Bachelor's degree"
 
 if __name__ == '__main__':
     unittest.main()
