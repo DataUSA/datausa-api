@@ -1,8 +1,8 @@
 import os
 from flask import Flask, jsonify
-from flask.ext.compress import Compress
+from flask_compress import Compress
 # from flask.ext.cors import CORS
-from flask.ext.cache import Cache
+from flask_cache import Cache
 
 app = Flask(__name__)
 app.config.from_object('config')

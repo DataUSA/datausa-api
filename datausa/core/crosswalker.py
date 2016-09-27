@@ -192,6 +192,63 @@ def onet_cip_parents(attr_id, **kwargs):
                 return attr_id
     return orig_id
 
+
+def join_crosswalk(table, var, val):
+    '''Given a table and an API object, determine if any crosswalks need
+    to be performed'''
+    pums_schema_name = BasePums.get_schema_name()
+    pums5_schema_name = BasePums5.get_schema_name()
+
+    registered_crosswalks = [
+        {"column": "industry_iocode", "schema": "bea", "mapping": industry_iocode_func},
+        {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
+        {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
+        {"column": "naics", "schema": "bls", "mapping": pums_to_growth_map, "table": GrowthI, "avoid": CesYi},
+        {"column": "soc", "schema": "bls", "mapping": pums_to_bls_soc_map},
+        {"column": "soc", "schema": "onet", "mapping": onet_parents},
+        {"column": "cip", "schema": "onet", "mapping": onet_cip_parents},
+
+        # cbp uses same naics coding as bls
+        {"column": "naics", "schema": "cbp", "mapping": pums_to_bls_naics_map},
+        {"column": "naics", "schema": pums_schema_name, "mapping": naics_map},
+        {"column": "cip", "schema": pums_schema_name, "mapping": truncate_cip},
+        {"column": "geo", "schema": pums_schema_name, "mapping": pums_parent_puma},
+        {"column": "naics", "schema": pums5_schema_name, "mapping": naics_map},
+        {"column": "cip", "schema": pums5_schema_name, "mapping": truncate_cip},
+        {"column": "geo", "schema": pums5_schema_name, "mapping": pums_parent_puma},
+        {"column": "geo", "schema": "chr", "mapping": chr_parents}
+
+    ]
+    exclusives = {r["table"]: True for r in registered_crosswalks if "table" in r}
+
+    for rcrosswalk in registered_crosswalks:
+        column = rcrosswalk['column']
+        schema = rcrosswalk['schema']
+        mapping = rcrosswalk['mapping']
+        target_table = rcrosswalk['table'] if 'table' in rcrosswalk else None
+        avoid = rcrosswalk['avoid'] if 'avoid' in rcrosswalk else None
+
+        if avoid:
+            if table.full_name() == avoid.full_name():
+                continue
+
+        if column in api_obj.vars_and_vals.keys() and table.__table_args__['schema'] == schema:
+            if table in exclusives and (not target_table or target_table.__tablename__ != table.__tablename__):
+                continue
+
+            curr_vals = vals
+            if isinstance(mapping, dict):
+                new_vals = [mapping[val] if val in mapping else val for val in curr_vals]
+            else:
+                new_vals = [mapping(val, api_obj=api_obj) for val in curr_vals]
+            new_val_str = OR.join(new_vals)
+            api_obj.vars_and_vals[column] = new_val_str
+
+            # detect if any changes actually happend
+            if curr_vals_str != new_val_str:
+                api_obj.subs[column] = new_val_str
+    return api_obj
+
 naics_map = pums_naics_mapping()
 iocode_map = iocode_mapping()
 pums_to_bls_naics_map = pums_to_bls_naics()

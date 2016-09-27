@@ -1,6 +1,6 @@
 import flask
 import sqlalchemy
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 from sqlalchemy.sql import text
 from flask import Response
 import simplejson
@@ -234,6 +234,9 @@ def handle_join(qry, filters, table, api_obj):
                                 filters.append(joined_filt[col]["column"] == api_obj.vars_and_vals[col])
     qry=qry.join(*joins)
     return qry, filters
+
+
+
 
 def query(table, api_obj, stream=False):
     vars_and_vals = api_obj.vars_and_vals

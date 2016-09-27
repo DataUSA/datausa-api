@@ -1,0 +1,3 @@
+[MESSAGES CONTROL]
+disable=singleton-comparison
+generated-members=query

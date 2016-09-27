@@ -11,7 +11,7 @@ class Acs1_Ygl_Speakers(BaseAcs1, GeoId1, Ygl_Speakers):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": GeoId.LEVELS, "language": [consts.ALL]}
+        return {"geo": GeoId.LEVELS_1YR, "language": [consts.ALL]}
 
 class Acs5_Ygl_Speakers(BaseAcs5, GeoId5, Ygl_Speakers):
     __tablename__ = "ygl_speakers"

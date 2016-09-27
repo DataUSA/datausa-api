@@ -111,7 +111,7 @@ class Yo(BasePums, Employees, Year, SocId, EmployeesGini):
 
 class Yow(BasePums, Employees, Year, SocId, WageId):
     __tablename__ = "yow"
-    median_moe = 1
+    median_moe = 1.5
 
     @classmethod
     def get_supported_levels(cls):
@@ -120,7 +120,7 @@ class Yow(BasePums, Employees, Year, SocId, WageId):
 
 class Yiw(BasePums, Employees, Year, NaicsId, WageId):
     __tablename__ = "yiw"
-    median_moe = 1
+    median_moe = 1.5
 
     @classmethod
     def get_supported_levels(cls):

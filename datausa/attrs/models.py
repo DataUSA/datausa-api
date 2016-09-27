@@ -348,6 +348,16 @@ class IoCode(BaseAttr):
     parent = db.Column(db.String)
 
 
+class GeoCrosswalker(db.Model):
+    __tablename__ = 'geo_crosswalker'
+    __table_args__ = {"schema": "attrs"}
+    geo_a = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
+    geo_b = db.Column(db.String, db.ForeignKey(Geo.id),
+                             primary_key=True)
+    a = relationship('Geo', foreign_keys='GeoCrosswalker.geo_a')
+    b = relationship('Geo', foreign_keys='GeoCrosswalker.geo_b', lazy='subquery')
+
+
 class GeoContainment(db.Model):
     __tablename__ = 'geo_containment'
     __table_args__ = {"schema": "attrs"}
