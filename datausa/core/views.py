@@ -5,6 +5,8 @@ from datausa.core import api, join_api
 from datausa.core.models import ApiObject
 from datausa.core.crosswalker import crosswalk
 from datausa.util.big_places import is_big_geo
+from datausa.core.exceptions import DataUSAException
+
 
 mod = Blueprint('core', __name__, url_prefix='/api')
 
@@ -70,6 +72,8 @@ def api_view(csv=None):
 @mod.route("/join/csv/", defaults={'csv': True})
 def api_join_view(csv=None):
     api_obj = build_api_obj(default_limit=100)
+    if api_obj.limit and api_obj.limit > 80000:
+        raise DataUSAException("Limit parameter must be less than 80,000")
     tables = manager.required_tables(api_obj)
     data = join_api.joinable_query(tables, api_obj, manager.table_years, csv_format=csv)
     return data
