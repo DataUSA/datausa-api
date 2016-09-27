@@ -184,7 +184,10 @@ def process_value_filters(table, vars_and_vals, api_obj):
             filt = getattr(table, var).in_(splitter(val))
         else:
             filt = getattr(table, var) == val
-        filts.append(filt)
+        if var == consts.YEAR and val == consts.ALL:
+            pass # do nothing, show all years
+        else:
+            filts.append(filt)
     return filts
 
 def remove_filters(filters, table, col, api_obj):

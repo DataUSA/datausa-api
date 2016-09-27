@@ -104,3 +104,9 @@ def all_table_vars():
     '''show all available data tables and contained variables'''
     results = {table.full_name(): table.col_strs(short_name=True) for table in table_manager.registered_models}
     return jsonify(metadata=results)
+
+@mod.route("/years/")
+def years_view():
+    years_data = manager.table_years_set
+    return jsonify(data=years_data)
+

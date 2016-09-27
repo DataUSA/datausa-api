@@ -25,7 +25,7 @@ class BaseModel(object):
         return {
             "dataset": dataset,
             "org": cls.source_org,
-            "table": cls.__tablename__,
+            "table": cls.full_name(),
             "link": cls.source_link,
             "supported_levels": cls.get_supported_levels(),
         }
