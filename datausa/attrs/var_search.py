@@ -1,27 +1,15 @@
 '''Logic for handling parsing of variables in search queries'''
 import regex
 from fuzzywuzzy import process
-from datausa.attrs.models import AcsLanguage, Cip, Soc, PumsBirthplace
+from datausa.attrs.models import AcsLanguage, Cip, Soc
 
-def build_attr_map(Attr_obj):
+# TODO cache
+def build_attr_map(attr_obj):
     '''Given an attribute object return a mapping dictionary of names to IDs'''
-    return {x.name.lower(): x.id for x in Attr_obj.query.with_entities(Attr_obj.id, Attr_obj.name)}
+    return {x.name.lower(): x.id for x in attr_obj.query.with_entities(attr_obj.id, attr_obj.name)}
 
 def var_support_map(txt, vars_list):
     '''given a list of variables return a mapping of variables supported by attr'''
-
-    lookup = {
-        "geo": ["age",
-                "pop",
-                "income",
-                "avg_wage",
-                "conflict_total",
-                "adult_obesity",
-                "diabetes",
-                "num_speakers"],
-        "soc": ["num_ppl", "avg_wage", "avg_age"],
-        "cip": ["grads_total"]
-    }
 
     two_pass_list = {
         "num_speakers": {"mapper": build_attr_map(AcsLanguage), "name": "language"},
@@ -29,7 +17,6 @@ def var_support_map(txt, vars_list):
         "num_ppl": {"mapper": build_attr_map(Soc), "name": "soc"},
     }
 
-    inverted_lookup = {subvalue: key for key,value in lookup.items() for subvalue in value}
     results = []
     final_txt = txt
 
@@ -53,7 +40,7 @@ def var_support_map(txt, vars_list):
                     final_txt = final_txt.replace(matched_attr_key, "").strip()
                 else:
                     # use regex to eliminate the reset of the matched word
-                    in_split[0] = regex.sub(r"(" + matched_attr_key + "){e<=3}\w*", "",
+                    in_split[0] = regex.sub(r"(" + matched_attr_key + r"){e<=3}\w*", "",
                                             in_split[0]).strip()
 
             if attr_names:
@@ -72,6 +59,8 @@ def var_search(txt):
     '''Takes a query and returns a list of related variables'''
 
     var_list = {
+        "income": ["income"],
+        "population": ["pop"],
         "economy": ["income", "avg_wage"],
         "diabetes": ["diabetes", "adult_obesity"],
         "obesity": ["adult_obesity", "diabetes"],
@@ -87,7 +76,7 @@ def var_search(txt):
     if not var_names and " in " in txt:
         var_names = ["num_ppl", "avg_age"]
 
-    for k, _ in results:
-        txt = txt.replace(k, "").strip()
+    for matched_keyword, _ in results:
+        txt = txt.replace(matched_keyword, "").strip()
 
     return var_support_map(txt, var_names)
