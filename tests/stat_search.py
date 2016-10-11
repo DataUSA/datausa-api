@@ -11,13 +11,28 @@ class TestVarSearch(unittest.TestCase):
   def test_stat_search_obesity(self):
       q = 'obesity in new york'
       results = var_search(q)
-      assert "adult_obesity" in results
+      assert 'adult_obesity' in results
+      assert len(results) == 1
 
+  def test_stat_search_obe(self):
+      q = 'obe'
+      results = var_search(q)
+      assert 'adult_obesity' in results
+      assert len(results) == 1
 
   def test_stat_search_pop(self):
       q = 'population of west virginia'
       results = var_search(q)
-      assert "pop" in results
+      assert 'pop' in results
+      assert len(results) == 1
+
+  def test_stat_search_economy(self):
+      q = 'economy'
+      results = var_search(q)
+      assert 'income' in results
+      assert 'avg_wage' in results
+      assert len(results) == 2
+
 
 if __name__ == '__main__':
     unittest.main()

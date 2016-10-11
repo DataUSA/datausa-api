@@ -10,6 +10,8 @@ from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
 from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
+from datausa.attrs.var_search import var_search
+
 
 from whoosh.qparser import QueryParser
 from whoosh import index, sorting, qparser, scoring, query
@@ -193,11 +195,19 @@ def search():
     elif not txt or len(txt) <= 1:
         return search_old()
 
+    preprocessed_q = var_search(txt)
+    related_variables = preprocessed_q['vars']
+    if related_variables:
+        txt = preprocessed_q['query']
+
     data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit, is_stem=is_stem)
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "is_stem", "url_name"]
     autocorrected = tries > 0
     suggs = [x for x in suggs if x != txt]
-    return jsonify(data=data, headers=headers, suggestions=suggs, autocorrected=autocorrected)
+    related_vars = var_search(txt)
+    return jsonify(data=data, headers=headers, suggestions=suggs,
+                   autocorrected=autocorrected, related_vars=related_variables,
+                   q=txt)
 
 @mod.route("/search_old/")
 def search_old():
