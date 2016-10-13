@@ -2,7 +2,7 @@ from datausa import app
 from flask import Blueprint, request, jsonify, abort
 
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
-from datausa.attrs.models import Cip, Naics, University, Soc, Degree
+from datausa.attrs.models import Cip, Naics, University, Soc, Degree, attr_map
 from datausa.attrs.models import Race, Search, ZipLookup, GeoNeighbors
 from datausa.attrs.models import OccCrosswalk, IndCrosswalk
 from datausa.attrs.models import Skill, Sector, Geo, AcsInd, PumsIoCrosswalk
@@ -12,10 +12,11 @@ from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
 from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
 from datausa.attrs.var_search import var_search
 
-
 from whoosh.qparser import QueryParser
 from whoosh import index, sorting, qparser, scoring, query
 from config import SEARCH_INDEX_DIR
+
+from datausa.core.views import search_data_helper
 
 import re
 
@@ -53,18 +54,6 @@ ix = index.open_dir(SEARCH_INDEX_DIR)
 qp = QueryParser("name", schema=ix.schema, group=qparser.OrGroup)
 facet = sorting.FieldFacet("zvalue", reverse=True)
 scores = sorting.ScoreFacet()
-
-attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
-            "geo": Geo, "university": University, "degree": Degree,
-            "skill": Skill, "sector": Sector,
-            "pums_degree": PumsDegree,
-            "pums_race": PumsRace, "sex": PumsSex,
-            "birthplace": PumsBirthplace,
-            "wage_bin": PumsWage, "iocode": IoCode,
-            "race": Race, "acs_race": AcsRace,
-            "acs_occ": AcsOcc, "conflict": Conflict, "acs_ind": AcsInd,
-            "language": AcsLanguage,
-            "bls_soc": Soc, "bls_naics": Naics}
 
 def show_attrs(attr_obj, sumlevels=None):
     if sumlevels is not None:
@@ -197,14 +186,18 @@ def search():
 
     preprocessed_q = var_search(txt)
     related_variables = preprocessed_q['vars']
-    if related_variables:
-        txt = preprocessed_q['query']
+    # if related_variables:
+    txt = preprocessed_q['query']
 
     data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit, is_stem=is_stem)
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "is_stem", "url_name"]
     autocorrected = tries > 0
     suggs = [x for x in suggs if x != txt]
-    related_vars = var_search(txt)
+
+
+    # grab data!
+    data, headers = search_data_helper(headers, data, related_variables)
+
     return jsonify(data=data, headers=headers, suggestions=suggs,
                    autocorrected=autocorrected, related_vars=related_variables,
                    q=txt)

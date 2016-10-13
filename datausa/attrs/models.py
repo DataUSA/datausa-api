@@ -5,6 +5,8 @@ from sqlalchemy import or_, asc
 from datausa.attrs.consts import OR
 from sqlalchemy.sql import text
 
+
+
 class BaseAttr(db.Model):
     __abstract__ = True
     __table_args__ = {"schema": "attrs"}
@@ -305,6 +307,7 @@ class PumsBirthplace(BaseAttr):
     __table_args__ = {"schema": "pums_attrs"}
 
     adm0_a3 = db.Column(db.String)
+    denonym = db.Column(db.String)
 
 
 class Sector(BaseAttr):
@@ -444,3 +447,15 @@ class IndCrosswalk(db.Model):
     acs_ind = db.Column(db.String, primary_key=True)
     pums_naics = db.Column(db.String, db.ForeignKey(PumsNaics.id), primary_key=True)
     level = db.Column(db.Integer)
+
+attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
+            "geo": Geo, "university": University, "degree": Degree,
+            "skill": Skill, "sector": Sector,
+            "pums_degree": PumsDegree,
+            "pums_race": PumsRace, "sex": PumsSex,
+            "birthplace": PumsBirthplace,
+            "wage_bin": PumsWage, "iocode": IoCode,
+            "race": Race, "acs_race": AcsRace,
+            "acs_occ": AcsOcc, "conflict": Conflict, "acs_ind": AcsInd,
+            "language": AcsLanguage,
+            "bls_soc": Soc, "bls_naics": Naics}

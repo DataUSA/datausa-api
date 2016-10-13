@@ -238,7 +238,7 @@ def handle_join(qry, filters, table, api_obj):
 
 
 
-def query(table, api_obj, stream=False):
+def query(table, api_obj, stream=False, raw=False):
     vars_and_vals = api_obj.vars_and_vals
     shows_and_levels = api_obj.shows_and_levels
     values = api_obj.values
@@ -284,5 +284,9 @@ def query(table, api_obj, stream=False):
 
     if stream:
         return stream_format(table, cols, qry, api_obj)
-
+    if raw:
+        return cols, qry
     return simple_format(table, cols, qry, api_obj)
+
+def grab_data(x,y,z):
+    '''get variables for desired data points'''
