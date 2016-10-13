@@ -97,9 +97,7 @@ def search_data_helper(search_headers, search_data, related_vars):
         for search_result in search_data:
             row_id = search_result[0]
             if row_id in lookup_values:
-                search_result.append({
-                    'data': lookup_values[row_id]
-                })
+                search_result.append(lookup_values[row_id])
     return search_headers, search_data
 
 @mod.route("/join/")

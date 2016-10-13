@@ -59,7 +59,7 @@ def var_search(txt):
         "diabetes": ["diabetes", "adult_obesity"],
         "obesity": ["adult_obesity", "diabetes"],
         "healthcare": ["uninsured", "diabetes"],
-        "speakers": ["num_speakers"],
+        # "speakers": ["num_speakers"],
         "graduates": ["grads_total"],
         "car crash": ["motor_vehicle_crash_deaths"],
         "infant_mortality": ["infant_mortality"],
@@ -70,7 +70,7 @@ def var_search(txt):
     }
 
     results = process.extract(txt, var_list.keys())
-    var_names = [item for keyword, score in results if score >= 90
+    var_names = [item for keyword, score in results if score >= 75
                  for item in var_list[keyword]]
 
     # if not var_names and " in " in txt:
