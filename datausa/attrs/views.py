@@ -185,7 +185,7 @@ def search():
         return search_old()
 
     preprocessed_q = var_search(txt)
-    related_variables = preprocessed_q['vars']
+    # related_variables = preprocessed_q['vars']
     # if related_variables:
     txt = preprocessed_q['query']
 
@@ -196,10 +196,10 @@ def search():
 
 
     # grab related data from API
-    headers, data = search_data_helper(headers, data, related_variables)
+    headers, data = search_data_helper(headers, data, preprocessed_q)
 
     return jsonify(data=data, headers=headers, suggestions=suggs,
-                   autocorrected=autocorrected, related_vars=related_variables,
+                   autocorrected=autocorrected,
                    q=txt)
 
 @mod.route("/search_old/")

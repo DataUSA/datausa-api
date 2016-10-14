@@ -68,13 +68,15 @@ def api_view(csv=None):
     data = api.query(table, api_obj, stream=csv)
     return data
 
-def search_data_helper(search_headers, search_data, related_vars):
+def search_data_helper(search_headers, search_data, var_data):
+    related_vars = var_data["vars"]
+    matched_keywords = var_data["matched"]
     if related_vars:
         vars_needed = [x["required"] for x in related_vars]
         kwargs = related_vars[0]
-
+        show_kind = "geo"
         kwargs["required"] = ",".join(vars_needed)
-        kwargs["show"] = "geo"
+        kwargs["show"] = show_kind
         kwargs["geo"] = ",".join([x[search_headers.index("id")] for x in search_data if x[search_headers.index("kind")] == "geo"])
 
         api_obj = build_api_obj(kwargs)
@@ -93,6 +95,11 @@ def search_data_helper(search_headers, search_data, related_vars):
 
             lookup_values[row[1]] = {key: row[pos_lookup[key]] for key in vars_needed}
 
+        if show_kind == "geo" and "01000US" not in lookup_values:
+            # ['id', 'name', 'zvalue', 'kind', 'display', 'sumlevel', 'is_stem', 'url_name']
+            phrase =  "{} in the United States".format(matched_keywords[0].title()) if matched_keywords else "United States"
+            search_data.insert(0, ["01000US", phrase, 15, "geo", "United States", "nation", None, "united-states"])
+            # raise Exception(matched_keywords)
         search_headers.append('data')
         for search_result in search_data:
             row_id = search_result[0]

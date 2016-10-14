@@ -19,7 +19,7 @@ def build_attr_map(attr_obj, key=None, filters=None):
     return {(getattr(x, key) or x.name if key else x.name).lower(): x.id
             for x in qry}
 
-def var_support_map(txt, vars_list):
+def var_support_map(txt, vars_list, matched_keywords):
     '''given a list of variables return a mapping of variables supported by attr'''
     results = []
     final_txt = txt
@@ -44,7 +44,7 @@ def var_support_map(txt, vars_list):
         final_txt = in_split[-1].strip()
 
     final_txt = regex.sub(r"^\s*(of\s*in|of|in\s*) ", "", final_txt).strip()
-    return {"vars" : results, "query": final_txt}
+    return {"vars" : results, "query": final_txt, "matched": matched_keywords}
 
 def var_search(txt):
     '''Takes a query and returns a list of related variables'''
@@ -54,15 +54,15 @@ def var_search(txt):
         "people": ["pop", "age"],
         "population": ["pop", "age"],
         "income": ["income"],
-        "economy": ["income", "avg_wage", "num_ppl"],
+        "economy": ["income", "age", "pop"],
         "salary": ["avg_wage"],
         "diabetes": ["diabetes", "adult_obesity"],
         "obesity": ["adult_obesity", "diabetes"],
         "healthcare": ["uninsured", "diabetes"],
         # "speakers": ["num_speakers"],
         "graduates": ["grads_total"],
-        "car crash": ["motor_vehicle_crash_deaths"],
-        "infant_mortality": ["infant_mortality"],
+        "car crashes": ["motor_vehicle_crash_deaths"],
+        "infant mortality": ["infant_mortality"],
         "crime": ["violent_crime"],
         "murder": ["homicide_rate"],
         "teen births": ["teen_births"],
@@ -76,10 +76,12 @@ def var_search(txt):
     # if not var_names and " in " in txt:
         # var_names = ["num_ppl"]
 
+    matched_keywords = []
     for matched_keyword, _ in results:
         txt = txt.replace(matched_keyword, "").strip()
+        matched_keywords.append(matched_keyword)
 
-    return var_support_map(txt, var_names)
+    return var_support_map(txt, var_names, matched_keywords)
 
 # def var_support_map(txt, vars_list):
 #     '''given a list of variables return a mapping of variables supported by attr'''
