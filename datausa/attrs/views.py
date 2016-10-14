@@ -195,8 +195,8 @@ def search():
     suggs = [x for x in suggs if x != txt]
 
 
-    # grab data!
-    data, headers = search_data_helper(headers, data, related_variables)
+    # grab related data from API
+    headers, data = search_data_helper(headers, data, related_variables)
 
     return jsonify(data=data, headers=headers, suggestions=suggs,
                    autocorrected=autocorrected, related_vars=related_variables,
