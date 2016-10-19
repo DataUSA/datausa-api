@@ -78,7 +78,6 @@ def var_search(txt):
 
     matched_keywords = []
     for matched_keyword, _ in results:
-        txt = txt.replace(matched_keyword, "").strip()
         matched_keywords.append(matched_keyword)
 
     return var_support_map(txt, var_names, matched_keywords)
