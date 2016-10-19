@@ -98,7 +98,7 @@ def search_data_helper(search_headers, search_data, var_data):
         if show_kind == "geo" and "01000US" not in lookup_values:
             # ['id', 'name', 'zvalue', 'kind', 'display', 'sumlevel', 'is_stem', 'url_name']
             phrase =  "{} in the United States".format(matched_keywords[0].title()) if matched_keywords else "United States"
-            search_data.insert(0, ["01000US", phrase, 15, "geo", "United States", "nation", None, "united-states"])
+            search_data.insert(0, ["01000US", "United States", 15, "geo", phrase, "nation", None, "united-states"])
             # raise Exception(matched_keywords)
         search_headers.append('data')
         for search_result in search_data:
