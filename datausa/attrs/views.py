@@ -144,7 +144,7 @@ def get_children(kind, attr_id):
     raise Exception("Invalid attribute type.")
 
 
-def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
+def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my_vars=None):
     txt = txt.replace(",", "")
 
     my_filter = None
@@ -167,16 +167,15 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
     q = qp.parse(txt)
 
     var_q = vars_qp.parse(txt)
-    my_vars = None
-    with vars_ix.searcher() as s:
-    # s = vars_ix.searcher()
-        results = s.search(var_q)
-        my_vars = [{"name": r["name"],
-                    "description": r["description"],
-                    "section": r["section"],
-                    "related_attrs": r["related_attrs"].split(","),
-                    "related_vars": r["related_vars"].split(",")} for r in results]
-    # my_vars = results
+    if not my_vars:
+        with vars_ix.searcher() as s:
+        # s = vars_ix.searcher()
+            results = s.search(var_q)
+            my_vars = [{"name": r["name"],
+                        "description": r["description"],
+                        "section": r["section"],
+                        "related_attrs": r["related_attrs"].split(","),
+                        "related_vars": r["related_vars"].split(",")} for r in results]
 
     weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)
     with ix.searcher(weighting=weighter) as s:
@@ -193,7 +192,8 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
                  r["url_name"] if "url_name" in r else None]
                 for r in results]
         if not data and suggs:
-            return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit, is_stem=is_stem)
+            return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit, is_stem=is_stem,
+                             my_vars=my_vars)
         return data, suggs, tries, my_vars
 
 @mod.route("/search/")
