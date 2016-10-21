@@ -7,7 +7,7 @@ from config import VAR_INDEX_DIR
 
 def get_schema():
     return Schema(related_vars=TEXT(stored=True),
-                  name=NGRAMWORDS(stored=True, minsize=2, maxsize=12, at='start', queryor=True),
+                  name=NGRAMWORDS(stored=True, minsize=3, maxsize=12, at='start', queryor=True),
                   description=TEXT(stored=True),
                   section=TEXT(stored=True),
                   related_attrs=TEXT(stored=True))
@@ -23,9 +23,26 @@ if __name__ == '__main__':
     writer = ix.writer()
 
     all_vars = [
-        [u'adult_obesity,diabetes', u'obesity', u'Obesity prevalence', u'health', u'geo'],
-        [u'adult_obesity,diabetes', u'diabetes', u'Diabetes prevalence', u'health', u'geo'],
+        [u'adult_obesity,diabetes', u'obesity', u'Obesity prevalence', u'obesity_diabetes', u'geo'],
+        [u'adult_obesity,diabetes', u'diabetes', u'Diabetes prevalence', u'obesity_diabetes', u'geo'],
+        [u'adult_obesity,diabetes', u'healthcare', u'Healthcare', u'obesity_diabetes', u'geo'],
+        [u'motor_vehicle_crash_deaths', u'car crashes', u'Motor vehicle crash deaths', u'crime', u'geo'],
+
+        # [u'infant_mortality', u'infant mortality', u'Infant mortality', u'health', u'geo'],
+        # [u'teen_births', u'teen births', u'Teen births', u'health', u'geo'],
+        [u'mean_commute_minutes', u'commute time', u'Average travel time', u'commute_time', u'geo'],
+
+        [u'crime', u'crime', u'Crime', u'crime', u'geo'],
+        [u'murder', u'murder', u'Murder', u'crime', u'geo'],
         [u'pop,age', u'population', u'Population', u'demographics', u'geo'],
+        [u'pop,age', u'people', u'Population', u'demographics', u'geo'],
+        [u'age', u'age', u'Median Age', u'demographics', u'geo'],
+        [u'income', u'income', u'Median income', u'economy', u'geo'],
+        [u'avg_wage', u'salary', u'Average wage', u'economy', u'geo'],
+        [u'avg_wage', u'wage', u'Average wage', u'economy', u'geo'],
+        [u'income,age,pop', u'economy', u'Economic data', u'economy', u'geo'],
+        [u'median_property_value', u'property value', u'Property values', u'economy', u'geo'],
+
     ]
 
     for related_vars, name, description, section, related_attrs in all_vars:
