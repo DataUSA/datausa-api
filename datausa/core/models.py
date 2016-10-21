@@ -1,5 +1,28 @@
+import json
+
 from datausa.core.exceptions import DataUSAException
 from datausa.attrs.consts import ALL, OR
+
+class VariableManager(object):
+    def __init__(self, my_vars):
+        self.my_vars = my_vars
+
+    def keywords(self):
+        return [var.keyword for var in self.my_vars]
+
+    def lookup(self, target):
+        lookup_table = {var.keyword: var for var in self.my_vars}
+        return lookup_table[target]
+
+
+class Variable(object):
+    def __init__(self, keyword, related_vars):
+        self.keyword = keyword
+        self.related_vars = related_vars
+        self.show = 'geo'
+
+    def __str__(self):
+        return self.keyword
 
 
 class BaseModel(object):

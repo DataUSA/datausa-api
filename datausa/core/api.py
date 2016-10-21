@@ -287,6 +287,3 @@ def query(table, api_obj, stream=False, raw=False):
     if raw:
         return cols, qry
     return simple_format(table, cols, qry, api_obj)
-
-def grab_data(x,y,z):
-    '''get variables for desired data points'''

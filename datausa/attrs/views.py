@@ -46,7 +46,6 @@ class SimpleWeighter(scoring.BM25F):
             return score_me * 3 + abs(zvalue)
         elif self.fullterm.startswith(name[:5]):
             return score_me * 1.5 + abs(zvalue)
-            # return (score_me * 1.75) + (10 * zvalue)
         return (score_me * 0.75) + (zvalue * 0.25)
 
 
@@ -131,9 +130,10 @@ def get_children(kind, attr_id):
     raise Exception("Invalid attribute type.")
 
 
-def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
+def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, api_args=None):
     txt = txt.replace(",", "")
-
+    preprocessed_q = var_search(txt)
+    txt = preprocessed_q['query']
     my_filter = None
 
     if kind and sumlevel:
@@ -150,7 +150,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
         my_filter = query.NumericRange("is_stem", 1, is_stem)
 
     if tries > 2:
-        return [],[],[]
+        return [], [],[],[]
     q = qp.parse(txt)
     weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)
     with ix.searcher(weighting=weighter) as s:
@@ -168,7 +168,9 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
                 for r in results]
         if not data and suggs:
             return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit, is_stem=is_stem)
-        return data, suggs, tries
+        headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "is_stem", "url_name"]
+        # headers, data = search_data_helper(headers, data, api_args)
+        return headers, data, suggs, tries
 
 @mod.route("/search/")
 def search():
@@ -184,20 +186,11 @@ def search():
     elif not txt or len(txt) <= 1:
         return search_old()
 
-    preprocessed_q = var_search(txt)
-    # related_variables = preprocessed_q['vars']
-    # if related_variables:
-    txt = preprocessed_q['query']
-
-    data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit, is_stem=is_stem)
-    headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "is_stem", "url_name"]
+    headers, data, suggs, tries = do_search(txt, sumlevel, kind,
+                                            limit=limit,
+                                            is_stem=is_stem)
     autocorrected = tries > 0
     suggs = [x for x in suggs if x != txt]
-
-
-    # grab related data from API
-    headers, data = search_data_helper(headers, data, preprocessed_q)
-
     return jsonify(data=data, headers=headers, suggestions=suggs,
                    autocorrected=autocorrected,
                    q=txt)

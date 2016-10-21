@@ -2,9 +2,12 @@
 import regex
 from fuzzywuzzy import process
 
-from datausa.attrs.models import AcsLanguage, Cip, PumsSoc, PumsBirthplace
+from datausa import cache
 
-# TODO cache
+from datausa.attrs.models import Search
+from datausa.core.models import VariableManager, Variable
+
+@cache.memoize()
 def build_attr_map(attr_obj, key=None, filters=None):
     '''Given an attribute object return a mapping dictionary of names to IDs'''
     ents = [attr_obj.id, attr_obj.name]
@@ -19,129 +22,63 @@ def build_attr_map(attr_obj, key=None, filters=None):
     return {(getattr(x, key) or x.name if key else x.name).lower(): x.id
             for x in qry}
 
-def var_support_map(txt, vars_list, matched_keywords):
+def var_support_map(txt, vars_list):
     '''given a list of variables return a mapping of variables supported by attr'''
-    results = []
     final_txt = txt
-
     in_split = final_txt.split(" in ", 1)
     has_in = len(in_split) > 1
+    results = []
+
     for my_var in vars_list:
-        tmp_result = {
-            "required": my_var,
-            "year": "latest",
-            "sumlevel": "all"
-        }
-
-        in_split[0] = regex.sub(r"(" + my_var + r"){e<=3}\w*", "",
+        in_split[0] = regex.sub(r"(" + my_var.keyword + r"){e<=3}\w*", "",
                                 in_split[0]).strip()
-
-        # if best_attr_names:
-                # tmp_result[best_subvarname] = best_attr_names[0]
-        results.append(tmp_result)
+        results.append(my_var)
 
     if has_in:
         final_txt = in_split[-1].strip()
 
+    if not has_in:
+        entities = build_attr_map(Search).keys()
+        entities = [ent.replace("," ,"") for ent in entities]
+        candidates = [attr_name for attr_name in entities if attr_name in final_txt and len(attr_name) > 2]
+        matched_attrs = sorted(candidates, key=len, reverse=True)
+
+        if matched_attrs:
+            final_txt = matched_attrs[0]
+
     final_txt = regex.sub(r"^\s*(of\s*in|of|in\s*) ", "", final_txt).strip()
-    return {"vars" : results, "query": final_txt, "matched": matched_keywords}
+    return {"vars" : results, "query": final_txt, "matched": vars_list}
 
 def var_search(txt):
     '''Takes a query and returns a list of related variables'''
 
-    var_list = {
-        "age": ["age"],
-        "people": ["pop", "age"],
-        "population": ["pop", "age"],
-        "income": ["income"],
-        "economy": ["income", "age", "pop"],
-        "salary": ["avg_wage"],
-        "diabetes": ["diabetes", "adult_obesity"],
-        "obesity": ["adult_obesity", "diabetes"],
-        "healthcare": ["uninsured", "diabetes"],
-        # "speakers": ["num_speakers"],
-        "graduates": ["grads_total"],
-        "car crashes": ["motor_vehicle_crash_deaths"],
-        "infant mortality": ["infant_mortality"],
-        "crime": ["violent_crime"],
-        "murder": ["homicide_rate"],
-        "teen births": ["teen_births"],
-        "property value": ["median_property_value"]
-    }
+    var_manager = VariableManager([
+        Variable("age", ["age"]),
+        Variable("people", ["pop", "age"]),
+        Variable("population", ["pop", "age"]),
+        Variable("income", ["income"]),
+        Variable("economy", ["income", "age", "pop"]),
+        Variable("salary", ["avg_wage"]),
+        Variable("diabetes", ["diabetes", "adult_obesity"]),
+        Variable("obesity", ["adult_obesity", "diabetes"]),
+        Variable("healthcare", ["uninsured", "diabetes"]),
+        Variable("graduates", ["grads_total"]),
+        Variable("car crashes", ["motor_vehicle_crash_deaths"]),
+        Variable("infant mortality", ["infant_mortality"]),
+        Variable("crime", ["violent_crime"]),
+        Variable("murder", ["homicide_rate"]),
+        Variable("teen births", ["teen_births"]),
+        Variable("property value", ["median_property_value"])
+    ])
 
-    results = process.extract(txt, var_list.keys())
-    var_names = [item for keyword, score in results if score >= 75
-                 for item in var_list[keyword]]
 
-    # if not var_names and " in " in txt:
-        # var_names = ["num_ppl"]
+    var_results = process.extract(txt, var_manager.keywords())
 
-    matched_keywords = []
-    for matched_keyword, _ in results:
-        matched_keywords.append(matched_keyword)
+    var_names = [var_manager.lookup(keyword) for keyword, score in var_results if score >= 90]
+    # raise Exception(var_names)
+    # if there are no fuzzy matches but the query is a prefix of one of the variables
+    # include that variable
+    if not var_names:
+        var_names = [var_name for var_name in var_names if var_name.startswith(txt)]
 
-    return var_support_map(txt, var_names, matched_keywords)
-
-# def var_support_map(txt, vars_list):
-#     '''given a list of variables return a mapping of variables supported by attr'''
-#
-#     two_pass_list = {
-#         "num_speakers": [{"mapper": build_attr_map(AcsLanguage), "name": "language"}],
-#         "grads_total": [{"mapper": build_attr_map(Cip), "name": "cip"}],
-#         "num_ppl": [{"mapper": build_attr_map(PumsBirthplace, "denonym",
-#                                              [~PumsBirthplace.id.like("XX%")]),
-#                     "name": "birthplace"},
-#                     {"mapper": build_attr_map(PumsSoc), "name": "soc"}],
-#     }
-#
-#     results = []
-#     final_txt = txt
-#
-#     in_split = final_txt.split(" in ")
-#     has_in = len(in_split) > 1
-#     for my_var in vars_list:
-#         tmp_result = {
-#             "required": my_var,
-#             "sumlevel": "all",
-#             "year": "latest"
-#         }
-#         if my_var in two_pass_list:
-#             best_high_score = 0
-#             best_match = None
-#             best_attr_names = None
-#             best_subvarname = None
-#             for mapper_obj in two_pass_list[my_var]:
-#                 # mapper_obj = two_pass_list[my_var]
-#                 mapper = mapper_obj["mapper"]
-#                 subvarname = mapper_obj["name"]
-#                 attr_results = process.extract(txt if not has_in else in_split[0], mapper.keys())
-#                 # raise Exception(attr_results)
-#                 attr_names = [mapper[keyword] for keyword, score in attr_results if score >= 90]
-#                 high_score = max([score for _, score in attr_results])
-#                 # raise Exception(high_score)
-#                 if high_score >= best_high_score:
-#                     best_high_score = high_score
-#                     best_match = attr_results[0][0]
-#                     best_high_score = high_score
-#                     best_attr_names = attr_names
-#                     best_subvarname  =subvarname
-#
-#             # raise Exception(best_match, best_high_score)
-#             if not has_in:
-#                 final_txt = final_txt.replace(best_match, "").strip()
-#             else:
-#                 # use regex to eliminate the reset of the matched word
-#                 in_split[0] = regex.sub(r"(" + best_match + r"){e<=3}\w*", "",
-#                                         in_split[0]).strip()
-#
-#             if best_attr_names:
-#                 tmp_result[best_subvarname] = best_attr_names[0]
-#         results.append(tmp_result)
-#
-#
-#     if has_in:
-#         in_split = [word.strip() for word in in_split]
-#         final_txt = " in ".join(in_split)
-#
-#     final_txt = regex.sub(r"^\s*(of\s*in|of|in\s*) ", "", final_txt).strip()
-#     return {"vars" : results, "query": final_txt}
+    return var_support_map(txt, var_names)

@@ -68,43 +68,70 @@ def api_view(csv=None):
     data = api.query(table, api_obj, stream=csv)
     return data
 
-def search_data_helper(search_headers, search_data, var_data):
-    related_vars = var_data["vars"]
-    matched_keywords = var_data["matched"]
-    if related_vars:
-        vars_needed = [x["required"] for x in related_vars]
-        kwargs = related_vars[0]
-        show_kind = "geo"
-        kwargs["required"] = ",".join(vars_needed)
-        kwargs["show"] = show_kind
-        kwargs["geo"] = ",".join([x[search_headers.index("id")] for x in search_data if x[search_headers.index("kind")] == "geo"])
 
-        api_obj = build_api_obj(kwargs)
-        api_obj = manager.force_1yr_for_big_places(api_obj)
-        api_obj = manager.schema_selector(api_obj)
-        table_list = manager.all_tables(api_obj)
-        table = manager.select_best(table_list, api_obj)
-        api_obj.capture_logic(table_list)
-        api_obj = manager.crosswalk(table, api_obj)
-        cols, data = api.query(table, api_obj, raw=True)
+def data_call_from_dict(kwargs):
+    '''given a dictionary of API call arguments, make the API call'''
+    api_obj = build_api_obj(kwargs)
+    api_obj = manager.force_1yr_for_big_places(api_obj)
+    api_obj = manager.schema_selector(api_obj)
+    table_list = manager.all_tables(api_obj)
+    table = manager.select_best(table_list, api_obj)
+    api_obj.capture_logic(table_list)
+    api_obj = manager.crosswalk(table, api_obj)
+    cols, data = api.query(table, api_obj, raw=True)
+    return cols, data
+
+def search_data_helper(search_headers, search_data, api_args):
+    if not api_args:
+        return search_headers, search_data
+
+    my_vars = api_args["vars"]
+    matched_vars = api_args["matched"]
+    if my_vars:
+        vars_needed = [rv for v in my_vars for rv in v.related_vars]
+        show_kind = my_vars[0].show
+        params = {
+            "required": ",".join(vars_needed),
+            "show": show_kind
+        }
+        # kwargs = related_vars[0]
+        # show_kind = kwargs["show"]
+        # kwargs["required"] = ",".join(vars_needed)
+
+
+        sr_id_idx = search_headers.index("id")
+        sr_kind_idx = search_headers.index("kind")
+        attr_list = [search_result[sr_id_idx] for search_result in search_data
+                    if search_result[sr_kind_idx] == show_kind]
 
         lookup_values = {}
-        pos_lookup = {k: cols.index(k) for k in vars_needed}
-        for row in data:
-            vals_idxs = [idx for idx, col in enumerate(cols) if col in vars_needed]
 
-            lookup_values[row[1]] = {key: row[pos_lookup[key]] for key in vars_needed}
 
-        if show_kind == "geo" and "01000US" not in lookup_values:
-            # ['id', 'name', 'zvalue', 'kind', 'display', 'sumlevel', 'is_stem', 'url_name']
-            phrase =  "{} in the United States".format(matched_keywords[0].title()) if matched_keywords else "United States"
-            search_data.insert(0, ["01000US", "United States", 15, "geo", phrase, "nation", None, "united-states"])
-            # raise Exception(matched_keywords)
+        if not attr_list and show_kind == 'geo':
+            attr_list = ['01000US']
+
+        if attr_list:
+            # if show_kind == 'geo':
+            #     attr_list.append('01000US')
+            params[show_kind] = ",".join(attr_list)
+            cols, data = data_call_from_dict(params)
+
+            pos_lookup = {k: cols.index(k) for k in vars_needed}
+            id_idx = [str(col).split(".")[-1] for col in cols].index(show_kind)
+            for row in data:
+                lookup_values[row[id_idx]] = {key: row[pos_lookup[key]] for key in vars_needed}
+
+        # if not lookup_values or "01000US" not in lookup_values or :
+        phrase =  "{} in the United States".format(str(matched_vars[0]).title()) if matched_vars else "United States"
+        search_data.insert(1, ["01000US", "United States", 15, "geo", phrase, "nation", None, "united-states"])
+
         search_headers.append('data')
         for search_result in search_data:
             row_id = search_result[0]
             if row_id in lookup_values:
                 search_result.append(lookup_values[row_id])
+
+
     return search_headers, search_data
 
 @mod.route("/join/")
