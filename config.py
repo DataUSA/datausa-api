@@ -35,3 +35,4 @@ CACHE_THRESHOLD = 5000
 
 FLICKR_DIR = os.environ.get("DATAUSA_FLICKR_DIR", os.path.join(basedir, '../datausa-site/datausa/static/img/splash'))
 SEARCH_INDEX_DIR = os.path.join(basedir, 'search_index/')
+VAR_INDEX_DIR = os.path.join(basedir, 'var_index/')

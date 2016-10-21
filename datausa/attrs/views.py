@@ -13,7 +13,7 @@ from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
 
 from whoosh.qparser import QueryParser
 from whoosh import index, sorting, qparser, scoring, query
-from config import SEARCH_INDEX_DIR
+from config import SEARCH_INDEX_DIR, VAR_INDEX_DIR
 
 import re
 
@@ -45,6 +45,10 @@ class SimpleWeighter(scoring.BM25F):
             return score_me * 1.5 + abs(zvalue)
             # return (score_me * 1.75) + (10 * zvalue)
         return (score_me * 0.75) + (zvalue * 0.25)
+
+
+vars_ix = index.open_dir(VAR_INDEX_DIR)
+vars_qp = QueryParser("name", schema=vars_ix.schema, group=qparser.OrGroup)
 
 
 ix = index.open_dir(SEARCH_INDEX_DIR)
@@ -159,8 +163,21 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
         my_filter = query.NumericRange("is_stem", 1, is_stem)
 
     if tries > 2:
-        return [],[],[]
+        return [], [], [], []
     q = qp.parse(txt)
+
+    var_q = vars_qp.parse(txt)
+    my_vars = None
+    with vars_ix.searcher() as s:
+    # s = vars_ix.searcher()
+        results = s.search(var_q)
+        my_vars = [{"name": r["name"],
+                    "description": r["description"],
+                    "section": r["section"],
+                    "related_attrs": r["related_attrs"].split(","),
+                    "related_vars": r["related_vars"].split(",")} for r in results]
+    # my_vars = results
+
     weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)
     with ix.searcher(weighting=weighter) as s:
         if len(txt) > 2:
@@ -177,7 +194,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
                 for r in results]
         if not data and suggs:
             return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit, is_stem=is_stem)
-        return data, suggs, tries
+        return data, suggs, tries, my_vars
 
 @mod.route("/search/")
 def search():
@@ -193,11 +210,11 @@ def search():
     elif not txt or len(txt) <= 1:
         return search_old()
 
-    data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit, is_stem=is_stem)
+    data, suggs, tries, my_vars = do_search(txt, sumlevel, kind, limit=limit, is_stem=is_stem)
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "is_stem", "url_name"]
     autocorrected = tries > 0
     suggs = [x for x in suggs if x != txt]
-    return jsonify(data=data, headers=headers, suggestions=suggs, autocorrected=autocorrected)
+    return jsonify(data=data, headers=headers, suggestions=suggs, autocorrected=autocorrected, related_vars=my_vars)
 
 @mod.route("/search_old/")
 def search_old():
