@@ -130,7 +130,7 @@ def get_children(kind, attr_id):
     raise Exception("Invalid attribute type.")
 
 
-def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, api_args=None):
+def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
     txt = txt.replace(",", "")
     preprocessed_q = var_search(txt)
     txt = preprocessed_q['query']
@@ -169,7 +169,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, ap
         if not data and suggs:
             return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit, is_stem=is_stem)
         headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "is_stem", "url_name"]
-        # headers, data = search_data_helper(headers, data, api_args)
+        headers, data = search_data_helper(headers, data, preprocessed_q)
         return headers, data, suggs, tries
 
 @mod.route("/search/")

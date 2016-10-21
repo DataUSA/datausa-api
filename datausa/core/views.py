@@ -94,10 +94,6 @@ def search_data_helper(search_headers, search_data, api_args):
             "required": ",".join(vars_needed),
             "show": show_kind
         }
-        # kwargs = related_vars[0]
-        # show_kind = kwargs["show"]
-        # kwargs["required"] = ",".join(vars_needed)
-
 
         sr_id_idx = search_headers.index("id")
         sr_kind_idx = search_headers.index("kind")
@@ -106,13 +102,10 @@ def search_data_helper(search_headers, search_data, api_args):
 
         lookup_values = {}
 
-
         if not attr_list and show_kind == 'geo':
             attr_list = ['01000US']
 
         if attr_list:
-            # if show_kind == 'geo':
-            #     attr_list.append('01000US')
             params[show_kind] = ",".join(attr_list)
             cols, data = data_call_from_dict(params)
 
@@ -121,7 +114,6 @@ def search_data_helper(search_headers, search_data, api_args):
             for row in data:
                 lookup_values[row[id_idx]] = {key: row[pos_lookup[key]] for key in vars_needed}
 
-        # if not lookup_values or "01000US" not in lookup_values or :
         phrase =  "{} in the United States".format(str(matched_vars[0]).title()) if matched_vars else "United States"
         search_data.insert(1, ["01000US", "United States", 15, "geo", phrase, "nation", None, "united-states"])
 
@@ -130,7 +122,6 @@ def search_data_helper(search_headers, search_data, api_args):
             row_id = search_result[0]
             if row_id in lookup_values:
                 search_result.append(lookup_values[row_id])
-
 
     return search_headers, search_data
 
