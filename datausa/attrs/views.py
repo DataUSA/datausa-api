@@ -144,6 +144,17 @@ def get_children(kind, attr_id):
     raise Exception("Invalid attribute type.")
 
 
+def nationwide_results(data, my_vars):
+    '''given attribute search results and variable search results, determine
+    if we should inject the US page into the data'''
+    attr_ids = [row[0] for row in data]
+    usa = '01000US'
+    if my_vars and usa not in attr_ids:
+        var_data = my_vars[0]
+        phrase = "{} nationwide".format(var_data['description'])
+        data.insert(1, [usa, phrase, 10, "geo", phrase, "010", "united-states"])
+    return data
+
 def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my_vars=None):
     txt = txt.replace(",", "")
 
@@ -167,7 +178,10 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
     q = qp.parse(txt)
 
     var_q = vars_qp.parse(txt)
+    # search for variables in query
     if not my_vars:
+        # my_vars can save original vars detected before autocorrecting for spelling,
+        # so we'll only do var searches that haven't yet been autocorrected
         with vars_ix.searcher() as s:
         # s = vars_ix.searcher()
             results = s.search(var_q)
@@ -194,6 +208,10 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
         if not data and suggs:
             return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit, is_stem=is_stem,
                              my_vars=my_vars)
+
+        # insert nationwide linkage
+        data = nationwide_results(data, my_vars)
+
         return data, suggs, tries, my_vars
 
 @mod.route("/search/")
