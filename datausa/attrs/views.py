@@ -30,21 +30,22 @@ class SimpleWeighter(scoring.BM25F):
 
     def final(self, searcher, docnum, score_me):
         name = searcher.stored_fields(docnum).get("name")
-        zscore = searcher.stored_fields(docnum)['zvalue'] * .04
         zvalue = searcher.stored_fields(docnum).get("zvalue")
+        zscore = zvalue * .15
+
         if name == self.fullterm:
-            return score_me * 30 + (25 * abs(zvalue))
+            return score_me * 30 + (25 * abs(zscore))
         elif name.startswith(self.fullterm):
             if zvalue > 0:
-                return (score_me * 5.75) + (25 * zvalue)
+                return (score_me * 5.75) + (25 * zscore)
             else:
-                return score_me * 5.75 + (1 - abs(zvalue) * 25)
+                return score_me * 5.75 + (1 - abs(zscore) * 25)
         elif self.fullterm.startswith(name[:10]):
-            return score_me * 3 + abs(zvalue)
+            return score_me * 3 + abs(zscore)
         elif self.fullterm.startswith(name[:5]):
-            return score_me * 1.5 + abs(zvalue)
+            return score_me * 1.5 + abs(zscore)
             # return (score_me * 1.75) + (10 * zvalue)
-        return (score_me * 0.75) + (zvalue * 0.25)
+        return (score_me * 0.75) + (zscore * 0.25)
 
 
 vars_ix = index.open_dir(VAR_INDEX_DIR)
@@ -151,7 +152,7 @@ def nationwide_results(data, my_vars):
     usa = '01000US'
     if my_vars and usa not in attr_ids:
         var_data = my_vars[0]
-        phrase = "{} nationwide".format(var_data['description'])
+        phrase = "{} in the United States".format(var_data['description'])
         data.insert(1, [usa, phrase, 10, "geo", phrase, "010", "united-states"])
     return data
 

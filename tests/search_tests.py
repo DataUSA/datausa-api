@@ -40,7 +40,7 @@ class TestStringMethods(unittest.TestCase):
       self.assertEqual(data[0][0], '16000US2965000')
 
   def test_fortla(self):
-        data,suggs,tries,my_vars = do_search("fort la")
+        data,suggs,tries,my_vars = do_search("fort lau")
         self.assertEqual(data[0][0], '16000US1224000')
 
   def test_bad_spelling(self):
