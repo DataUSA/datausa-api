@@ -43,6 +43,7 @@ if __name__ == '__main__':
         [u'avg_wage', u'salary', u'Average wage', u'economy', u'geo'],
         [u'avg_wage', u'wage', u'Average wage', u'economy', u'geo'],
         [u'income,age,pop', u'economy', u'Economic data', u'economy', u'geo'],
+        [u'avg_wage', u'wages', u'Wages', u'income_distro', u'geo'],
         [u'median_property_value', u'property value', u'Property values', u'economy', u'geo'],
 
     ]

@@ -150,7 +150,7 @@ def nationwide_results(data, my_vars):
     if we should inject the US page into the data'''
     attr_ids = [row[0] for row in data]
     usa = '01000US'
-    if my_vars and usa not in attr_ids:
+    if my_vars and usa not in attr_ids and len(data) < 10:
         var_data = my_vars[0]
         phrase = "{} in the United States".format(var_data['description'])
         data.insert(1, [usa, phrase, 10, "geo", phrase, "010", "united-states"])
@@ -191,6 +191,14 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
                         "section": r["section"],
                         "related_attrs": r["related_attrs"].split(","),
                         "related_vars": r["related_vars"].split(",")} for r in results]
+        if my_vars:
+            already_seen = []
+            filtered_my_vars = []
+            for my_var in my_vars:
+                if my_var["related_vars"] not in already_seen:
+                    filtered_my_vars.append(my_var)
+                already_seen.append(my_var["related_vars"])
+            my_vars = filtered_my_vars
 
     weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)
     with ix.searcher(weighting=weighter) as s:
