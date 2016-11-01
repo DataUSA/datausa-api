@@ -151,9 +151,8 @@ def nationwide_results(data, my_vars):
     attr_ids = [row[0] for row in data]
     usa = '01000US'
     if my_vars and usa not in attr_ids and len(data) < 10:
-        var_data = my_vars[0]
-        phrase = "{} in the United States".format(var_data['description'])
-        data.insert(1, [usa, phrase, 10, "geo", phrase, "010", "united-states"])
+        name = "United States"
+        data.insert(1, [usa, name, 10, "geo", name, "010", "united-states"])
     return data
 
 def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my_vars=None):

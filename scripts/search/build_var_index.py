@@ -27,6 +27,7 @@ if __name__ == '__main__':
         [u'adult_obesity,diabetes', u'diabetes', u'Diabetes prevalence', u'obesity_diabetes', u'geo'],
         [u'adult_obesity,diabetes', u'healthcare', u'Healthcare', u'obesity_diabetes', u'geo'],
         [u'motor_vehicle_crash_deaths', u'car crashes', u'Motor vehicle crash deaths', u'crime', u'geo'],
+        [u'adult_smoking', u'smokers', u'Percentage of adults that reported smoking', u'substance_abuse', u'geo'],
 
         # [u'infant_mortality', u'infant mortality', u'Infant mortality', u'health', u'geo'],
         # [u'teen_births', u'teen births', u'Teen births', u'health', u'geo'],
@@ -34,6 +35,7 @@ if __name__ == '__main__':
         [u'mean_commute_minutes', u'transit', u'Average travel time', u'commute_time', u'geo'],
         [u'mean_commute_minutes', u'transportation', u'Average travel time', u'commute_time', u'geo'],
 
+        [u'conflict_total', u'veterans', u'Number of veterans', u'veterans', u'geo'],
         [u'crime', u'crime', u'Crime', u'crime', u'geo'],
         [u'murder', u'murder', u'Murder', u'crime', u'geo'],
         [u'pop,age', u'population', u'Population', u'demographics', u'geo'],
