@@ -49,6 +49,8 @@ if __name__ == '__main__':
         [u'median_property_value', u'property value', u'Property values', u'economy', u'geo'],
         [u'income_below_poverty', u'poverty', u'Poverty', u'poverty_age_gender', u'geo'],
         [u'households_renter_occupied,households_owner_occupied,households', u'renters', u'Renter occupied households', u'rent_own', u'geo'],
+        [u'grads_total', u'graduates', u'Postsecondary degree graduates', u'education', u'geo'],
+        [u'grads_total', u'grads', u'Postsecondary degree graduates', u'education', u'geo'],
 
     ]
 
