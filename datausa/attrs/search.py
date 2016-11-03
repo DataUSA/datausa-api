@@ -46,7 +46,7 @@ def nationwide_results(data, my_vars, attr_score, var_score, usr_query):
     if we should inject the US page into the data'''
     attr_ids = [row[0] for row in data]
     usa = '01000US'
-    name = "{} in United States".format(my_vars[0]["description"]) if my_vars else None
+    name = "{} in United States".format(my_vars[0]["description"].title()) if my_vars else None
 
     put_us_first = False
     first_name = data[0][1].lower().split(" ")[0]
