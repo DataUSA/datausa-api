@@ -4,7 +4,7 @@ import unittest
 import datausa
 
 
-class JoinAPITestCases(unittest.TestCase):
+class TestJoinAPI(unittest.TestCase):
 
     def setUp(self):
         self.app = datausa.app.test_client()

@@ -11,3 +11,4 @@ Whoosh==2.7.2
 Unidecode==0.4.19
 gunicorn==19.4.5
 click==6.3
+pytest==3.0.3
