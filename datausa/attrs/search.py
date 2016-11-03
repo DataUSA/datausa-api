@@ -1,3 +1,5 @@
+import re
+
 from whoosh.qparser import QueryParser
 from whoosh import index, sorting, qparser, scoring, query
 from config import SEARCH_INDEX_DIR, VAR_INDEX_DIR
@@ -74,6 +76,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
     q = qp.parse(txt)
 
     var_q = vars_qp.parse(txt)
+    var_keywords = {}
     # search for variables in query
     if not my_vars:
         # my_vars can save original vars detected before autocorrecting for spelling,
@@ -81,7 +84,8 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
         with vars_ix.searcher() as s:
         # s = vars_ix.searcher()
             results = s.search(var_q)
-            my_vars = [{"name": r["name"],
+            my_vars = [{"matched_on": r.highlights("name"),
+                        "name": r["name"],
                         "description": r["description"],
                         "section": r["section"],
                         "related_attrs": r["related_attrs"].split(","),
@@ -93,8 +97,25 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
                 if my_var["related_vars"] not in already_seen:
                     filtered_my_vars.append(my_var)
                 already_seen.append(my_var["related_vars"])
+                highlight_txt = my_var["matched_on"]
+
+                if highlight_txt:
+                    match = re.match(r'<b class=".+">(.+)</b>', highlight_txt)
+                    # raise Exception(match, highlight_txt)
+                    if match:
+                        matched_txt = match.group(1)
+                        var_keywords[matched_txt] = True
             my_vars = filtered_my_vars
 
+    try:
+        for term in q:
+            if term.text in var_keywords.keys():
+                term.boost = -0.1
+    except NotImplementedError:
+        if q.text in var_keywords.keys():
+            q.boost = -0.1
+
+    # raise Exception(q)
     weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)
     with ix.searcher(weighting=weighter) as s:
         if len(txt) > 2:
