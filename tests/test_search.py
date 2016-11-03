@@ -4,7 +4,7 @@ from whoosh import qparser, query
 from config import SEARCH_INDEX_DIR
 import math
 import unittest
-from datausa.attrs.views import do_search
+from datausa.attrs.search import do_search
 
 ix = index.open_dir(SEARCH_INDEX_DIR)
 qp = QueryParser("name", schema=ix.schema, group=qparser.OrGroup)
