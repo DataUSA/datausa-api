@@ -49,7 +49,7 @@ def nationwide_results(data, my_vars, attr_score, var_score, usr_query):
     name = "{} in United States".format(my_vars[0]["description"].title()) if my_vars else None
 
     put_us_first = False
-    raw_name = data[0][1].lower()
+    raw_name = data[0][1].lower() if data else ""
     first_name = raw_name.split(" ")[0]
     put_us_first = not (usr_query.startswith(first_name) or
                         usr_query.endswith(first_name) or
@@ -61,6 +61,7 @@ def nationwide_results(data, my_vars, attr_score, var_score, usr_query):
         data.insert(pos, [usa, name, 10, "geo", name, "010", "united-states"])
     elif my_vars and usa not in attr_ids and len(data) < 10:
         data.insert(1, [usa, name, 10, "geo", name, "010", "united-states"])
+
     return data
 
 
