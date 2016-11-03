@@ -41,13 +41,19 @@ facet = sorting.FieldFacet("zvalue", reverse=True)
 scores = sorting.ScoreFacet()
 
 
-def nationwide_results(data, my_vars):
+def nationwide_results(data, my_vars, attr_score, var_score, usr_query):
     '''given attribute search results and variable search results, determine
     if we should inject the US page into the data'''
     attr_ids = [row[0] for row in data]
     usa = '01000US'
-    if my_vars and usa not in attr_ids and len(data) < 10:
-        name = "United States"
+    name = "{} in United States".format(my_vars[0]["description"]) if my_vars else None
+
+    bad_first = data[0][1].lower().startswith(usr_query) if data else True
+
+    if my_vars and var_score and var_score * 17 > attr_score:
+        pos = 0 if bad_first else 1
+        data.insert(pos, [usa, name, 10, "geo", name, "010", "united-states"])
+    elif my_vars and usa not in attr_ids and len(data) < 10:
         data.insert(1, [usa, name, 10, "geo", name, "010", "united-states"])
     return data
 
@@ -77,6 +83,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
 
     var_q = vars_qp.parse(txt)
     var_keywords = {}
+    vars_max_score = None
     # search for variables in query
     if not my_vars:
         # my_vars can save original vars detected before autocorrecting for spelling,
@@ -84,6 +91,10 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
         with vars_ix.searcher() as s:
         # s = vars_ix.searcher()
             results = s.search(var_q)
+            # raise Exception(list(results)[0])
+            vscores = [r.score for r in results]
+            vars_max_score = max(vscores) if vscores else None
+
             my_vars = [{"matched_on": r.highlights("name"),
                         "name": r["name"],
                         "description": r["description"],
@@ -100,20 +111,21 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
                 highlight_txt = my_var["matched_on"]
 
                 if highlight_txt:
-                    match = re.match(r'<b class=".+">(.+)</b>', highlight_txt)
-                    # raise Exception(match, highlight_txt)
-                    if match:
-                        matched_txt = match.group(1)
-                        var_keywords[matched_txt] = True
+                    matches = re.findall(r'<b class="[^>]+">([^>]+)</b>', highlight_txt)
+                    if matches:
+                        for matched_txt in matches:
+                            var_keywords[matched_txt] = True
             my_vars = filtered_my_vars
 
     try:
         for term in q:
-            if term.text in var_keywords.keys():
-                term.boost = -0.1
+            for keyword in var_keywords.keys():
+                if term.text in keyword:
+                    term.boost = -0.1
     except NotImplementedError:
-        if q.text in var_keywords.keys():
-            q.boost = -0.1
+        for keyword in var_keywords.keys():
+            if q.text in keyword:
+                q.boost = -0.1
 
     # raise Exception(q)
     weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)
@@ -130,11 +142,15 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
                  r["is_stem"] if "is_stem" in r else False,
                  r["url_name"] if "url_name" in r else None]
                 for r in results]
+
         if not data and suggs:
             return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit, is_stem=is_stem,
                              my_vars=my_vars)
 
+        ascores = [r.score for r in results]
+        attr_max_score = max(ascores) if ascores else 0
+        # raise Exception(attr_max_score, vars_max_score)
         # insert nationwide linkage
-        data = nationwide_results(data, my_vars)
+        data = nationwide_results(data, my_vars, attr_max_score, vars_max_score, txt)
 
         return data, suggs, tries, my_vars

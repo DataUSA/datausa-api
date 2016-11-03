@@ -34,6 +34,7 @@ if __name__ == '__main__':
         [u'mean_commute_minutes', u'commuters', u'Average travel time', u'commute_time', u'geo'],
         [u'mean_commute_minutes', u'transit', u'Average travel time', u'commute_time', u'geo'],
         [u'mean_commute_minutes', u'transportation', u'Average travel time', u'commute_time', u'geo'],
+        [u'mean_commute_minutes', u'travel time', u'Average travel time', u'commute_time', u'geo'],
 
         [u'conflict_total', u'veterans', u'Number of veterans', u'veterans', u'geo'],
         [u'crime', u'crime', u'Crime', u'crime', u'geo'],
