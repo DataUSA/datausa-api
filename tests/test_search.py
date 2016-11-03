@@ -112,6 +112,10 @@ class TestStringMethods(unittest.TestCase):
         data,suggs,tries,my_vars = do_search("boston travel time")
         self.assertEqual(data[0][0], '16000US2507000')
 
+  def test_nj_travel_time(self):
+        data,suggs,tries,my_vars = do_search("economy in new jersey")
+        self.assertEqual(data[0][0], '04000US34')
+
 
 if __name__ == '__main__':
     unittest.main()
