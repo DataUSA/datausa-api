@@ -3,6 +3,8 @@ import re
 from whoosh.qparser import QueryParser
 from whoosh import index, sorting, qparser, scoring, query
 from config import SEARCH_INDEX_DIR, VAR_INDEX_DIR
+from whoosh.lang.porter import stem
+from whoosh.analysis import RegexTokenizer
 
 class SimpleWeighter(scoring.BM25F):
     use_final = True
@@ -88,7 +90,10 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
         return [], [], [], []
     q = qp.parse(txt)
 
-    var_q = vars_qp.parse(txt)
+    rext = RegexTokenizer()
+    var_txt = u" ".join([stem(token.text) for token in rext(unicode(txt))])
+    var_q = vars_qp.parse(var_txt)
+
     var_keywords = {}
     vars_max_score = None
     # search for variables in query
