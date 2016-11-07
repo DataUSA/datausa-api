@@ -26,36 +26,50 @@ if __name__ == '__main__':
     writer = ix.writer()
 
     all_vars = [
-        [u'adult_obesity,diabetes', u'obesity', u'Obesity prevalence', u'obesity_diabetes', u'geo', None],
-        [u'adult_obesity,diabetes', u'diabetes', u'Diabetes prevalence', u'obesity_diabetes', u'geo', None],
-        [u'adult_obesity,diabetes', u'healthcare', u'Healthcare', u'obesity_diabetes', u'geo', None],
-        [u'motor_vehicle_crash_deaths', u'car crashes', u'Motor vehicle crash deaths', u'crime', u'geo', None],
-        [u'adult_smoking', u'smokers', u'Percentage of adults that reported smoking', u'substance_abuse', u'geo', None],
+        [u'adult_obesity,diabetes', u'obesity', u'Obesity Prevalence,Diabetes Prevalence', u'obesity_diabetes', u'geo', None],
+        [u'adult_obesity,diabetes', u'diabetes', u'Obesity Prevalence,Diabetes Prevalence', u'obesity_diabetes', u'geo', None],
+        [u'adult_obesity,diabetes', u'healthcare', u'Obesity Prevalence,Diabetes Prevalence', u'obesity_diabetes', u'geo', None],
+        [u'motor_vehicle_crash_deaths', u'car crashes', u'Motor Vehicle Crash Deaths', u'crime', u'geo', None],
+        [u'motor_vehicle_crash_deaths', u'accidents', u'Motor Vehicle Crash Deaths', u'crime', u'geo', None],
+
+        [u'adult_smoking', u'smokers', u'Adult Smoking Prevalence', u'substance_abuse', u'geo', None],
+        [u'adult_smoking', u'cigarettes', u'Adult Smoking Prevalence', u'substance_abuse', u'geo', None],
 
         # [u'infant_mortality', u'infant mortality', u'Infant mortality', u'health', u'geo'],
         # [u'teen_births', u'teen births', u'Teen births', u'health', u'geo'],
-        [u'mean_commute_minutes', u'commuters', u'Average travel time', u'commute_time', u'geo', None],
-        [u'mean_commute_minutes', u'transit', u'Average travel time', u'commute_time', u'geo', None],
-        [u'mean_commute_minutes', u'transportation', u'Average travel time', u'commute_time', u'geo', None],
-        [u'mean_commute_minutes', u'travel time', u'Average travel time', u'commute_time', u'geo', None],
+        [u'mean_commute_minutes', u'commuters', u'Average Travel Time', u'commute_time', u'geo', None],
+        [u'mean_commute_minutes', u'transit', u'Average Travel Time', u'commute_time', u'geo', None],
+        [u'mean_commute_minutes', u'transportation', u'Average Travel Time', u'commute_time', u'geo', None],
+        [u'mean_commute_minutes', u'travel time', u'Average Travel Time', u'commute_time', u'geo', None],
 
-        [u'conflict_total', u'veterans', u'Number of veterans', u'veterans', u'geo', None],
-        [u'crime', u'crime', u'Crime', u'crime', u'geo', None],
-        [u'murder', u'murder', u'Murder', u'crime', u'geo', None],
-        [u'pop,age', u'population', u'Population', u'demographics', u'geo', None],
-        [u'pop,age', u'people', u'Population', u'demographics', u'geo', None],
+        [u'conflict_total', u'veterans', u'Number of Veterans', u'veterans', u'geo', None],
+        [u'conflict_total', u'war', u'Number of Veterans', u'veterans', u'geo', None],
+
+        [u'violent_crime', u'crime', u'Violent Crimes', u'crime', u'geo', None],
+        [u'homicide_rate', u'murder', u'Homicide Deaths', u'crime', u'geo', None],
+        [u'homicide_rate', u'homicide', u'Homicide Deaths', u'crime', u'geo', None],
+
+        [u'pop,age', u'population', u'Population,Median Age', u'demographics', u'geo', None],
+        [u'pop,age', u'people', u'Population,Median Age', u'demographics', u'geo', None],
         [u'age', u'age', u'Median Age', u'demographics', u'geo', None],
-        [u'income', u'income', u'Median income', u'economy', u'geo', None],
-        [u'avg_wage', u'salary', u'Average wage', u'economy', u'geo', None],
-        [u'avg_wage', u'wage', u'Average wage', u'economy', u'geo', None],
-        [u'income,age,pop', u'economy', u'Economic data', u'economy', u'geo', None],
-        [u'avg_wage', u'wages', u'Wages', u'income_distro', u'geo', None],
-        [u'median_property_value', u'property value', u'Property values', u'economy', u'geo', None],
-        [u'income_below_poverty', u'poverty', u'Poverty', u'poverty_age_gender', u'geo', None],
+        [u'income', u'income', u'Median Yearly Income', u'economy', u'geo', None],
+        [u'avg_wage', u'salary', u'Average Salary', u'economy', u'geo,soc,naics,cip', None],
+        [u'avg_wage', u'wage', u'Average Salary', u'economy', u'geo,soc,naics,cip', None],
+        [u'income,age,pop', u'economics', u'Median Yearly Income,Age,Population', u'economy', u'geo', None],
+        # [u'avg_wage', u'wages', u'Wages', u'income_distro', u'geo', None],
+        [u'median_property_value', u'property value', u'Median Property Value', u'economy', u'geo', None],
+        [u'median_property_value', u'home value', u'Median Property Value', u'economy', u'geo', None],
+        [u'median_property_value', u'housing cost', u'Median Property Value', u'economy', u'geo', None],
+
+        [u'income_below_poverty', u'poverty', u'Population in Poverty', u'poverty_age_gender', u'geo', None],
+        [u'income_below_poverty', u'poor', u'Population in Poverty', u'poverty_age_gender', u'geo', None],
+
         [u'households_renter_occupied,households_owner_occupied,households', u'renters', u'Renter occupied households', u'rent_own', u'geo', None],
-        [u'grads_total', u'graduates', u'Postsecondary degree graduates', u'education', u'geo', None],
-        [u'grads_total', u'grads', u'Postsecondary degree graduates', u'education', u'geo', None],
+        [u'grads_total', u'graduates', u'Degrees Awarded', u'education', u'geo', None],
+        [u'grads_total', u'grads', u'Degrees Awarded', u'education', u'geo', None],
+        [u'grads_total', u'students', u'Degrees Awarded', u'education', u'geo', None],
     ]
+
     from datausa.attrs.models import AcsLanguage
 
     for lang in AcsLanguage.query.all():

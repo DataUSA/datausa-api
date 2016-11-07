@@ -49,11 +49,12 @@ def nationwide_results(data, my_vars, attr_score, var_score, usr_query):
     if we should inject the US page into the data'''
     attr_ids = [row[0] for row in data]
     usa = '01000US'
-    name = "{} in United States".format(my_vars[0]["description"].title()) if my_vars else None
+    name = "{} in United States".format(my_vars[0]["description"][0].title()) if my_vars else None
 
     put_us_first = False
     raw_name = data[0][1].lower() if data else ""
     first_name = raw_name.split(" ")[0]
+    # TODO iterate through first few, find weak match and insert before
     put_us_first = not (usr_query.startswith(first_name) or
                         usr_query.endswith(first_name) or
                         raw_name[:6] in usr_query or
@@ -110,7 +111,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
 
             my_vars = [{"matched_on": r.highlights("name"),
                         "name": r["name"],
-                        "description": r["description"],
+                        "description": r["description"].split(","),
                         "section": r["section"],
                         "related_attrs": r["related_attrs"].split(","),
                         "related_vars": r["related_vars"].split(","),
