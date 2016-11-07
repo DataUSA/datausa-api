@@ -120,6 +120,10 @@ class TestStringMethods(unittest.TestCase):
         data,suggs,tries,my_vars = do_search("obesity")
         self.assertEqual(data[0][0], '01000US')
 
+  def test_vietnamese_wyoming(self):
+        data,suggs,tries,my_vars = do_search("vietnamese speakers in wyoming")
+        ids = [row[0] for row in data]
+        self.assertTrue('04000US56' in ids[:2])
 
 
 if __name__ == '__main__':

@@ -52,19 +52,23 @@ def nationwide_results(data, my_vars, attr_score, var_score, usr_query):
     name = "{} in United States".format(my_vars[0]["description"][0].title()) if my_vars else None
 
     put_us_first = False
-    raw_name = data[0][1].lower() if data else ""
-    first_name = raw_name.split(" ")[0]
-    # TODO iterate through first few, find weak match and insert before
-    put_us_first = not (usr_query.startswith(first_name) or
-                        usr_query.endswith(first_name) or
-                        raw_name[:6] in usr_query or
-                        first_name.startswith(usr_query))
-    # raise Exception(put_us_first, attr_score)
+
+    pos = 0
+    for row in data[:3]:
+        raw_name = row[1].lower() if data else ""
+        first_name = raw_name.split(" ")[0]
+        put_us_first = not (usr_query.startswith(first_name) or
+                            usr_query.endswith(first_name) or
+                            raw_name[:6] in usr_query or
+                            first_name.startswith(usr_query))
+        if put_us_first:
+            break
+        else:
+            pos +=1
     if my_vars and var_score and var_score * 20 > attr_score:
-        pos = 0 if put_us_first else 1
         data.insert(pos, [usa, name, 10, "geo", name, "010", "united-states"])
     elif my_vars and usa not in attr_ids and len(data) < 10:
-        data.insert(1, [usa, name, 10, "geo", name, "010", "united-states"])
+        data.insert(pos, [usa, name, 10, "geo", name, "010", "united-states"])
 
     return data
 
