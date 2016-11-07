@@ -139,12 +139,16 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
     try:
         for term in q:
             for keyword in var_keywords.keys():
-                if term.text in keyword:
-                    term.boost = -0.1
+                if term.text == 'in' and " in " in txt:
+                    term.boost = -1
+                elif term.text in keyword:
+                    term.boost = -0.5
     except NotImplementedError:
         for keyword in var_keywords.keys():
-            if q.text in keyword:
-                q.boost = -0.1
+            if q.text == 'in' and " in " in txt:
+                q.boost = -1
+            elif q.text in keyword:
+                q.boost = -0.5
 
     # raise Exception(q)
     weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)

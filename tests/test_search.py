@@ -127,6 +127,11 @@ class TestStringMethods(unittest.TestCase):
         ids = [row[0] for row in data]
         self.assertTrue('04000US56' in ids[:2])
 
+  def test_polish_chicago(self):
+        data,suggs,tries,my_vars = do_search("polish speakers in chicago")
+        self.assertEqual(data[0][0], '16000US1714000')
+
+
 
 if __name__ == '__main__':
     unittest.main()
