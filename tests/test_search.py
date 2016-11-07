@@ -131,6 +131,9 @@ class TestStringMethods(unittest.TestCase):
         data,suggs,tries,my_vars = do_search("polish speakers in chicago")
         self.assertEqual(data[0][0], '16000US1714000')
 
+  def test_native_cambr(self):
+        data,suggs,tries,my_vars = do_search("native born in cambridge")
+        self.assertEqual(data[0][0], '16000US2511000')
 
 
 if __name__ == '__main__':

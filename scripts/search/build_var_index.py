@@ -68,6 +68,10 @@ if __name__ == '__main__':
         [u'grads_total', u'graduates', u'Degrees Awarded', u'education', u'geo', None],
         [u'grads_total', u'grads', u'Degrees Awarded', u'education', u'geo', None],
         [u'grads_total', u'students', u'Degrees Awarded', u'education', u'geo', None],
+
+        [u'nativity_foreign,nativity_us', u'foreign born', u'Foreign Born,Native Born', u'demographics', u'geo', None],
+        [u'nativity_foreign,nativity_us', u'native born', u'Foreign Born,Native Born', u'demographics', u'geo', None],
+
     ]
 
     from datausa.attrs.models import AcsLanguage
