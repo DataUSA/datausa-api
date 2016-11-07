@@ -49,7 +49,9 @@ def nationwide_results(data, my_vars, attr_score, var_score, usr_query):
     if we should inject the US page into the data'''
     attr_ids = [row[0] for row in data]
     usa = '01000US'
-    name = "{} in United States".format(my_vars[0]["description"][0].title()) if my_vars else None
+    var_names = [my_var["description"][0].title() for my_var in my_vars] if my_vars else []
+    var_names = ", ".join(var_names[:-1]) + " and {}".format(var_names[-1]) if len(var_names) > 1 else "".join(var_names)
+    name = "{} in United States".format(var_names) if my_vars else None
 
     put_us_first = False
 
@@ -149,8 +151,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
                 q.boost = -1
             elif q.text in keyword or keyword in q.text:
                 q.boost = -0.5
-    # raise Exception(q)
-    # raise Exception(q)
+
     weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)
     with ix.searcher(weighting=weighter) as s:
         if len(txt) > 2:

@@ -135,6 +135,26 @@ class TestStringMethods(unittest.TestCase):
         data,suggs,tries,my_vars = do_search("native born in cambridge")
         self.assertEqual(data[0][0], '16000US2511000')
 
+  def test_fr_cambr(self):
+        data,suggs,tries,my_vars = do_search("french in cambridge")
+        self.assertEqual(data[0][0], '16000US2511000')
+
+  def test_chil_nm(self):
+        data,suggs,tries,my_vars = do_search("chileans in new mexico")
+        self.assertEqual(data[0][0], '04000US35')
+
+  def test_swiss_nj(self):
+        data,suggs,tries,my_vars = do_search("swiss in new jersey")
+        self.assertEqual(data[0][0], '04000US34')
+
+  def test_cuba_montana(self):
+        data,suggs,tries,my_vars = do_search("cubans in montana")
+        self.assertEqual(data[0][0], '04000US30')
+
+  def test_il_fl(self):
+        data,suggs,tries,my_vars = do_search("israelis in florida")
+        self.assertEqual(data[0][0], '04000US12')
+
 
 if __name__ == '__main__':
     unittest.main()

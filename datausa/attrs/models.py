@@ -305,6 +305,7 @@ class PumsBirthplace(BaseAttr):
     __table_args__ = {"schema": "pums_attrs"}
 
     adm0_a3 = db.Column(db.String)
+    demonym = db.Column(db.String)
 
 
 class Sector(BaseAttr):

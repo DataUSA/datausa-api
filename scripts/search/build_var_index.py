@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     ]
 
-    from datausa.attrs.models import AcsLanguage
+    from datausa.attrs.models import AcsLanguage, PumsBirthplace
 
     for lang in AcsLanguage.query.all():
         my_params = {
@@ -86,6 +86,20 @@ if __name__ == '__main__':
         print my_var
         all_vars.append(my_var)
 
+
+    for birthplace in PumsBirthplace.query.filter(~PumsBirthplace.id.startswith("XX"),
+                                            ~PumsBirthplace.id.startswith("040")):
+        my_params = {
+            "year": "latest",
+            "birthplace": birthplace.id
+        }
+        b_keyword = birthplace.demonym or birthplace.name
+        b_keyword = b_keyword.lower().strip()
+        b_keyword = " ".join([k for k in b_keyword.split(" ") if len(k) > 3])
+        my_var = [u'num_ppl', u'{}'.format(b_keyword),
+                  u'People Born in {}'.format(birthplace.name.title()), u'heritage', u'geo', unicode(json.dumps(my_params))]
+        print my_var
+        all_vars.append(my_var)
 
     for related_vars, name, description, section, related_attrs, params in all_vars:
         writer.add_document(related_vars=related_vars, name=name,
