@@ -1,4 +1,5 @@
 import re
+import json
 
 from whoosh.qparser import QueryParser
 from whoosh import index, sorting, qparser, scoring, query
@@ -112,7 +113,8 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
                         "description": r["description"],
                         "section": r["section"],
                         "related_attrs": r["related_attrs"].split(","),
-                        "related_vars": r["related_vars"].split(",")} for r in results]
+                        "related_vars": r["related_vars"].split(","),
+                        "params": json.loads(r["params"]) if r["params"] else None} for r in results]
         if my_vars:
             already_seen = []
             filtered_my_vars = []
