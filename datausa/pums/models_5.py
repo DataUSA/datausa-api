@@ -47,3 +47,13 @@ class Ygos5(BasePums5, Employees, Year, GeoId, SocId, SexId):
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "soc": SocId.LEVELS,
                 "sex": [ALL]}
+
+class Ygb5(BasePums5, PersonalOver5, Year, GeoId, BirthplaceId):
+    __tablename__ = "ygb_v2"
+    median_moe = 2
+
+    num_ppl_rca = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": GeoId.LEVELS, "birthplace": [ALL]}
