@@ -53,7 +53,7 @@ if __name__ == '__main__':
         [u'pop,age', u'people', u'Population,Median Age', u'demographics', u'geo', None],
         [u'age', u'age', u'Median Age', u'demographics', u'geo', None],
         [u'income', u'income', u'Median Yearly Income', u'economy', u'geo', None],
-        [u'avg_wage', u'salary', u'Average Salary', u'economy', u'geo,soc,naics,cip', None],
+        [u'avg_wage', u'salaries', u'Average Salary', u'economy', u'geo,soc,naics,cip', None],
         [u'avg_wage', u'wage', u'Average Salary', u'economy', u'geo,soc,naics,cip', None],
         [u'income,age,pop', u'economics', u'Median Yearly Income,Age,Population', u'economy', u'geo', None],
         # [u'avg_wage', u'wages', u'Wages', u'income_distro', u'geo', None],
