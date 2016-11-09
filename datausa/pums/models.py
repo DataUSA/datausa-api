@@ -308,7 +308,8 @@ class Yocd(BasePums, Employees, Year, SocId, CipId, DegreeId, EmployeesRca):
 class Ygb(BasePums, PersonalOver5, Year, GeoId, BirthplaceId):
     __tablename__ = "ygb_v2"
     median_moe = 2.1
-
+    num_over5 = db.Column(db.Float)
+    num_over5_moe = db.Column(db.Float)
     num_over5_rca = db.Column(db.Float)
 
     @classmethod
