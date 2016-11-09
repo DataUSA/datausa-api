@@ -97,7 +97,7 @@ if __name__ == '__main__':
         b_keyword = birthplace.demonym or birthplace.name
         b_keyword = b_keyword.lower().strip()
         b_keyword = " ".join([k for k in b_keyword.split(" ") if len(k) > 3])
-        my_var = [u'num_ppl', u'{}'.format(b_keyword),
+        my_var = [u'num_over5', u'{}'.format(b_keyword),
                   u'People Born in {}'.format(birthplace.name.title()), u'heritage', u'geo', unicode(json.dumps(my_params))]
         print my_var
         all_vars.append(my_var)

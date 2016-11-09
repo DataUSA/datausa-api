@@ -309,7 +309,7 @@ class Ygb(BasePums, PersonalOver5, Year, GeoId, BirthplaceId):
     __tablename__ = "ygb_v2"
     median_moe = 2.1
 
-    num_ppl_rca = db.Column(db.Float)
+    num_over5_rca = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
