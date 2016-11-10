@@ -156,5 +156,14 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(data[0][0], '04000US12')
 
 
+  def test_citizenship(self):
+        data,suggs,tries,my_vars = do_search("citizenship")
+        self.assertEqual(data[0][0], '01000US')
+
+  def test_citizenship(self):
+        data,suggs,tries,my_vars = do_search("citizenship in florida")
+        self.assertEqual(data[0][0], '04000US12')
+
+
 if __name__ == '__main__':
     unittest.main()

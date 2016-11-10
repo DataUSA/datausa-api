@@ -73,6 +73,8 @@ if __name__ == '__main__':
         [u'nativity_foreign,nativity_us', u'native born', u'Foreign Born,Native Born', u'demographics', u'geo', None],
 
         [u'pop_black,pop_latino,pop_white,pop_asian', u'race ethnicity', u'Black Population,Hispanic Population,White Population,Asian Population', u'ethnicity', u'geo', None],
+        [u'us_citizens', u'citizen', u'Citizenship', u'citizenship', u'geo', None],
+
     ]
 
     from datausa.attrs.models import AcsLanguage, PumsBirthplace
