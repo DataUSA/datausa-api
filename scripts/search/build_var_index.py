@@ -110,6 +110,8 @@ if __name__ == '__main__':
 
     for birthplace in PumsBirthplace.query.filter(~PumsBirthplace.id.startswith("XX"),
                                             ~PumsBirthplace.id.startswith("040")):
+        if birthplace.id in ["161", "344"]: # skip georgia and car
+            continue
         my_params = {
             "year": "latest",
             "birthplace": birthplace.id

@@ -164,6 +164,10 @@ class TestStringMethods(unittest.TestCase):
         data,suggs,tries,my_vars = do_search("citizenship in florida")
         self.assertEqual(data[0][0], '04000US12')
 
+  def test_ga(self):
+        data,suggs,tries,my_vars = do_search("georgia")
+        self.assertEqual(data[0][0], '04000US13')
+
 
 if __name__ == '__main__':
     unittest.main()
