@@ -74,6 +74,24 @@ if __name__ == '__main__':
 
         [u'pop_black,pop_latino,pop_white,pop_asian', u'race ethnicity', u'Black Population,Hispanic Population,White Population,Asian Population', u'ethnicity', u'geo', None],
         [u'us_citizens', u'citizen', u'Citizenship', u'citizenship', u'geo', None],
+        [u'gini', u'gini', u'Gini', u'income_distro', u'geo', None],
+        [u'gini', u'inequality', u'Gini', u'income_distro', u'geo', None],
+        [u'pop_latino', u'hispanic', u'Hispanic Population', u'ethnicity', u'geo', None],
+        [u'pop_latino', u'latino', u'Hispanic Population', u'ethnicity', u'geo', None],
+        [u'pop_black', u'black', u'Black Population', u'ethnicity', u'geo', None],
+        [u'pop_white', u'white', u'White Population', u'ethnicity', u'geo', None],
+        [u'pop_asian', u'asian', u'Asian Population', u'ethnicity', u'geo', None],
+        [u'transport_bicycle', u'bicycle', u'Bicycle to Work', u'mode_transport', u'geo', None],
+        [u'transport_bicycle', u'bikers', u'Bicycle to Work', u'mode_transport', u'geo', None],
+        [u'transport_bicycle', u'cyclist', u'Bicycle to Work', u'mode_transport', u'geo', None],
+        [u'transport_carpooled', u'carpool', u'Carpool to Work', u'mode_transport', u'geo', None],
+        [u'transport_publictrans', u'public transit', u'Public Transit to Work', u'mode_transport', u'geo', None],
+        [u'transport_drove', u'drive', u'Drove Alone to Work', u'mode_transport', u'geo', None],
+        [u'transport_drove', u'cars', u'Drove Alone to Work', u'mode_transport', u'geo', None],
+        [u'transport_drove', u'drivers', u'Drove Alone to Work', u'mode_transport', u'geo', None],
+        [u'transport_taxi', u'taxi', u'Taxi to Work', u'mode_transport', u'geo', None],
+        [u'transport_motorcycle', u'motorcycle', u'Motorcycled to Work', u'mode_transport', u'geo', None],
+        [u'transport_walked', u'walk', u'Walked to Work', u'mode_transport', u'geo', None],
 
     ]
 
@@ -105,6 +123,7 @@ if __name__ == '__main__':
         all_vars.append(my_var)
 
     for related_vars, name, description, section, related_attrs, params in all_vars:
+        # print '|{}|{}|{}|'.format(name, description, related_vars)
         writer.add_document(related_vars=related_vars, name=name,
                             description=description, section=section,
                             related_attrs=related_attrs, params=params)
