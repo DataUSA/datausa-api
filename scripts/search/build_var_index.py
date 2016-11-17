@@ -61,7 +61,7 @@ if __name__ == '__main__':
         [u'median_property_value', u'home value', u'Median Property Value', u'economy', u'geo', None],
         [u'median_property_value', u'housing cost', u'Median Property Value', u'economy', u'geo', None],
 
-        [u'income_below_poverty', u'poverty', u'Population in Poverty', u'poverty_age_gender', u'geo', None],
+        [u'income_below_poverty', u'poverti', u'Population in Poverty', u'poverty_age_gender', u'geo', None],
         [u'income_below_poverty', u'poor', u'Population in Poverty', u'poverty_age_gender', u'geo', None],
 
         [u'households_renter_occupied,households_owner_occupied,households', u'renters', u'Renter occupied households', u'rent_own', u'geo', None],
