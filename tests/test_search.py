@@ -168,6 +168,12 @@ class TestStringMethods(unittest.TestCase):
         data,suggs,tries,my_vars = do_search("georgia")
         self.assertEqual(data[0][0], '04000US13')
 
+  def test_age(self):
+        data,suggs,tries,my_vars = do_search("age in chicago")
+        self.assertEqual(data[0][0], '16000US1714000')
+        self.assertTrue(len(my_vars) > 0)
+        self.assertEqual(my_vars[0]['name'], 'age')
+
 
 if __name__ == '__main__':
     unittest.main()

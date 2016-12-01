@@ -99,9 +99,9 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
     q = qp.parse(txt)
 
     rext = RegexTokenizer()
-    var_txt = u" ".join([stem(token.text) for token in rext(unicode(txt))])
-    var_q = vars_qp.parse(var_txt)
+    var_txt = u" ".join([stem(token.text) if len(token.text) > 3 else token.text for token in rext(unicode(txt))])
 
+    var_q = vars_qp.parse(var_txt)
     var_keywords = {}
     vars_max_score = None
     # search for variables in query
