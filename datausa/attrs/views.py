@@ -10,10 +10,7 @@ from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
 from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
-
-from whoosh.qparser import QueryParser
-from whoosh import index, sorting, qparser, scoring, query
-from config import SEARCH_INDEX_DIR
+from datausa.attrs.search import do_search
 
 import re
 
@@ -21,36 +18,7 @@ def to_bool(x):
     return x and x.lower() == "true"
 
 
-class SimpleWeighter(scoring.BM25F):
-    use_final = True
 
-    def __init__(self, fullterm, *args, **kwargs):
-        self.fullterm = fullterm.lower().strip()
-        super(SimpleWeighter, self).__init__(*args, **kwargs)
-
-    def final(self, searcher, docnum, score_me):
-        name = searcher.stored_fields(docnum).get("name")
-        zscore = searcher.stored_fields(docnum)['zvalue'] * .04
-        zvalue = searcher.stored_fields(docnum).get("zvalue")
-        if name == self.fullterm:
-            return score_me * 30 + (25 * abs(zvalue))
-        elif name.startswith(self.fullterm):
-            if zvalue > 0:
-                return (score_me * 5.75) + (25 * zvalue)
-            else:
-                return score_me * 5.75 + (1 - abs(zvalue) * 25)
-        elif self.fullterm.startswith(name[:10]):
-            return score_me * 3 + abs(zvalue)
-        elif self.fullterm.startswith(name[:5]):
-            return score_me * 1.5 + abs(zvalue)
-            # return (score_me * 1.75) + (10 * zvalue)
-        return (score_me * 0.75) + (zvalue * 0.25)
-
-
-ix = index.open_dir(SEARCH_INDEX_DIR)
-qp = QueryParser("name", schema=ix.schema, group=qparser.OrGroup)
-facet = sorting.FieldFacet("zvalue", reverse=True)
-scores = sorting.ScoreFacet()
 
 attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
@@ -140,45 +108,6 @@ def get_children(kind, attr_id):
     raise Exception("Invalid attribute type.")
 
 
-def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None):
-    txt = txt.replace(",", "")
-
-    my_filter = None
-
-    if kind and sumlevel:
-        kf = query.Term("kind", kind)
-        sf = query.Term("sumlevel", sumlevel)
-        my_filter = query.And([kf, sf])
-    elif kind:
-        my_filter = query.Term("kind", kind)
-    elif sumlevel:
-        my_filter = query.Term("sumlevel", sumlevel)
-    if is_stem and is_stem > 0 and my_filter is not None:
-        my_filter = my_filter & query.NumericRange("is_stem", 1, is_stem)
-    elif is_stem and is_stem > 0 and my_filter is None:
-        my_filter = query.NumericRange("is_stem", 1, is_stem)
-
-    if tries > 2:
-        return [],[],[]
-    q = qp.parse(txt)
-    weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)
-    with ix.searcher(weighting=weighter) as s:
-        if len(txt) > 2:
-            corrector = s.corrector("display")
-            suggs = corrector.suggest(txt, limit=10, maxdist=2, prefix=3)
-        else:
-            suggs = []
-        results = s.search_page(q, 1, sortedby=[scores], pagelen=20, filter=my_filter)
-        data = [[r["id"], r["name"], r["zvalue"],
-                 r["kind"], r["display"],
-                 r["sumlevel"] if "sumlevel" in r else "",
-                 r["is_stem"] if "is_stem" in r else False,
-                 r["url_name"] if "url_name" in r else None]
-                for r in results]
-        if not data and suggs:
-            return do_search(suggs[0], sumlevel, kind, tries=tries+1, limit=limit, is_stem=is_stem)
-        return data, suggs, tries
-
 @mod.route("/search/")
 def search():
     offset = request.args.get("offset", None)
@@ -193,11 +122,11 @@ def search():
     elif not txt or len(txt) <= 1:
         return search_old()
 
-    data, suggs, tries = do_search(txt, sumlevel, kind, limit=limit, is_stem=is_stem)
+    data, suggs, tries, my_vars = do_search(txt, sumlevel, kind, limit=limit, is_stem=is_stem)
     headers = ["id", "name", "zvalue", "kind", "display", "sumlevel", "is_stem", "url_name"]
     autocorrected = tries > 0
     suggs = [x for x in suggs if x != txt]
-    return jsonify(data=data, headers=headers, suggestions=suggs, autocorrected=autocorrected)
+    return jsonify(data=data, headers=headers, suggestions=suggs, autocorrected=autocorrected, related_vars=my_vars)
 
 @mod.route("/search_old/")
 def search_old():
