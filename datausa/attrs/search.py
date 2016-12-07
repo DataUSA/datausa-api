@@ -119,6 +119,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
                         "name": r["name"],
                         "description": r["description"].split(","),
                         "section": r["section"],
+                        "section_title": r["section_title"],
                         "related_attrs": r["related_attrs"].split(","),
                         "related_vars": r["related_vars"].split(","),
                         "params": json.loads(r["params"]) if 'params' in r else None} for r in results]
