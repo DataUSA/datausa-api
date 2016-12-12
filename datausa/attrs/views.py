@@ -9,6 +9,7 @@ from datausa.attrs.models import Skill, Sector, Geo, AcsInd, PumsIoCrosswalk
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
+from datausa.attrs.models import AgeBucket, Insurance
 from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
 
@@ -30,7 +31,9 @@ attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "race": Race, "acs_race": AcsRace,
             "acs_occ": AcsOcc, "conflict": Conflict, "acs_ind": AcsInd,
             "language": AcsLanguage,
-            "bls_soc": Soc, "bls_naics": Naics}
+            "bls_soc": Soc, "bls_naics": Naics,
+            "age_bucket": AgeBucket,
+            "insurance": Insurance}
 
 def show_attrs(attr_obj, sumlevels=None):
     if sumlevels is not None:

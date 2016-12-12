@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declared_attr
 
 from datausa.database import db
 from datausa.attrs.models import Geo, AcsOcc, AcsInd, GeoContainment
-from datausa.attrs.models import AcsLanguage
+from datausa.attrs.models import AcsLanguage, Insurance, AgeBucket
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY
 from datausa.attrs.consts import PUMA, MSA, ALL, GEO

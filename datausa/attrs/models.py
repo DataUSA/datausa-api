@@ -364,6 +364,7 @@ class GeoContainment(db.Model):
     child_geoid = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
     parent_geoid = db.Column(db.String, db.ForeignKey(Geo.id),
                              primary_key=True)
+    area_covered = db.Column(db.Float)
     percent_covered = db.Column(db.Float)
     parent = relationship('Geo', foreign_keys='GeoContainment.parent_geoid')
     child = relationship('Geo', foreign_keys='GeoContainment.child_geoid',
@@ -397,6 +398,11 @@ class SocHierarchy(db.Model):
     great_grandparent_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.great_grandparent', lazy='subquery')
     soc_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.soc', lazy='subquery')
 
+class AgeBucket(BaseAttr):
+    __tablename__ = 'age_bucket'
+
+class Insurance(BaseAttr):
+    __tablename__ = 'insurance'
 
 class AcsLanguage(BaseAttr):
     __tablename__ = 'language'
