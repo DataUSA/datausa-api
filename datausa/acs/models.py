@@ -7,7 +7,7 @@ from datausa.attrs.consts import NATION, STATE, MSA, PLACE, PUMA, COUNTY, ALL
 class Acs1_Ygi_Health(BaseAcs1, GeoId1):
     __tablename__ = "ygi_health"
     median_moe = 2
-
+    virtual_schema = "acs_health"
     insurance = db.Column(db.String(), primary_key=True)
 
     hc_pop = db.Column(db.Float)
@@ -23,6 +23,7 @@ class Acs1_Ygi_Health(BaseAcs1, GeoId1):
 class Acs1_Yga_Health(BaseAcs1, GeoId1):
     __tablename__ = "yga_health"
     median_moe = 2
+    virtual_schema = "acs_health"
 
     age_bucket = db.Column(db.String(), primary_key=True)
 
@@ -39,6 +40,7 @@ class Acs1_Yga_Health(BaseAcs1, GeoId1):
 class Acs1_Ygia_Health(BaseAcs1, GeoId1):
     __tablename__ = "ygia_health"
     median_moe = 3
+    virtual_schema = "acs_health"
 
     insurance = db.Column(db.String(), primary_key=True)
     age_bucket = db.Column(db.String(), primary_key=True)

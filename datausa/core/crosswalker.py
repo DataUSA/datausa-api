@@ -144,7 +144,7 @@ def crosswalk(table, api_obj):
     pums5_schema_name = BasePums5.get_schema_name()
 
     registered_crosswalks = [
-        {"column": "geo", "schema": "acs_1yr", "mapping": acs_parent},
+        {"column": "geo", "schema": "acs_1yr", "mapping": acs_parent, "virtual_schema": "acs_health"},
         {"column": "industry_iocode", "schema": "bea", "mapping": industry_iocode_func},
         {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
         {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
@@ -172,6 +172,7 @@ def crosswalk(table, api_obj):
         mapping = rcrosswalk['mapping']
         target_table = rcrosswalk['table'] if 'table' in rcrosswalk else None
         avoid = rcrosswalk['avoid'] if 'avoid' in rcrosswalk else None
+        virtual_schema = rcrosswalk['virtual_schema'] if 'virtual_schema' in rcrosswalk else None
 
         if avoid:
             if table.full_name() == avoid.full_name():
@@ -180,7 +181,8 @@ def crosswalk(table, api_obj):
         if column in api_obj.vars_and_vals.keys() and table.__table_args__['schema'] == schema:
             if table in exclusives and (not target_table or target_table.__tablename__ != table.__tablename__):
                 continue
-
+            if virtual_schema and table.virtual_schema != virtual_schema:
+                continue
             curr_vals_str = api_obj.vars_and_vals[column]
             curr_vals = splitter(curr_vals_str)
             if isinstance(mapping, dict):

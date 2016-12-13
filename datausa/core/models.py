@@ -8,6 +8,7 @@ class BaseModel(object):
     source_title = ''
     source_link = ''
     source_org = ''
+    virtual_schema = None
     # def __init__(levels, moe, size):
     #     self.supported_levels = levels
     #     self.median_moe = moe
