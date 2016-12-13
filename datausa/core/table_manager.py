@@ -11,6 +11,7 @@ from sqlalchemy import distinct
 from datausa import cache
 
 from datausa.acs.abstract_models import BaseAcs5, BaseAcs3, BaseAcs1
+from datausa.acs.automap_models import Acs1_Yg_Conflict, Acs5_Yg_Conflict
 from datausa.util.big_places import is_big_geo
 
 def table_name(tbl):
@@ -205,7 +206,18 @@ class TableManager(object):
 
     @classmethod
     def select_best(cls, table_list, api_obj):
-        # Ordering is sorted in all_tables
+        special_cases = {
+            Acs1_Yg_Conflict.full_name(): (Acs1_Yg_Conflict, Acs5_Yg_Conflict, "conflict_total")
+        }
+        if table_list[0].full_name() in special_cases:
+            # if we are in a table with missing 1yr data
+            has_specific_geo = api_obj.vars_and_vals and "geo" in api_obj.vars_and_vals
+            if has_specific_geo:
+                tbl1, tbl5, target_col = special_cases[table_list[0].full_name()]
+                geos = api_obj.vars_and_vals["geo"].split(consts.OR)
+                all_have_data = all([datum for datum, in tbl1.query.with_entities(target_col).filter(tbl1.geo.in_(geos))])
+                return tbl1 if all_have_data else tbl5
+        # Ordering is sorted in table_list based on moe
         return table_list[0]
 
     @classmethod
