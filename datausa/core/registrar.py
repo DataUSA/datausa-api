@@ -72,7 +72,6 @@ registered_models = [
     StateStats, CountyStats, MSAStats, PlaceStats, PUMAStats,
 
     # ACS Health
-    Acs1_Ygia_Health, Acs1_Ygi_Health, Acs1_Yga_Health
 ]
 
 
