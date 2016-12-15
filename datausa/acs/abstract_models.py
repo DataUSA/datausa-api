@@ -9,6 +9,12 @@ from datausa.attrs.consts import PUMA, MSA, ALL, GEO
 from datausa.attrs.consts import PLACE, TRACT
 from sqlalchemy.sql import func
 
+class BaseHealth(object):
+    virtual_schema = "acs_health"
+    hc_pop = db.Column(db.Float)
+    hc_pop_moe = db.Column(db.Float)
+    hc_pop_rca = db.Column(db.Float)
+
 class AcsIndId(object):
     LEVELS = ["0", "1", "2", ALL]
 
