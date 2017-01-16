@@ -61,3 +61,5 @@ target/
 
 # Ignore cache folder
 cache/
+
+.env
