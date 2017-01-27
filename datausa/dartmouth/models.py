@@ -47,11 +47,39 @@ class DartmouthBase(db.Model, BaseModel):
         return cls.geo.startswith(level_code)
 
 
+# class YgAmiPD(AutomapBase, DartmouthBase):
+#     __tablename__ = 'yg_ami_post_discharge'
+#     median_moe = 1
+#
+#
+# class YgChfPD(AutomapBase, DartmouthBase):
+#     __tablename__ = 'yg_chf_post_discharge'
+#     median_moe = 1
+
+#
+# class YgMedicalPD(AutomapBase, DartmouthBase):
+#     __tablename__ = 'yg_medical_post_discharge'
+#     median_moe = 1
+#
+#
+# class YgPneumoniaPD(AutomapBase, DartmouthBase):
+#     __tablename__ = 'yg_pneumonia_post_discharge'
+#     median_moe = 1
+
+
 class YgPrimaryCare(AutomapBase, DartmouthBase):
-    __tablename__ = 'yg_primary_care'
+    __tablename__ = 'yg_prim_care_access'
     median_moe = 1
 
-    year = db.Column(db.Integer, primary_key=True)
+
+class YgReimbursements(AutomapBase, DartmouthBase):
+    __tablename__ = 'yg_reimbursements'
+    median_moe = 1
+
+
+# class YgSurgicalPD(AutomapBase, DartmouthBase):
+#     __tablename__ = 'yg_surgical_post_discharge'
+#     median_moe = 1
 
 
 AutomapBase.prepare(db.engine, reflect=False)
