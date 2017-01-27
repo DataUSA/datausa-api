@@ -9,6 +9,7 @@ from datausa.bea.models import *
 from datausa.acs.models import *
 from datausa.acs.automap_models import *
 from datausa.acs.stats_models import *
+from datausa.dartmouth.models import *
 
 registered_models = [
     # PUMS
@@ -34,6 +35,9 @@ registered_models = [
 
     # ONET
     SkillByCip, SkillBySoc,
+
+    # Dartmouth
+    YgPrimaryCare,
 
     # County Health Rankings
     HealthYg,

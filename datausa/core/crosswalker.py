@@ -161,7 +161,9 @@ def crosswalk(table, api_obj):
         {"column": "naics", "schema": pums5_schema_name, "mapping": naics_map},
         {"column": "cip", "schema": pums5_schema_name, "mapping": truncate_cip},
         {"column": "geo", "schema": pums5_schema_name, "mapping": pums_parent_puma},
-        {"column": "geo", "schema": "chr", "mapping": chr_parents}
+        {"column": "geo", "schema": "chr", "mapping": chr_parents},
+        {"column": "geo", "schema": "dartmouth", "mapping": chr_parents}
+
 
     ]
     exclusives = {r["table"]: True for r in registered_crosswalks if "table" in r}
