@@ -9,6 +9,7 @@ from datausa.bea.models import *
 from datausa.acs.models import *
 from datausa.acs.automap_models import *
 from datausa.acs.stats_models import *
+from datausa.dartmouth.models import *
 
 registered_models = [
     # PUMS
@@ -34,6 +35,9 @@ registered_models = [
 
     # ONET
     SkillByCip, SkillBySoc,
+
+    # Dartmouth
+    YgPrimaryCare, YgReimbursements,
 
     # County Health Rankings
     HealthYg,
@@ -70,6 +74,10 @@ registered_models = [
 
     # Stats
     StateStats, CountyStats, MSAStats, PlaceStats, PUMAStats,
+
+    # ACS Health
+    Acs1_Yga_Health, Acs1_Ygai_Health, Acs1_Ygais_Health,
+    Acs1_Ygas_Health, Acs1_Ygi_Health, Acs1_Ygis_Health, Acs1_Ygs_Health
 ]
 
 

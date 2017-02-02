@@ -2,12 +2,18 @@ from sqlalchemy.ext.declarative import declared_attr
 
 from datausa.database import db
 from datausa.attrs.models import Geo, AcsOcc, AcsInd, GeoContainment
-from datausa.attrs.models import AcsLanguage
+from datausa.attrs.models import AcsLanguage, Insurance, AgeBucket
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY
 from datausa.attrs.consts import PUMA, MSA, ALL, GEO
 from datausa.attrs.consts import PLACE, TRACT
 from sqlalchemy.sql import func
+
+class BaseHealth(object):
+    virtual_schema = "acs_health"
+    hc_pop = db.Column(db.Float)
+    hc_pop_moe = db.Column(db.Float)
+    hc_pop_rca = db.Column(db.Float)
 
 class AcsIndId(object):
     LEVELS = ["0", "1", "2", ALL]

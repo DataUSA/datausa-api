@@ -35,13 +35,12 @@ class ImageAttr(db.Model):
     __abstract__ = True
     image_link = db.Column(db.String)
     image_author = db.Column(db.String)
-    image_path = db.Column(db.String)
     url_name = db.Column(db.String)
 
-    HEADERS = ["id", "name", "image_link", "image_author", "image_path", "url_name"]
+    HEADERS = ["id", "name", "image_link", "image_author", "url_name"]
 
     def data_serialize(self):
-        return [self.id, self.name, self.image_link, self.image_author, self.image_path, self.url_name]
+        return [self.id, self.name, self.image_link, self.image_author, self.url_name]
 
 
 class University(BaseAttr):
@@ -365,6 +364,7 @@ class GeoContainment(db.Model):
     child_geoid = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
     parent_geoid = db.Column(db.String, db.ForeignKey(Geo.id),
                              primary_key=True)
+    area_covered = db.Column(db.Float)
     percent_covered = db.Column(db.Float)
     parent = relationship('Geo', foreign_keys='GeoContainment.parent_geoid')
     child = relationship('Geo', foreign_keys='GeoContainment.child_geoid',
@@ -398,6 +398,11 @@ class SocHierarchy(db.Model):
     great_grandparent_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.great_grandparent', lazy='subquery')
     soc_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.soc', lazy='subquery')
 
+class AgeBucket(BaseAttr):
+    __tablename__ = 'age_bucket'
+
+class Insurance(BaseAttr):
+    __tablename__ = 'insurance'
 
 class AcsLanguage(BaseAttr):
     __tablename__ = 'language'

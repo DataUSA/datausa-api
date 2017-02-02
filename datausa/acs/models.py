@@ -1,8 +1,110 @@
-from datausa.acs.abstract_models import GeoId, AcsOccId, db, AcsIndId
-from datausa.acs.abstract_models import BaseAcs1, BaseAcs3, BaseAcs5
-from datausa.acs.abstract_models import Ygl_Speakers, GeoId5, GeoId1
+from datausa.acs.abstract_models import GeoId, AcsOccId, db, AcsIndId, Insurance
+from datausa.acs.abstract_models import BaseAcs1, BaseAcs3, BaseAcs5, AgeBucket
+from datausa.acs.abstract_models import Ygl_Speakers, GeoId5, GeoId1, BaseHealth
 from datausa.attrs import consts
 from datausa.attrs.consts import NATION, STATE, MSA, PLACE, PUMA, COUNTY, ALL
+
+class Acs1_Ygi_Health(BaseAcs1, GeoId1, BaseHealth):
+    __tablename__ = "ygi_health"
+    median_moe = 2
+
+    insurance = db.Column(db.String(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
+            "insurance": [ALL]
+        }
+
+class Acs1_Yga_Health(BaseAcs1, GeoId1):
+    __tablename__ = "yga_health"
+    median_moe = 2
+
+    age_bucket = db.Column(db.String(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
+            "age_bucket": [ALL]
+        }
+
+class Acs1_Ygai_Health(BaseAcs1, GeoId1):
+    __tablename__ = "ygai_health"
+    median_moe = 3
+
+    age_bucket = db.Column(db.String(), primary_key=True)
+    insurance = db.Column(db.String(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
+            "insurance": [ALL],
+            "age_bucket": [ALL]
+        }
+
+
+class Acs1_Ygis_Health(BaseAcs1, GeoId1):
+    __tablename__ = "ygis_health"
+    median_moe = 3
+
+    sex = db.Column(db.String(), primary_key=True)
+    insurance = db.Column(db.String(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
+            "insurance": [ALL],
+            "sex": [ALL]
+        }
+
+
+
+class Acs1_Ygas_Health(BaseAcs1, GeoId1):
+    __tablename__ = "ygas_health"
+    median_moe = 3
+
+    sex = db.Column(db.String(), primary_key=True)
+    age_bucket = db.Column(db.String(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
+            "sex": [ALL],
+            "age_bucket": [ALL]
+        }
+
+class Acs1_Ygs_Health(BaseAcs1, GeoId1):
+    __tablename__ = "ygs_health"
+    median_moe = 2
+
+    sex = db.Column(db.String(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
+            "sex": [ALL]
+        }
+
+
+class Acs1_Ygais_Health(BaseAcs1, GeoId1):
+    __tablename__ = "ygs_health"
+    median_moe = 2
+
+    sex = db.Column(db.String(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
+            "sex": [ALL]
+        }
+
 
 
 class Acs1_Ygl_Speakers(BaseAcs1, GeoId1, Ygl_Speakers):
