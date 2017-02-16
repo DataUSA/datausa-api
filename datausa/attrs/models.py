@@ -164,6 +164,10 @@ class Cip(BaseAttr, ImageAttr):
         return [attr.data_serialize() for attr in cips], Cip.HEADERS
 
 
+class Cohort(BaseAttr):
+    __tablename__ = 'cohort'
+
+
 class Degree(BaseAttr):
     __tablename__ = 'degree'
 
