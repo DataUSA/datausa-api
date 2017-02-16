@@ -37,7 +37,7 @@ registered_models = [
     SkillByCip, SkillBySoc,
 
     # Dartmouth
-    YgPrimaryCare, YgReimbursements,
+    YgPrimaryCare, YgReimbursements, YgcPostDischarge,
 
     # County Health Rankings
     HealthYg,
