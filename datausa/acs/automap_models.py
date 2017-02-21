@@ -87,7 +87,7 @@ class Acs5_Yg_Conflict(AutomapBase, BaseAcs5, GeoId5):
     __tablename__ = "yg_conflict"
     median_moe = 2
 
-class Acs5_Yg_Income(BaseAcs5, GeoId5):
+class Acs5_Yg_Income(AutomapBase, BaseAcs5, GeoId5):
     __tablename__ = "yg_income"
     median_moe = 1.2
 
