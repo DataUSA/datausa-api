@@ -10,6 +10,7 @@ from datausa.acs.models import *
 from datausa.acs.automap_models import *
 from datausa.acs.stats_models import *
 from datausa.dartmouth.models import *
+from datausa.freight.models import *
 
 registered_models = [
     # PUMS
@@ -77,7 +78,10 @@ registered_models = [
 
     # ACS Health
     Acs1_Yga_Health, Acs1_Ygai_Health, Acs1_Ygais_Health,
-    Acs1_Ygas_Health, Acs1_Ygi_Health, Acs1_Ygis_Health, Acs1_Ygs_Health
+    Acs1_Ygas_Health, Acs1_Ygi_Health, Acs1_Ygis_Health, Acs1_Ygs_Health,
+
+    # Freight
+    FAFYodmp, FAFYodp, FAFYomp, FAFYodm, FAFYop, FAFYdp, FAFYdm, FAFYom
 ]
 
 
