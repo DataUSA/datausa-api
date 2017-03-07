@@ -1,8 +1,9 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
-from datausa.attrs.models import GeoContainment, Soc
+from datausa.attrs.models import GeoContainment, Soc, GeoCrosswalker
 from datausa.bls.models import BlsCrosswalk, SocCrosswalk, GrowthI, GrowthILookup, CesYi
 from datausa.pums.abstract_models import BasePums, BasePums5
 from datausa.acs.models import Acs1_Ygi_Health
+from datausa.freight.models import FAFYom
 from datausa.attrs.consts import OR
 from datausa import cache
 from sqlalchemy import or_, and_
@@ -43,6 +44,12 @@ def iocode_mapping():
     all_objs = PumsIoCrosswalk.query.all()
     return {obj.pums_naics: obj.iocode for obj in all_objs}
 
+
+@cache.memoize()
+def freight_geos():
+    '''freight geos lookup'''
+    qry = FAFYom.query.with_entities(FAFYom.origin_geo.distinct()).all()
+    return {item: True for item, in qry}
 
 def acs_parent(geo_id, api_obj=None):
     '''Some data is only accessible at the PUMA level
@@ -111,6 +118,29 @@ def pums_parent_puma(geo_id, api_obj=None):
             raise Exception("Not yet implemented")
     return geo_id
 
+def freight_parents(geo_id, api_obj=None):
+    '''freight data'''
+    needs_crosswalk = ["160", "050", "310", "795"]
+    prefix = geo_id[:3]
+    if prefix in needs_crosswalk:
+        freight_geo_list = freight_geos()
+        if geo_id in freight_geo_list:
+            return geo_id
+        else:
+
+            filters = [
+                GeoCrosswalker.geo_a == geo_id,
+                or_(GeoCrosswalker.geo_b.startswith("040"),
+                    GeoCrosswalker.geo_b.startswith("310"))
+            ]
+            qry = GeoCrosswalker.query.with_entities(GeoCrosswalker.geo_b)
+            qry = qry.filter(*filters).order_by(GeoCrosswalker.geo_b.desc())
+            for geo_result, in qry: # -- note the comma to unpack the tuple
+                if geo_result in freight_geo_list:
+                    return geo_result
+
+    return geo_id
+
 def chr_parents(geo_id, api_obj=None):
     '''CHR data'''
     needs_crosswalk = ["160", "310", "795"]
@@ -162,10 +192,11 @@ def crosswalk(table, api_obj):
         {"column": "cip", "schema": pums5_schema_name, "mapping": truncate_cip},
         {"column": "geo", "schema": pums5_schema_name, "mapping": pums_parent_puma},
         {"column": "geo", "schema": "chr", "mapping": chr_parents},
-        {"column": "geo", "schema": "dartmouth", "mapping": chr_parents}
-
-
+        {"column": "geo", "schema": "dartmouth", "mapping": chr_parents},
+        {"column": "origin_geo", "schema": "freight", "mapping": freight_parents},
+        {"column": "destination_geo", "schema": "freight", "mapping": freight_parents}
     ]
+
     exclusives = {r["table"]: True for r in registered_crosswalks if "table" in r}
 
     for rcrosswalk in registered_crosswalks:
