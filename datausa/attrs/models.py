@@ -419,6 +419,9 @@ class AcsRace(BaseAttr):
 class Conflict(BaseAttr):
     __tablename__ = 'conflict'
 
+class Sctg(BaseAttr):
+    __tablename__ = 'sctg'
+    parent = db.Column(db.String)
 
 class Search(BaseAttr):
     __tablename__ = 'search_v4'
