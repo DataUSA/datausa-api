@@ -32,7 +32,6 @@ attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "acs_occ": AcsOcc, "conflict": Conflict, "acs_ind": AcsInd,
             "language": AcsLanguage,
             "bls_soc": Soc, "bls_naics": Naics,
-            "age_bucket": AgeBucket,
             "insurance": Insurance, "cohort": Cohort, "sctg": Sctg}
 
 def show_attrs(attr_obj, sumlevels=None):
