@@ -25,10 +25,13 @@ def tbl_years_set():
     for tbl in registered_models:
         tbl_name = table_name(tbl)
         if hasattr(tbl, "year"):
-            qry = tbl.query.with_entities(
-                distinct(tbl.year).label("year"),
-            )
-            years_set[tbl_name] = [res.year for res in qry]
+            if hasattr(tbl, "CACHED_YEARS"):
+                years_set[tbl_name] = tbl.CACHED_YEARS
+            else:
+                qry = tbl.query.with_entities(
+                    distinct(tbl.year).label("year"),
+                )
+                years_set[tbl_name] = [res.year for res in qry]
         else:
             years_set[tbl_name] = None
     return years_set
@@ -39,13 +42,17 @@ def tbl_years():
     for tbl in registered_models:
         tbl_name = table_name(tbl)
         if hasattr(tbl, "year"):
-            qry = tbl.query.with_entities(
-                func.max(tbl.year).label("max_year"),
-                func.min(tbl.year).label("min_year"),
-            )
-            res = qry.one()
-            years[tbl_name] = {consts.LATEST: res.max_year,
-                               consts.OLDEST: res.min_year}
+            if hasattr(tbl, "CACHED_YEARS"):
+                years[tbl_name] = {consts.OLDEST: min(tbl.CACHED_YEARS),
+                                   consts.LATEST: max(tbl.CACHED_YEARS)}
+            else:
+                qry = tbl.query.with_entities(
+                    func.max(tbl.year).label("max_year"),
+                    func.min(tbl.year).label("min_year"),
+                )
+                res = qry.one()
+                years[tbl_name] = {consts.LATEST: res.max_year,
+                                   consts.OLDEST: res.min_year}
         else:
             years[tbl_name] = None
     return years
