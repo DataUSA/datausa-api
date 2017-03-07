@@ -97,6 +97,8 @@ class Acs1_Ygais_Health(BaseAcs1, GeoId1, BaseHealth):
     median_moe = 4
 
     sex = db.Column(db.String(), primary_key=True)
+    age_bucket = db.Column(db.String(), primary_key=True)
+    insurance = db.Column(db.String(), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
