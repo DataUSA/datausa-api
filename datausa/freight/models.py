@@ -72,6 +72,18 @@ class FAFYodm(BaseFreight, OriginGeo, DestGeo):
             "transportation_mode": [ALL]
         }
 
+class FAFYod(BaseFreight, OriginGeo, DestGeo):
+    __tablename__ = "yod_faf"
+    median_moe = 2
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "origin_geo": [STATE, COUNTY, ALL],
+            "destination_geo": [STATE, COUNTY, ALL]
+        }
+
 
 class FAFYodp(BaseFreight, OriginGeo, DestGeo):
     __tablename__ = "yodp_faf"

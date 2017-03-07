@@ -81,7 +81,7 @@ registered_models = [
     Acs1_Ygas_Health, Acs1_Ygi_Health, Acs1_Ygis_Health, Acs1_Ygs_Health,
 
     # Freight
-    FAFYodmp, FAFYodp, FAFYomp, FAFYodm, FAFYop, FAFYdp, FAFYdm, FAFYom
+    FAFYodmp, FAFYodp, FAFYomp, FAFYodm, FAFYop, FAFYdp, FAFYdm, FAFYom, FAFYod
 ]
 
 
