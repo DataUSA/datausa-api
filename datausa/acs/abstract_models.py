@@ -10,7 +10,7 @@ from datausa.attrs.consts import PLACE, TRACT
 from sqlalchemy.sql import func
 
 class BaseHealth(object):
-    virtual_schema = "acs_health"
+    __virtual_schema__ = "acs_health"
     hc_pop = db.Column(db.Float)
     hc_pop_moe = db.Column(db.Float)
     hc_pop_rca = db.Column(db.Float)
