@@ -17,7 +17,7 @@ class Acs1_Ygi_Health(BaseAcs1, GeoId1, BaseHealth):
             "insurance": [ALL]
         }
 
-class Acs1_Yga_Health(BaseAcs1, GeoId1):
+class Acs1_Yga_Health(BaseAcs1, GeoId1, BaseHealth):
     __tablename__ = "yga_health"
     median_moe = 2
 
@@ -30,7 +30,7 @@ class Acs1_Yga_Health(BaseAcs1, GeoId1):
             "age_bucket": [ALL]
         }
 
-class Acs1_Ygai_Health(BaseAcs1, GeoId1):
+class Acs1_Ygai_Health(BaseAcs1, GeoId1, BaseHealth):
     __tablename__ = "ygai_health"
     median_moe = 3
 
@@ -46,7 +46,7 @@ class Acs1_Ygai_Health(BaseAcs1, GeoId1):
         }
 
 
-class Acs1_Ygis_Health(BaseAcs1, GeoId1):
+class Acs1_Ygis_Health(BaseAcs1, GeoId1, BaseHealth):
     __tablename__ = "ygis_health"
     median_moe = 3
 
@@ -63,7 +63,7 @@ class Acs1_Ygis_Health(BaseAcs1, GeoId1):
 
 
 
-class Acs1_Ygas_Health(BaseAcs1, GeoId1):
+class Acs1_Ygas_Health(BaseAcs1, GeoId1, BaseHealth):
     __tablename__ = "ygas_health"
     median_moe = 3
 
@@ -78,7 +78,7 @@ class Acs1_Ygas_Health(BaseAcs1, GeoId1):
             "age_bucket": [ALL]
         }
 
-class Acs1_Ygs_Health(BaseAcs1, GeoId1):
+class Acs1_Ygs_Health(BaseAcs1, GeoId1, BaseHealth):
     __tablename__ = "ygs_health"
     median_moe = 2
 
@@ -92,9 +92,9 @@ class Acs1_Ygs_Health(BaseAcs1, GeoId1):
         }
 
 
-class Acs1_Ygais_Health(BaseAcs1, GeoId1):
-    __tablename__ = "ygs_health"
-    median_moe = 2
+class Acs1_Ygais_Health(BaseAcs1, GeoId1, BaseHealth):
+    __tablename__ = "ygais_health"
+    median_moe = 4
 
     sex = db.Column(db.String(), primary_key=True)
 
@@ -102,7 +102,9 @@ class Acs1_Ygais_Health(BaseAcs1, GeoId1):
     def get_supported_levels(cls):
         return {
             "geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
-            "sex": [ALL]
+            "sex": [ALL],
+            "insurance": [ALL],
+            "age_bucket": [ALL]
         }
 
 
