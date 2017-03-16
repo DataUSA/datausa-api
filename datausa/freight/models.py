@@ -2,7 +2,8 @@ from datausa.database import db
 from datausa.core.models import BaseModel
 from sqlalchemy.ext.declarative import declared_attr
 from datausa.attrs.consts import STATE, COUNTY, ALL
-from datausa.attrs.models import Geo
+from datausa.attrs.models import Geo, Sctg, ProductCrosswalk
+from sqlalchemy.orm import column_property
 
 class BaseFreight(db.Model, BaseModel):
     __abstract__ = True
@@ -14,6 +15,20 @@ class BaseFreight(db.Model, BaseModel):
     tons = db.Column(db.Float)
     millions_of_2012_dollars = db.Column(db.Float)
 
+
+class Product(object):
+    @declared_attr
+    def sctg(cls):
+        return db.Column(db.String(), db.ForeignKey(Sctg.id), primary_key=True)
+
+    @declared_attr
+    def napcs(cls):
+        return column_property(ProductCrosswalk.napcs)
+
+    @classmethod
+    def crosswalk_join(cls, qry):
+        cond = ProductCrosswalk.sctg == cls.sctg
+        return qry.join(ProductCrosswalk, cond)
 
 class OriginGeo(object):
     @declared_attr
@@ -42,12 +57,11 @@ class DestGeo(object):
         return cls.destination_geo.startswith(level_code)
 
 
-class FAFYodmp(BaseFreight, OriginGeo, DestGeo):
+class FAFYodmp(BaseFreight, OriginGeo, DestGeo, Product):
     __tablename__ = "yodmp_faf"
     median_moe = 4
     year = db.Column(db.Integer(), primary_key=True)
     transportation_mode = db.Column(db.String(), primary_key=True)
-    sctg = db.Column(db.String(), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
@@ -55,7 +69,8 @@ class FAFYodmp(BaseFreight, OriginGeo, DestGeo):
             "origin_geo": [STATE, COUNTY, ALL],
             "destination_geo": [STATE, COUNTY, ALL],
             "transportation_mode": [ALL],
-            "sctg": [ALL]
+            "sctg": [ALL],
+            "napcs": [ALL]
         }
 
 class FAFYodm(BaseFreight, OriginGeo, DestGeo):
@@ -85,25 +100,24 @@ class FAFYod(BaseFreight, OriginGeo, DestGeo):
         }
 
 
-class FAFYodp(BaseFreight, OriginGeo, DestGeo):
+class FAFYodp(BaseFreight, OriginGeo, DestGeo, Product):
     __tablename__ = "yodp_faf"
     median_moe = 3
     year = db.Column(db.Integer(), primary_key=True)
-    sctg = db.Column(db.String(), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
         return {
             "origin_geo": [STATE, COUNTY, ALL],
             "destination_geo": [STATE, COUNTY, ALL],
-            "sctg": [ALL]
+            "sctg": [ALL],
+            "napcs": [ALL]
         }
 
-class FAFYomp(BaseFreight, OriginGeo):
+class FAFYomp(BaseFreight, OriginGeo, Product):
     __tablename__ = "yomp_faf"
     median_moe = 3
     year = db.Column(db.Integer(), primary_key=True)
-    sctg = db.Column(db.String(), primary_key=True)
     transportation_mode = db.Column(db.String(), primary_key=True)
 
     @classmethod
@@ -111,33 +125,34 @@ class FAFYomp(BaseFreight, OriginGeo):
         return {
             "origin_geo": [STATE, COUNTY, ALL],
             "transportation_mode": [ALL],
-            "sctg": [ALL]
+            "sctg": [ALL],
+            "napcs": [ALL]
         }
 
-class FAFYop(BaseFreight, OriginGeo):
+class FAFYop(BaseFreight, OriginGeo, Product):
     __tablename__ = "yop_faf"
     median_moe = 2
     year = db.Column(db.Integer(), primary_key=True)
-    sctg = db.Column(db.String(), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
         return {
             "origin_geo": [STATE, COUNTY, ALL],
-            "sctg": [ALL]
+            "sctg": [ALL],
+            "napcs": [ALL]
         }
 
-class FAFYdp(BaseFreight, DestGeo):
+class FAFYdp(BaseFreight, DestGeo, Product):
     __tablename__ = "ydp_faf"
     median_moe = 2
     year = db.Column(db.Integer(), primary_key=True)
-    sctg = db.Column(db.String(), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
         return {
             "destination_geo": [STATE, COUNTY, ALL],
-            "sctg": [ALL]
+            "sctg": [ALL],
+            "napcs": [ALL]
         }
 
 class FAFYdm(BaseFreight, DestGeo):

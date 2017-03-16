@@ -423,6 +423,11 @@ class Sctg(BaseAttr):
     __tablename__ = 'sctg'
     parent = db.Column(db.String)
 
+
+class Napcs(BaseAttr):
+    __tablename__ = 'napcs'
+
+
 class Search(BaseAttr):
     __tablename__ = 'search_v4'
     id = db.Column(db.String, primary_key=True)
@@ -457,3 +462,9 @@ class IndCrosswalk(db.Model):
     acs_ind = db.Column(db.String, primary_key=True)
     pums_naics = db.Column(db.String, db.ForeignKey(PumsNaics.id), primary_key=True)
     level = db.Column(db.Integer)
+
+class ProductCrosswalk(db.Model):
+    __tablename__ = 'napcs_sctg_xwalk'
+    __table_args__ = {"schema": "attrs"}
+    sctg = db.Column(db.String,  db.ForeignKey(Sctg.id), primary_key=True)
+    napcs = db.Column(db.String, db.ForeignKey(Napcs.id), primary_key=True)

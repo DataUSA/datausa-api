@@ -261,6 +261,10 @@ def query(table, api_obj, stream=False):
 
     # qry = table.query.with_entities(*cols)
     qry = table.query
+
+    if hasattr(table, "crosswalk_join"):
+        qry = table.crosswalk_join(qry)
+
     if stream:
         qry, cols = use_attr_names(table, qry, cols)
     qry = qry.with_entities(*cols)
