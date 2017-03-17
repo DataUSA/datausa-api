@@ -135,9 +135,13 @@ def freight_parents(geo_id, api_obj=None):
             ]
             qry = GeoCrosswalker.query.with_entities(GeoCrosswalker.geo_b)
             qry = qry.filter(*filters).order_by(GeoCrosswalker.geo_b.desc())
+
             for geo_result, in qry: # -- note the comma to unpack the tuple
                 if geo_result in freight_geo_list:
                     return geo_result
+            # if we get to this point and no match is found, fall back to the state
+            if prefix in ["160", "050", "795"] and len(geo_id) >= 8:
+                return "04000US" + geo_id[7:9]
 
     return geo_id
 
