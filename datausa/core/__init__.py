@@ -1,7 +1,8 @@
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 def get_columns(tbl):
-    return tbl.__table__.columns
+    cols = tbl.__mapper__.attrs
+    return [getattr(tbl, col.key) for col in cols]
 
 # possible_variables = [col.key for t in registered_models for col in t.__table__.columns]
 # def attribute_names(cls):
