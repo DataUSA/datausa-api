@@ -22,6 +22,7 @@ def use_attr_names(table, qry, cols):
         col_str = col if isinstance(col, basestring) else col.key
         orig_str = col_str
         col_str = "iocode" if "_iocode" in col_str else col_str
+        col_str = "geo" if col_str.endswith("_geo") else col_str
         col_str = "pums_degree" if "pums" in table.__table_args__["schema"] and col_str == "degree" else col_str
         if table.__table_args__["schema"] == 'bls' and col_str in ['naics', 'soc']:
             col_str = "bls_{}".format(col_str)
