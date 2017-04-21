@@ -218,7 +218,7 @@ class Yir(BasePums, Employees, Year, NaicsId, RaceId, EmployeesRca):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"soc": SocId.LEVELS, "race": [ALL]}
+        return {"naics": NaicsId.LEVELS, "race": [ALL]}
 
 
 class Yior(BasePums, Employees, Year, NaicsId, SocId, RaceId):
