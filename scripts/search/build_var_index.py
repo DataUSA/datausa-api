@@ -27,9 +27,9 @@ if __name__ == '__main__':
     writer = ix.writer()
 
     all_vars = [
-        [u'adult_obesity,diabetes', u'obesity', u'Obesity Prevalence,Diabetes Prevalence', u'obesity_diabetes', u'Healthcare', u'geo', None],
-        [u'adult_obesity,diabetes', u'diabetes', u'Obesity Prevalence,Diabetes Prevalence', u'obesity_diabetes', u'Healthcare',  u'geo', None],
-        [u'adult_obesity,diabetes', u'healthcare', u'Obesity Prevalence,Diabetes Prevalence', u'obesity_diabetes', u'Healthcare', u'geo', None],
+        [u'adult_obesity,diabetes', u'obesity', u'Obesity Prevalence,Diabetes Prevalence', u'category_health_risks', u'Healthcare', u'geo', None],
+        [u'adult_obesity,diabetes', u'diabetes', u'Obesity Prevalence,Diabetes Prevalence', u'category_health_risks', u'Healthcare',  u'geo', None],
+        [u'adult_obesity,diabetes', u'healthcare', u'Obesity Prevalence,Diabetes Prevalence', u'category_health_risks', u'Healthcare', u'geo', None],
         [u'motor_vehicle_crash_deaths', u'car crashes', u'Motor Vehicle Crash Deaths', u'crime', u'Crime', u'geo', None],
         [u'motor_vehicle_crash_deaths', u'accidents', u'Motor Vehicle Crash Deaths', u'crime', u'Crime', u'geo', None],
 
