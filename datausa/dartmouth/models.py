@@ -3,7 +3,7 @@ from datausa.attrs.models import Geo
 from datausa import cache
 
 from datausa.core.models import BaseModel
-from datausa.attrs.consts import STATE, COUNTY, ALL
+from datausa.attrs.consts import NATION, STATE, COUNTY, ALL
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import MetaData
@@ -36,13 +36,13 @@ class DartmouthBase(db.Model, BaseModel):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": [ALL, STATE, COUNTY]}
+        return {"geo": [ALL, NATION, STATE, COUNTY]}
 
     @classmethod
     def geo_filter(cls, level):
         if level == ALL:
             return True
-        level_map = {STATE: "040", COUNTY: "050"}
+        level_map = {STATE: "040", COUNTY: "050", NATION: "010"}
         level_code = level_map[level]
         return cls.geo.startswith(level_code)
 
@@ -55,7 +55,7 @@ class YgcPostDischarge(AutomapBase, DartmouthBase):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": [ALL, STATE, COUNTY], "cohort": [ALL]}
+        return {"geo": [ALL, NATION, STATE, COUNTY], "cohort": [ALL]}
 
 class YgPrimaryCare(AutomapBase, DartmouthBase):
     __tablename__ = 'yg_prim_care_access'
