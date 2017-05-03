@@ -13,9 +13,9 @@ qry = '''SELECT g.{0} as id,  (g.{2} - stats.average) / stats.st AS zvalue, '{0}
 FROM {1} g
 LEFT JOIN pums_attrs.pums_{0} a ON (a.id = g.{0} and a.level = g.{0}_level)
 CROSS JOIN
-(select STDDEV({2}) as st, AVG({2}) as average FROM {1} WHERE {0}_level={3} AND year=2014) stats
+(select STDDEV({2}) as st, AVG({2}) as average FROM {1} WHERE {0}_level={3} AND year=2015) stats
 WHERE g.{0}_level = {3}
-AND g.year = 2014'''
+AND g.year = 2015'''
 
 queries = []
 for attr, table, metric, levels in attrs:
@@ -30,9 +30,9 @@ cip_qry = '''SELECT g.{0},  (g.{2} - stats.average) / stats.st AS zvalue, '{0}' 
 FROM {1} g
 LEFT JOIN attrs.course a ON (a.id = g.{0})
 CROSS JOIN
-(select STDDEV({2}) as st, AVG({2}) as average FROM {1} WHERE char_length({0}) = {3} AND year=2014) stats
+(select STDDEV({2}) as st, AVG({2}) as average FROM {1} WHERE char_length({0}) = {3} AND year=2015) stats
 WHERE char_length({0}) = {3}
-AND g.year = 2014'''
+AND g.year = 2015'''
 
 for level in [2, 4, 6]:
     queries.append(cip_qry.format("cip", "ipeds.grads_yc", "grads_total", level))
@@ -42,12 +42,12 @@ geo_qry = '''SELECT g.{0},  (g.{2} - stats.average) / stats.st AS zvalue, '{0}' 
 FROM {1} g
 LEFT JOIN attrs.geo_names a ON (a.id = g.{0})
 CROSS JOIN
-(select STDDEV({2}) as st, AVG({2}) as average FROM {1} WHERE {0} LIKE '{3}%' AND year=2013) stats
+(select STDDEV({2}) as st, AVG({2}) as average FROM {1} WHERE {0} LIKE '{3}%' AND year=2015) stats
 WHERE g.{0} LIKE '{3}%'
-AND g.year = 2013'''
+AND g.year = 2015'''
 
 for level in ['040', '050', '160', '310', '795']:
-    queries.append(geo_qry.format("geo", "acs.yg", "pop", level))
+    queries.append(geo_qry.format("geo", "acs_5yr.yg", "pop", level))
 
 queries.append("SELECT '01000US', 150, 'geo', 'united states', 'United States', '010', -1, 'united-states'")
 
