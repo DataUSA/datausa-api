@@ -60,7 +60,7 @@ registered_models = [
     Acs1_Yg_PropertyValue, Acs1_Yg_PropertyTax, Acs1_Yg_Vehicles,
     Acs1_Yg_TravelTime, Acs1_Yg_Transport,
     Acs1_Yg_Poverty, Acs1_Yg_Tenure, Acs1_Yg_Income,
-
+    Acs1_Yg_Num_Emp,
     # ACS
     Acs5_Yg, Acs5_Yg_Income, Acs5_Yg_Conflict, Acs5_Yg_IncDist,
     Acs5_Ygo_Earnings,
@@ -69,7 +69,7 @@ registered_models = [
     Acs5_Yg_PropertyTax, Acs5_Yg_PropertyValue, Acs5_Ygl_Speakers,
     Acs5_Yg_PovertyRace,
     Acs5_Ygo_Num_Emp, Acs5_Ygi_Num_Emp,
-
+    Acs5_Yg_Num_Emp,
     # ACS 3-year
     Acs3_Ygo_Num_Emp, Acs3_Ygi_Num_Emp, Acs3_Ygi_MedEarnings,
 
