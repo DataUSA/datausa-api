@@ -1,5 +1,5 @@
-from datausa.acs.abstract_models import GeoId, AcsOccId, db, AcsIndId, Insurance
-from datausa.acs.abstract_models import BaseAcs1, BaseAcs3, BaseAcs5, AgeBucket
+from datausa.acs.abstract_models import GeoId, AcsOccId, db, AcsIndId
+from datausa.acs.abstract_models import BaseAcs1, BaseAcs3, BaseAcs5
 from datausa.acs.abstract_models import Ygl_Speakers, GeoId5, GeoId1, BaseHealth
 from datausa.attrs import consts
 from datausa.attrs.consts import NATION, STATE, MSA, PLACE, PUMA, COUNTY, ALL
