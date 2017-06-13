@@ -19,7 +19,7 @@ def crawl_page(site_url, moi):
         print "skipping", display_id, attr_kind
     page = u'{}/profile/{}/{}/'.format(site_url, attr_kind, display_id)
     print page, "getting..."
-    r = requests.get(page, auth=HTTPBasicAuth('datausa', os.environ.get('DATAUSA_WEB_PW', '')))
+    r = requests.get(page, auth=HTTPBasicAuth('sunbird', os.environ.get('DATAUSA_WEB_PW', '')))
     if r.status_code != 200:
         if r.status_code == 401:
             raise Exception("You may have forgotten to set DATAUSA_WEB_PW env var (or provided a bad PW).\nWe need this because the site is password protected")
