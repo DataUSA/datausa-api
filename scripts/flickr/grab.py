@@ -8,7 +8,6 @@ def read_csv():
 
     max_side = 1600
     thumb_side = 425
-    feat_side = 850
     quality = 90
 
     if len(sys.argv) < 3:
@@ -31,7 +30,6 @@ def read_csv():
     input_file = csv.DictReader(open(sys.argv[2]))
     imgdir = os.path.join(FLICKR_DIR, attr_type)
     thumbdir = imgdir.replace("splash", "thumb")
-    featdir = imgdir.replace("splash", "feature")
     badImages = []
     smallImages = []
     goodImages = []
@@ -44,9 +42,6 @@ def read_csv():
 
     if not os.path.exists(thumbdir):
         os.makedirs(thumbdir)
-
-    if not os.path.exists(featdir):
-        os.makedirs(featdir)
 
     for row in input_file:
         update = False
@@ -99,7 +94,6 @@ def read_csv():
 
                             imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
                             thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
-                            featpath = os.path.join(featdir, "{}.jpg".format(uid))
 
                             urllib.urlretrieve(download_url, imgpath)
 
@@ -107,9 +101,6 @@ def read_csv():
 
                             img.thumbnail((max_side, max_side), pillow.ANTIALIAS)
                             img.save(imgpath, "JPEG", quality=quality)
-
-                            img.thumbnail((feat_side, feat_side), pillow.ANTIALIAS)
-                            img.save(featpath, "JPEG", quality=quality)
 
                             img.thumbnail((thumb_side, thumb_side), pillow.ANTIALIAS)
                             img.save(thumbpath, "JPEG", quality=quality)
@@ -128,12 +119,8 @@ def read_csv():
 
                     imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
                     thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
-                    featpath = os.path.join(featdir, "{}.jpg".format(uid))
 
                     img = pillow.open(imgpath).convert("RGB")
-
-                    img.thumbnail((feat_side, feat_side), pillow.ANTIALIAS)
-                    img.save(featpath, "JPEG", quality=quality)
 
                     img.thumbnail((thumb_side, thumb_side), pillow.ANTIALIAS)
                     img.save(thumbpath, "JPEG", quality=quality)
