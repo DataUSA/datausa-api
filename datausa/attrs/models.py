@@ -36,11 +36,12 @@ class ImageAttr(db.Model):
     image_link = db.Column(db.String)
     image_author = db.Column(db.String)
     url_name = db.Column(db.String)
+    image_meta = db.Column(db.String)
 
-    HEADERS = ["id", "name", "image_link", "image_author", "url_name"]
+    HEADERS = ["id", "name", "image_link", "image_author", "url_name", "image_meta"]
 
     def data_serialize(self):
-        return [self.id, self.name, self.image_link, self.image_author, self.url_name]
+        return [self.id, self.name, self.image_link, self.image_author, self.url_name, self.image_meta]
 
 
 class University(BaseAttr):
@@ -164,6 +165,10 @@ class Cip(BaseAttr, ImageAttr):
         return [attr.data_serialize() for attr in cips], Cip.HEADERS
 
 
+class Cohort(BaseAttr):
+    __tablename__ = 'cohort'
+
+
 class Degree(BaseAttr):
     __tablename__ = 'degree'
 
@@ -174,7 +179,6 @@ class Geo(BaseAttr, ImageAttr):
     display_name = db.Column(db.String)
     name_long = db.Column(db.String)
     sumlevel = db.Column(db.String)
-    image_meta = db.Column(db.String)
     HEADERS = ["id", "name", "url_name"]
 
     @classmethod
@@ -415,9 +419,17 @@ class AcsRace(BaseAttr):
 class Conflict(BaseAttr):
     __tablename__ = 'conflict'
 
+class Sctg(BaseAttr):
+    __tablename__ = 'sctg'
+    parent = db.Column(db.String)
+
+
+class Napcs(BaseAttr):
+    __tablename__ = 'napcs'
+
 
 class Search(BaseAttr):
-    __tablename__ = 'search_v4'
+    __tablename__ = 'search_v5'
     id = db.Column(db.String, primary_key=True)
     zvalue = db.Column(db.Float)
     kind = db.Column(db.String, primary_key=True)
@@ -450,3 +462,9 @@ class IndCrosswalk(db.Model):
     acs_ind = db.Column(db.String, primary_key=True)
     pums_naics = db.Column(db.String, db.ForeignKey(PumsNaics.id), primary_key=True)
     level = db.Column(db.Integer)
+
+class ProductCrosswalk(db.Model):
+    __tablename__ = 'napcs_sctg_xwalk'
+    __table_args__ = {"schema": "attrs"}
+    sctg = db.Column(db.String,  db.ForeignKey(Sctg.id), primary_key=True)
+    napcs = db.Column(db.String, db.ForeignKey(Napcs.id), primary_key=True)

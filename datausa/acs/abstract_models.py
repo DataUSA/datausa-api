@@ -10,7 +10,7 @@ from datausa.attrs.consts import PLACE, TRACT
 from sqlalchemy.sql import func
 
 class BaseHealth(object):
-    virtual_schema = "acs_health"
+    __virtual_schema__ = "acs_health"
     hc_pop = db.Column(db.Float)
     hc_pop_moe = db.Column(db.Float)
     hc_pop_rca = db.Column(db.Float)
@@ -104,6 +104,7 @@ class BaseAcs5(db.Model, BaseModel):
     source_title = 'ACS 5-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
     source_org = 'Census Bureau'
+    CACHED_YEARS = [2013, 2014, 2015]
 
     @declared_attr
     def year(cls):
@@ -132,6 +133,7 @@ class BaseAcs1(db.Model, BaseModel):
     source_title = 'ACS 1-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
     source_org = 'Census Bureau'
+    CACHED_YEARS = [2013, 2014, 2015]
 
     @declared_attr
     def year(cls):

@@ -25,6 +25,7 @@ geo,name,short,zval
 04000US51,Virginia,va,10
 04000US53,Washington,wa,10
 04000US25,Massachusetts,ma,10
+04000US25,Massachusetts,mass,10
 04000US18,Indiana,in,10
 04000US04,Arizona,az,10
 04000US47,Tennessee,tn,10

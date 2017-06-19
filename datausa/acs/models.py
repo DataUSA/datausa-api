@@ -1,5 +1,5 @@
-from datausa.acs.abstract_models import GeoId, AcsOccId, db, AcsIndId, Insurance
-from datausa.acs.abstract_models import BaseAcs1, BaseAcs3, BaseAcs5, AgeBucket
+from datausa.acs.abstract_models import GeoId, AcsOccId, db, AcsIndId
+from datausa.acs.abstract_models import BaseAcs1, BaseAcs3, BaseAcs5
 from datausa.acs.abstract_models import Ygl_Speakers, GeoId5, GeoId1, BaseHealth
 from datausa.attrs import consts
 from datausa.attrs.consts import NATION, STATE, MSA, PLACE, PUMA, COUNTY, ALL
@@ -17,7 +17,7 @@ class Acs1_Ygi_Health(BaseAcs1, GeoId1, BaseHealth):
             "insurance": [ALL]
         }
 
-class Acs1_Yga_Health(BaseAcs1, GeoId1):
+class Acs1_Yga_Health(BaseAcs1, GeoId1, BaseHealth):
     __tablename__ = "yga_health"
     median_moe = 2
 
@@ -30,7 +30,7 @@ class Acs1_Yga_Health(BaseAcs1, GeoId1):
             "age_bucket": [ALL]
         }
 
-class Acs1_Ygai_Health(BaseAcs1, GeoId1):
+class Acs1_Ygai_Health(BaseAcs1, GeoId1, BaseHealth):
     __tablename__ = "ygai_health"
     median_moe = 3
 
@@ -46,7 +46,7 @@ class Acs1_Ygai_Health(BaseAcs1, GeoId1):
         }
 
 
-class Acs1_Ygis_Health(BaseAcs1, GeoId1):
+class Acs1_Ygis_Health(BaseAcs1, GeoId1, BaseHealth):
     __tablename__ = "ygis_health"
     median_moe = 3
 
@@ -63,7 +63,7 @@ class Acs1_Ygis_Health(BaseAcs1, GeoId1):
 
 
 
-class Acs1_Ygas_Health(BaseAcs1, GeoId1):
+class Acs1_Ygas_Health(BaseAcs1, GeoId1, BaseHealth):
     __tablename__ = "ygas_health"
     median_moe = 3
 
@@ -78,7 +78,7 @@ class Acs1_Ygas_Health(BaseAcs1, GeoId1):
             "age_bucket": [ALL]
         }
 
-class Acs1_Ygs_Health(BaseAcs1, GeoId1):
+class Acs1_Ygs_Health(BaseAcs1, GeoId1, BaseHealth):
     __tablename__ = "ygs_health"
     median_moe = 2
 
@@ -92,17 +92,21 @@ class Acs1_Ygs_Health(BaseAcs1, GeoId1):
         }
 
 
-class Acs1_Ygais_Health(BaseAcs1, GeoId1):
-    __tablename__ = "ygs_health"
-    median_moe = 2
+class Acs1_Ygais_Health(BaseAcs1, GeoId1, BaseHealth):
+    __tablename__ = "ygais_health"
+    median_moe = 4
 
     sex = db.Column(db.String(), primary_key=True)
+    age_bucket = db.Column(db.String(), primary_key=True)
+    insurance = db.Column(db.String(), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
         return {
             "geo": [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL],
-            "sex": [ALL]
+            "sex": [ALL],
+            "insurance": [ALL],
+            "age_bucket": [ALL]
         }
 
 
@@ -260,3 +264,51 @@ class Acs3_Ygi_MedEarnings(BaseAcs3, AcsIndId, GeoId):
     @classmethod
     def get_supported_levels(cls):
         return {"geo": [NATION, STATE, COUNTY, MSA, PLACE, PUMA, ALL], "acs_ind": ["0", "1", "all"]}
+
+
+class Acs1_Yg_Num_Emp(BaseAcs1, GeoId):
+    __tablename__ = "yg_num_emp"
+    median_moe = 1.2
+
+    civ_labor_force = db.Column(db.Float)
+    civ_labor_force_moe = db.Column(db.Float)
+    emp_survey_total = db.Column(db.Float)
+    emp_survey_total_moe = db.Column(db.Float)
+    labor_force = db.Column(db.Float)
+    labor_force_moe = db.Column(db.Float)
+    not_in_labor_force = db.Column(db.Float)
+    not_in_labor_force_moe = db.Column(db.Float)
+    num_armed_forces = db.Column(db.Float)
+    num_armed_forces_moe = db.Column(db.Float)
+    num_emp = db.Column(db.Float)
+    num_emp_moe = db.Column(db.Float)
+    num_unemp = db.Column(db.Float)
+    num_unemp_moe = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": [NATION, COUNTY, MSA, PLACE, PUMA, ALL], "acs_occ": AcsOccId.LEVELS}
+
+
+class Acs5_Yg_Num_Emp(BaseAcs5, GeoId):
+    __tablename__ = "yg_num_emp"
+    median_moe = 1
+
+    civ_labor_force = db.Column(db.Float)
+    civ_labor_force_moe = db.Column(db.Float)
+    emp_survey_total = db.Column(db.Float)
+    emp_survey_total_moe = db.Column(db.Float)
+    labor_force = db.Column(db.Float)
+    labor_force_moe = db.Column(db.Float)
+    not_in_labor_force = db.Column(db.Float)
+    not_in_labor_force_moe = db.Column(db.Float)
+    num_armed_forces = db.Column(db.Float)
+    num_armed_forces_moe = db.Column(db.Float)
+    num_emp = db.Column(db.Float)
+    num_emp_moe = db.Column(db.Float)
+    num_unemp = db.Column(db.Float)
+    num_unemp_moe = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": [NATION, COUNTY, MSA, PLACE, PUMA, ALL], "acs_occ": AcsOccId.LEVELS}

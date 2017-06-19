@@ -3,7 +3,7 @@ from datausa.attrs.models import Geo
 from datausa import cache
 
 from datausa.core.models import BaseModel
-from datausa.attrs.consts import STATE, COUNTY, ALL
+from datausa.attrs.consts import NATION, STATE, COUNTY, ALL
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import MetaData
@@ -36,36 +36,26 @@ class DartmouthBase(db.Model, BaseModel):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"geo": [ALL, STATE, COUNTY]}
+        return {"geo": [ALL, NATION, STATE, COUNTY]}
 
     @classmethod
     def geo_filter(cls, level):
         if level == ALL:
             return True
-        level_map = {STATE: "040", COUNTY: "050"}
+        level_map = {STATE: "040", COUNTY: "050", NATION: "010"}
         level_code = level_map[level]
         return cls.geo.startswith(level_code)
 
 
-# class YgAmiPD(AutomapBase, DartmouthBase):
-#     __tablename__ = 'yg_ami_post_discharge'
-#     median_moe = 1
-#
-#
-# class YgChfPD(AutomapBase, DartmouthBase):
-#     __tablename__ = 'yg_chf_post_discharge'
-#     median_moe = 1
+class YgcPostDischarge(AutomapBase, DartmouthBase):
+    __tablename__ = 'ygc_post_discharge'
+    median_moe = 2
 
-#
-# class YgMedicalPD(AutomapBase, DartmouthBase):
-#     __tablename__ = 'yg_medical_post_discharge'
-#     median_moe = 1
-#
-#
-# class YgPneumoniaPD(AutomapBase, DartmouthBase):
-#     __tablename__ = 'yg_pneumonia_post_discharge'
-#     median_moe = 1
+    cohort = db.Column(db.String(), primary_key=True)
 
+    @classmethod
+    def get_supported_levels(cls):
+        return {"geo": [ALL, NATION, STATE, COUNTY], "cohort": [ALL]}
 
 class YgPrimaryCare(AutomapBase, DartmouthBase):
     __tablename__ = 'yg_prim_care_access'
@@ -75,11 +65,6 @@ class YgPrimaryCare(AutomapBase, DartmouthBase):
 class YgReimbursements(AutomapBase, DartmouthBase):
     __tablename__ = 'yg_reimbursements'
     median_moe = 1
-
-
-# class YgSurgicalPD(AutomapBase, DartmouthBase):
-#     __tablename__ = 'yg_surgical_post_discharge'
-#     median_moe = 1
 
 
 AutomapBase.prepare(db.engine, reflect=False)

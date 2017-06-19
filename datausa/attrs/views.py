@@ -4,12 +4,12 @@ from flask import Blueprint, request, jsonify, abort
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
 from datausa.attrs.models import Cip, Naics, University, Soc, Degree
 from datausa.attrs.models import Race, Search, ZipLookup, GeoNeighbors
-from datausa.attrs.models import OccCrosswalk, IndCrosswalk
+from datausa.attrs.models import OccCrosswalk, IndCrosswalk, ProductCrosswalk
 from datausa.attrs.models import Skill, Sector, Geo, AcsInd, PumsIoCrosswalk
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
-from datausa.attrs.models import AgeBucket, Insurance
+from datausa.attrs.models import AgeBucket, Insurance, Cohort, Sctg, Napcs
 from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
 
@@ -32,8 +32,8 @@ attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "acs_occ": AcsOcc, "conflict": Conflict, "acs_ind": AcsInd,
             "language": AcsLanguage,
             "bls_soc": Soc, "bls_naics": Naics,
-            "age_bucket": AgeBucket,
-            "insurance": Insurance}
+            "insurance": Insurance, "cohort": Cohort,
+            "sctg": Sctg, "napcs": Napcs}
 
 def show_attrs(attr_obj, sumlevels=None):
     if sumlevels is not None:
@@ -225,9 +225,12 @@ def has_ipeds_data(attr_id):
 
 @mod.route("/crosswalk/<attr_kind>/<attr_id>/")
 def crosswalk_acs(attr_kind, attr_id):
-    if attr_kind not in ["acs_occ", "acs_ind", "iocode"]:
+    if attr_kind not in ["acs_occ", "acs_ind", "iocode", "sctg"]:
         return abort(404)
-    if attr_kind == "iocode":
+    if attr_kind == "sctg":
+        results = ProductCrosswalk.query.filter(ProductCrosswalk.sctg == attr_id)
+        results = [[item.napcs, "napcs"] for item in results]
+    elif attr_kind == "iocode":
         results = PumsIoCrosswalk.query.filter(PumsIoCrosswalk.iocode == attr_id).all()
         results = [[item.pums_naics, "naics"] for item in results]
     else:

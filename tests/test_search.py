@@ -174,6 +174,17 @@ class TestStringMethods(unittest.TestCase):
         self.assertTrue(len(my_vars) > 0)
         self.assertEqual(my_vars[0]['name'], 'age')
 
+  def test_healthcare(self):
+        data,suggs,tries,my_vars = do_search("healthcare")
+        self.assertEqual(data[0][0], "01000US")
+        self.assertEqual(my_vars[0]["name"], "healthcare")
+        self.assertEqual(my_vars[0]["section"], "category_health_risks")
+
+  def test_obesity(self):
+        data,suggs,tries,my_vars = do_search("obesity")
+        self.assertEqual(data[0][0], "01000US")
+        self.assertEqual(my_vars[0]["name"], "obesity")
+        self.assertEqual(my_vars[0]["section"], "category_health_risks")
 
 if __name__ == '__main__':
     unittest.main()

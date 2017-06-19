@@ -71,7 +71,7 @@ def api_view(csv=None):
 @mod.route("/join/")
 @mod.route("/join/csv/", defaults={'csv': True})
 def api_join_view(csv=None):
-    api_obj = build_api_obj(default_limit=100)
+    api_obj = build_api_obj(default_limit=500)
     if api_obj.limit and api_obj.limit > 80000:
         raise DataUSAException("Limit parameter must be less than 80,000")
     tables = manager.required_tables(api_obj)
@@ -109,4 +109,3 @@ def all_table_vars():
 def years_view():
     years_data = manager.table_years_set
     return jsonify(data=years_data)
-

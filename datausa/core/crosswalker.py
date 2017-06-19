@@ -1,8 +1,9 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
-from datausa.attrs.models import GeoContainment, Soc
+from datausa.attrs.models import GeoContainment, Soc, GeoCrosswalker
 from datausa.bls.models import BlsCrosswalk, SocCrosswalk, GrowthI, GrowthILookup, CesYi
 from datausa.pums.abstract_models import BasePums, BasePums5
 from datausa.acs.models import Acs1_Ygi_Health
+from datausa.freight.models import FAFYom
 from datausa.attrs.consts import OR
 from datausa import cache
 from sqlalchemy import or_, and_
@@ -43,6 +44,12 @@ def iocode_mapping():
     all_objs = PumsIoCrosswalk.query.all()
     return {obj.pums_naics: obj.iocode for obj in all_objs}
 
+
+@cache.memoize()
+def freight_geos():
+    '''freight geos lookup'''
+    qry = FAFYom.query.with_entities(FAFYom.origin_geo.distinct()).all()
+    return {item: True for item, in qry}
 
 def acs_parent(geo_id, api_obj=None):
     '''Some data is only accessible at the PUMA level
@@ -111,6 +118,33 @@ def pums_parent_puma(geo_id, api_obj=None):
             raise Exception("Not yet implemented")
     return geo_id
 
+def freight_parents(geo_id, api_obj=None):
+    '''freight data'''
+    needs_crosswalk = ["160", "050", "310", "795"]
+    prefix = geo_id[:3]
+    if prefix in needs_crosswalk:
+        freight_geo_list = freight_geos()
+        if geo_id in freight_geo_list:
+            return geo_id
+        else:
+
+            filters = [
+                GeoCrosswalker.geo_a == geo_id,
+                or_(GeoCrosswalker.geo_b.startswith("040"),
+                    GeoCrosswalker.geo_b.startswith("310"))
+            ]
+            qry = GeoCrosswalker.query.with_entities(GeoCrosswalker.geo_b)
+            qry = qry.filter(*filters).order_by(GeoCrosswalker.geo_b.desc())
+
+            for geo_result, in qry: # -- note the comma to unpack the tuple
+                if geo_result in freight_geo_list:
+                    return geo_result
+            # if we get to this point and no match is found, fall back to the state
+            if prefix in ["160", "050", "795"] and len(geo_id) >= 8:
+                return "04000US" + geo_id[7:9]
+
+    return geo_id
+
 def chr_parents(geo_id, api_obj=None):
     '''CHR data'''
     needs_crosswalk = ["160", "310", "795"]
@@ -144,7 +178,7 @@ def crosswalk(table, api_obj):
     pums5_schema_name = BasePums5.get_schema_name()
 
     registered_crosswalks = [
-        {"column": "geo", "schema": "acs_1yr", "mapping": acs_parent, "virtual_schema": "acs_health"},
+        {"column": "geo", "schema": "acs_1yr", "mapping": acs_parent, "__virtual_schema__": "acs_health"},
         {"column": "industry_iocode", "schema": "bea", "mapping": industry_iocode_func},
         {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
         {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
@@ -162,10 +196,11 @@ def crosswalk(table, api_obj):
         {"column": "cip", "schema": pums5_schema_name, "mapping": truncate_cip},
         {"column": "geo", "schema": pums5_schema_name, "mapping": pums_parent_puma},
         {"column": "geo", "schema": "chr", "mapping": chr_parents},
-        {"column": "geo", "schema": "dartmouth", "mapping": chr_parents}
-
-
+        {"column": "geo", "schema": "dartmouth", "mapping": chr_parents},
+        {"column": "origin_geo", "schema": "freight", "mapping": freight_parents},
+        {"column": "destination_geo", "schema": "freight", "mapping": freight_parents}
     ]
+
     exclusives = {r["table"]: True for r in registered_crosswalks if "table" in r}
 
     for rcrosswalk in registered_crosswalks:
@@ -174,8 +209,7 @@ def crosswalk(table, api_obj):
         mapping = rcrosswalk['mapping']
         target_table = rcrosswalk['table'] if 'table' in rcrosswalk else None
         avoid = rcrosswalk['avoid'] if 'avoid' in rcrosswalk else None
-        virtual_schema = rcrosswalk['virtual_schema'] if 'virtual_schema' in rcrosswalk else None
-
+        __virtual_schema__ = rcrosswalk['__virtual_schema__'] if '__virtual_schema__' in rcrosswalk else None
         if avoid:
             if table.full_name() == avoid.full_name():
                 continue
@@ -183,8 +217,11 @@ def crosswalk(table, api_obj):
         if column in api_obj.vars_and_vals.keys() and table.__table_args__['schema'] == schema:
             if table in exclusives and (not target_table or target_table.__tablename__ != table.__tablename__):
                 continue
-            if virtual_schema and table.virtual_schema != virtual_schema:
+            if __virtual_schema__ and not hasattr(table, "__virtual_schema__"):
                 continue
+            elif __virtual_schema__ and table.__virtual_schema__ != __virtual_schema__:
+                continue
+
             curr_vals_str = api_obj.vars_and_vals[column]
             curr_vals = splitter(curr_vals_str)
             if isinstance(mapping, dict):

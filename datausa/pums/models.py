@@ -201,7 +201,7 @@ class Yic(BasePums, Employees, Year, NaicsId, CipId):
     median_moe = 2
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": ["2"], "naics": NaicsId.LEVELS}
+        return {"cip": ["2", ALL], "naics": NaicsId.LEVELS}
 
 class Yio(BasePums, Employees, Year, NaicsId, SocId, EmployeesRca):
     __tablename__ = "yio"
@@ -218,7 +218,7 @@ class Yir(BasePums, Employees, Year, NaicsId, RaceId, EmployeesRca):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"soc": SocId.LEVELS, "race": [ALL]}
+        return {"naics": NaicsId.LEVELS, "race": [ALL]}
 
 
 class Yior(BasePums, Employees, Year, NaicsId, SocId, RaceId):

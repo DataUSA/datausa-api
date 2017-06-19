@@ -70,4 +70,7 @@ if __name__ == '__main__':
     manual_add(writer, u'doctors', u'Doctors', '291060')
     manual_add(writer, u'manhattan', u'Manhattan, NY', '05000US36061')
     manual_add(writer, u'meteorologists', u'Meteorologists', '192021')
+    manual_add(writer, u'film', u'Motion Pictures & Video Industries', '5121')
+    manual_add(writer, u'movies', u'Motion Pictures & Video Industries', '5121')
+
     writer.commit()
