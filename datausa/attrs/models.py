@@ -36,11 +36,12 @@ class ImageAttr(db.Model):
     image_link = db.Column(db.String)
     image_author = db.Column(db.String)
     url_name = db.Column(db.String)
+    image_meta = db.Column(db.String)
 
-    HEADERS = ["id", "name", "image_link", "image_author", "url_name"]
+    HEADERS = ["id", "name", "image_link", "image_author", "url_name", "image_meta"]
 
     def data_serialize(self):
-        return [self.id, self.name, self.image_link, self.image_author, self.url_name]
+        return [self.id, self.name, self.image_link, self.image_author, self.url_name, self.image_meta]
 
 
 class University(BaseAttr):
@@ -178,7 +179,6 @@ class Geo(BaseAttr, ImageAttr):
     display_name = db.Column(db.String)
     name_long = db.Column(db.String)
     sumlevel = db.Column(db.String)
-    image_meta = db.Column(db.String)
     HEADERS = ["id", "name", "url_name"]
 
     @classmethod
