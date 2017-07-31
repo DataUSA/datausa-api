@@ -1,7 +1,7 @@
 import csv, flickr, short, sys
 
 MAX_SIDE = 1600
-LICENSES = ["4", "5", "7", "8"]
+LICENSES = ["4", "5", "7", "8", "9", "10"]
 
 def read_csv():
 

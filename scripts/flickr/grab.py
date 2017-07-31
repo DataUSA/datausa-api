@@ -6,7 +6,7 @@ from PIL import Image as pillow
 # from scripts.flickr.analyze import LICENSES, MAX_SIDE
 
 MAX_SIDE = 1600
-LICENSES = ["4", "5", "7", "8"]
+LICENSES = ["4", "5", "7", "8", "9", "10"]
 
 def read_csv():
 
