@@ -29,7 +29,7 @@ registered_models = [
     # IPEDS
     TuitionYc, TuitionYcu, TuitionYcs, TuitionYgs,
     EnrollmentYcu,
-    GradsYcu, GradsYc, GradsYcd, GradsYgd,
+    GradsYu, GradsYcu, GradsYc, GradsYcd, GradsYgd,
     GradsYg, GradsYgc, GradsYgu, GradsYgs, GradsYgcd,
     GradsPctYcu,
     UnivGeo,
