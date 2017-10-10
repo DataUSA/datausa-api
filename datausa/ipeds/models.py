@@ -33,6 +33,17 @@ class TuitionYc(Tuition, CipId):
     oos_tuition_rank = db.Column(db.Integer())
     state_tuition_rank = db.Column(db.Integer())
 
+
+class TuitionYu(Tuition, UniversityId):
+    __tablename__ = "tuition_yu"
+    median_moe = 1
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"university": [ALL]}
+
 class TuitionYcu(Tuition, CipId, UniversityId):
     __tablename__ = "tuition_ycu"
     median_moe = 2

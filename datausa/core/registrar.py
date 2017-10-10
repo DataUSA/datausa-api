@@ -27,7 +27,7 @@ registered_models = [
     Ygo5, Ygi5, Yoas5, Ygor5, Ygos5, Ygb5,
 
     # IPEDS
-    TuitionYc, TuitionYcu, TuitionYcs, TuitionYgs,
+    TuitionYu, TuitionYc, TuitionYcu, TuitionYcs, TuitionYgs,
     EnrollmentYcu,
     GradsYu, GradsYcu, GradsYc, GradsYcd, GradsYgd,
     GradsYg, GradsYgc, GradsYgu, GradsYgs, GradsYgcd,
