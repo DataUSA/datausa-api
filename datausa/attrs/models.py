@@ -44,7 +44,7 @@ class ImageAttr(db.Model):
         return [self.id, self.name, self.image_link, self.image_author, self.url_name, self.image_meta]
 
 
-class University(BaseAttr):
+class University(BaseAttr, ImageAttr):
     __tablename__ = 'university'
 
     state = db.Column(db.String)
