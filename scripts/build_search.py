@@ -51,6 +51,17 @@ for level in ['040', '050', '160', '310', '795']:
 
 queries.append("SELECT '01000US', 150, 'geo', 'united states', 'United States', '010', -1, 'united-states'")
 
-tail_qrys = ["({})".format(q) if i!= 0 else q for i,q in enumerate(queries)]
-final_q = "\n UNION \n".join(tail_qrys);
-print final_q
+
+# UNIVERSITIES
+university_qry = '''SELECT g.{0},  (g.{2} - stats.average) / stats.st AS zvalue, '{0}' as kind , lower(a.name) as name, a.display_name as display, NULL as sumlevel, a.is_stem as is_stem, a.url_name as url_name
+                    FROM {1} g
+                    LEFT JOIN attrs.university a ON (a.id = g.{0})
+                    CROSS JOIN
+                        (select STDDEV({2}) as st, AVG({2}) as average FROM {1} WHERE year=2015) stats
+                        WHERE g.year = 2015'''
+
+queries.append(university_qry.format("university", "ipeds.grads_yu", "grads_total"))
+
+tail_qrys = ["({})".format(q) if i != 0 else q for i, q in enumerate(queries)]
+final_q = "\n UNION \n".join(tail_qrys)
+print(final_q)

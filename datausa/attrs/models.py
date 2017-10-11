@@ -429,7 +429,7 @@ class Napcs(BaseAttr):
 
 
 class Search(BaseAttr):
-    __tablename__ = 'search_v5'
+    __tablename__ = 'search_v6'
     id = db.Column(db.String, primary_key=True)
     zvalue = db.Column(db.Float)
     kind = db.Column(db.String, primary_key=True)
