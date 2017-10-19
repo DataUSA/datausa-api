@@ -3,10 +3,13 @@ from config import FLICKR_DIR
 from datausa.database import db
 from datausa.attrs.views import attr_map
 from PIL import Image as pillow
+# from scripts.flickr.analyze import LICENSES, MAX_SIDE
+
+MAX_SIDE = 1600
+LICENSES = ["4", "5", "7", "8", "9", "10"]
 
 def read_csv():
 
-    max_side = 1600
     thumb_side = 425
     quality = 90
 
@@ -83,10 +86,10 @@ def read_csv():
 
                     image = {"id": uid, "url": image, "license": photo._Photo__license}
 
-                    if image["license"] in ["0"]:
+                    if image["license"] not in LICENSES:
                         badImages.append(image)
                     else:
-                        sizes = [p for p in photo.getSizes() if p["width"] >= max_side]
+                        sizes = [p for p in photo.getSizes() if p["width"] >= MAX_SIDE]
                         if len(sizes) == 0:
                             smallImages.append(image)
                         else:
@@ -99,7 +102,7 @@ def read_csv():
 
                             img = pillow.open(imgpath).convert("RGB")
 
-                            img.thumbnail((max_side, max_side), pillow.ANTIALIAS)
+                            img.thumbnail((MAX_SIDE, MAX_SIDE), pillow.ANTIALIAS)
                             img.save(imgpath, "JPEG", quality=quality)
 
                             img.thumbnail((thumb_side, thumb_side), pillow.ANTIALIAS)
@@ -154,7 +157,4 @@ def read_csv():
 
 
 if __name__ == '__main__':
-    # img = pillow.open("04000US17-orig.jpg").convert("RGB")
-    # img.thumbnail((max_side, max_side), pillow.ANTIALIAS)
-    # img.save("04000US17-new.jpg", "JPEG", quality=quality)
     read_csv()
