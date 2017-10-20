@@ -31,14 +31,16 @@ class BaseAttr(db.Model):
         return '<{}, id: {}, name: {}>'.format(self.__class__,
                                                self.id, self.name)
 
+
 class ImageAttr(db.Model):
     __abstract__ = True
     image_link = db.Column(db.String)
     image_author = db.Column(db.String)
     url_name = db.Column(db.String)
     image_meta = db.Column(db.String)
+    keywords = db.Column(db.ARRAY(db.String))
 
-    HEADERS = ["id", "name", "image_link", "image_author", "url_name", "image_meta"]
+    HEADERS = ["id", "name", "image_link", "image_author", "url_name", "image_meta", "keywords"]
 
     def data_serialize(self):
         return [self.id, self.name, self.image_link, self.image_author, self.url_name, self.image_meta]
