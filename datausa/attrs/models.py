@@ -2,7 +2,6 @@ from datausa.database import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy import or_, asc
-from datausa.attrs.consts import OR
 from sqlalchemy.sql import text
 
 
