@@ -1,11 +1,9 @@
 import os
 import os.path
 from whoosh import index
-from whoosh.fields import Schema, ID, TEXT, NUMERIC, KEYWORD, NGRAM, NGRAMWORDS
-from whoosh.fields import BOOLEAN
+from whoosh.fields import Schema, ID, TEXT, NUMERIC, KEYWORD, NGRAMWORDS
 from config import SEARCH_INDEX_DIR
 from unidecode import unidecode
-
 
 
 def manual_add(writer, name, display, orig_id, is_stem=False, url_name=None, zoverride=None, kind=u"geo"):
@@ -21,6 +19,7 @@ def manual_add(writer, name, display, orig_id, is_stem=False, url_name=None, zov
                         kind=kind, sumlevel=doc_obj.sumlevel,
                         is_stem=is_stem, url_name=url_name)
 
+
 def get_schema():
     return Schema(id=ID(stored=True),
                   name=NGRAMWORDS(stored=True, minsize=2, maxsize=12, at='start', queryor=True),
@@ -30,6 +29,7 @@ def get_schema():
                   sumlevel=KEYWORD(stored=True),
                   is_stem=NUMERIC(stored=True),
                   url_name=TEXT(stored=True))
+
 
 if __name__ == '__main__':
     print "got here!"
@@ -58,9 +58,15 @@ if __name__ == '__main__':
                             kind=obj.kind, sumlevel=obj.sumlevel,
                             is_stem=stem, url_name=obj.url_name)
 
+        if obj.keywords:
+            for keyword in obj.keywords:
+                writer.add_document(id=obj.id, name=keyword,
+                                    display=obj.display, zvalue=obj.zvalue,
+                                    kind=obj.kind, sumlevel=obj.sumlevel,
+                                    is_stem=stem, url_name=obj.url_name)
     # Custom synonyms to help with search
     import pandas as pd
-    attrs_with_aliases = ["geo", "university"]
+    attrs_with_aliases = ["geo"]
     for kind in attrs_with_aliases:
         target_path = os.path.join(SEARCH_INDEX_DIR, "..", "scripts", "search", "{}_aliases.csv".format(kind))
         df = pd.read_csv(target_path)
