@@ -1,6 +1,6 @@
 import csv, flickr, short, sys
 
-MAX_SIDE = 1600
+MAX_SIDE = 1400
 LICENSES = ["4", "5", "7", "8", "9", "10"]
 
 def read_csv():
@@ -51,7 +51,7 @@ def read_csv():
                         image["small"] = True
                         row["error"] = "resolution"
                 else:
-                    row["error"] = "license"
+                    row["error"] = "license-{}".format(image["license"])
 
             images.append(image)
 
