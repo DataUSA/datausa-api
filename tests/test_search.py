@@ -189,6 +189,10 @@ class TestStringMethods(unittest.TestCase):
         data, suggs, tries, my_vars = do_search("boston university")
         self.assertEqual(data[0][0], "164988")
 
+  def test_neu(self):
+        data, suggs, tries, my_vars = do_search("huskies")
+        self.assertEqual(data[0][0], "167358")
+
 
 if __name__ == '__main__':
     unittest.main()

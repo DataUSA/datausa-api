@@ -5,6 +5,7 @@ from sqlalchemy import or_, asc
 from datausa.attrs.consts import OR
 from sqlalchemy.sql import text
 
+
 class BaseAttr(db.Model):
     __abstract__ = True
     __table_args__ = {"schema": "attrs"}
@@ -186,7 +187,7 @@ class Geo(BaseAttr, ImageAttr):
     @classmethod
     def parents(cls, geo):
         mysumlevel = geo[:3]
-        filters =[GeoContainment.child_geoid == geo]
+        filters = [GeoContainment.child_geoid == geo]
         geos = GeoContainment.query.filter(*filters).order_by(text("percent_covered asc")).all()
         geos2 = []
         for g in geos:
@@ -290,6 +291,7 @@ class PumsSoc(BaseAttr, ImageAttr):
         data = [[obj.soc_obj.id, obj.soc_obj.name] for obj in objs]
         return data, PumsSoc.HEADERS
 
+
 class PumsSex(BaseAttr):
     __tablename__ = 'sex'
     __table_args__ = {"schema": "pums_attrs"}
@@ -359,7 +361,7 @@ class GeoCrosswalker(db.Model):
     __table_args__ = {"schema": "attrs"}
     geo_a = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
     geo_b = db.Column(db.String, db.ForeignKey(Geo.id),
-                             primary_key=True)
+                      primary_key=True)
     a = relationship('Geo', foreign_keys='GeoCrosswalker.geo_a')
     b = relationship('Geo', foreign_keys='GeoCrosswalker.geo_b', lazy='subquery')
 
@@ -376,6 +378,7 @@ class GeoContainment(db.Model):
     child = relationship('Geo', foreign_keys='GeoContainment.child_geoid',
                          lazy='subquery')
 
+
 class GeoNeighbors(db.Model):
     __tablename__ = 'geo_neighbors'
     __table_args__ = {"schema": "attrs"}
@@ -386,6 +389,7 @@ class GeoNeighbors(db.Model):
 class AcsOcc(BaseAttr):
     __tablename__ = 'acs_occ'
     level = db.Column(db.Integer)
+
 
 class AcsInd(BaseAttr):
     __tablename__ = 'acs_ind'
@@ -404,11 +408,14 @@ class SocHierarchy(db.Model):
     great_grandparent_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.great_grandparent', lazy='subquery')
     soc_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.soc', lazy='subquery')
 
+
 class AgeBucket(BaseAttr):
     __tablename__ = 'age_bucket'
 
+
 class Insurance(BaseAttr):
     __tablename__ = 'insurance'
+
 
 class AcsLanguage(BaseAttr):
     __tablename__ = 'language'
@@ -421,6 +428,7 @@ class AcsRace(BaseAttr):
 class Conflict(BaseAttr):
     __tablename__ = 'conflict'
 
+
 class Sctg(BaseAttr):
     __tablename__ = 'sctg'
     parent = db.Column(db.String)
@@ -431,7 +439,7 @@ class Napcs(BaseAttr):
 
 
 class Search(BaseAttr):
-    __tablename__ = 'search_v6'
+    __tablename__ = 'search_v7'
     id = db.Column(db.String, primary_key=True)
     zvalue = db.Column(db.Float)
     kind = db.Column(db.String, primary_key=True)
@@ -439,6 +447,8 @@ class Search(BaseAttr):
     sumlevel = db.Column(db.String, primary_key=True)
     is_stem = db.Column(db.Boolean)
     url_name = db.Column(db.String)
+    keywords = db.Column(db.ARRAY(db.String))
+
 
 class ZipLookup(db.Model):
     __tablename__ = 'zip_lookup'
@@ -464,6 +474,7 @@ class IndCrosswalk(db.Model):
     acs_ind = db.Column(db.String, primary_key=True)
     pums_naics = db.Column(db.String, db.ForeignKey(PumsNaics.id), primary_key=True)
     level = db.Column(db.Integer)
+
 
 class ProductCrosswalk(db.Model):
     __tablename__ = 'napcs_sctg_xwalk'
