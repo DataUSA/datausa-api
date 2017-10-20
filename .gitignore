@@ -63,3 +63,4 @@ target/
 cache/
 
 .env
+.envrc
