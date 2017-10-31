@@ -11,6 +11,7 @@ from datausa.acs.automap_models import *
 from datausa.acs.stats_models import *
 from datausa.dartmouth.models import *
 from datausa.freight.models import *
+from datausa.ed.models import DefaultsYu
 
 registered_models = [
     # PUMS
@@ -81,7 +82,10 @@ registered_models = [
     Acs1_Ygas_Health, Acs1_Ygi_Health, Acs1_Ygis_Health, Acs1_Ygs_Health,
 
     # Freight
-    FAFYodmp, FAFYodp, FAFYomp, FAFYodm, FAFYop, FAFYdp, FAFYdm, FAFYom, FAFYod
+    FAFYodmp, FAFYodp, FAFYomp, FAFYodm, FAFYop, FAFYdp, FAFYdm, FAFYom, FAFYod,
+
+    # Loans
+    DefaultsYu
 ]
 
 
