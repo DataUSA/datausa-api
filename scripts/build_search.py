@@ -58,7 +58,7 @@ university_qry = '''SELECT g.{0},  (g.{2} - stats.average) / stats.st AS zvalue,
                     LEFT JOIN attrs.university a ON (a.id = g.{0})
                     CROSS JOIN
                         (select STDDEV({2}) as st, AVG({2}) as average FROM {1} WHERE year=2015) stats
-                        WHERE g.year = 2015'''
+                        WHERE g.year = 2015 and a.status != 'D' '''
 
 queries.append(university_qry.format("university", "ipeds.grads_yu", "grads_total"))
 
