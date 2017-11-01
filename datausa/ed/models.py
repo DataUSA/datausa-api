@@ -17,7 +17,7 @@ class BaseEd(db.Model, BaseModel):
 
 class University(object):
     @declared_attr
-    def opeid(cls):
+    def opeid6(cls):
         return db.Column(db.String(), primary_key=True)
 
     @declared_attr
@@ -26,15 +26,15 @@ class University(object):
 
     @classmethod
     def crosswalk_join(cls, qry):
-        cond = UniversityCrosswalk.opeid == cls.opeid
+        cond = UniversityCrosswalk.opeid6 == cls.opeid6
         return qry.join(UniversityCrosswalk, cond)
 
 
 class DefaultsYu(BaseEd, University):
     __tablename__ = "yu_defaults"
     median_moe = 1
+
     year = db.Column(db.Integer(), primary_key=True)
-    opeid = db.Column(db.String(), primary_key=True)
     default_rate = db.Column(db.Float)
     num_defaults = db.Column(db.Integer)
     num_borrowers = db.Column(db.Integer)
@@ -44,5 +44,5 @@ class DefaultsYu(BaseEd, University):
         return {
             "year": [ALL],
             "university": [ALL],
-            "oped": [ALL]
+            "opeid6": [ALL]
         }

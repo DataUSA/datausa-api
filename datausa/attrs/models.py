@@ -53,7 +53,7 @@ class University(BaseAttr, ImageAttr):
     county = db.Column(db.String)
     msa = db.Column(db.String)
     sector = db.Column(db.String)
-    opeid = db.Column(db.String)
+    opeid8 = db.Column(db.String)
 
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
@@ -483,7 +483,7 @@ class ProductCrosswalk(db.Model):
     napcs = db.Column(db.String, db.ForeignKey(Napcs.id), primary_key=True)
 
 class UniversityCrosswalk(db.Model):
-    __tablename__ = 'unitid_to_opeid'
+    __tablename__ = 'unitid_to_opeid6'
     __table_args__ = {"schema": "attrs"}
-    opeid = db.Column(db.String, primary_key=True)
+    opeid6 = db.Column(db.String, primary_key=True)
     university = db.Column(db.String, db.ForeignKey(University.id), primary_key=True)
