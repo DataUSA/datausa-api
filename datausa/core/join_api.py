@@ -18,6 +18,7 @@ from datausa.core.streaming import stream_qry, stream_qry_csv
 from datausa.core.attr_crosswalking import naics_crosswalk_join, soc_crosswalk_join
 from datausa.core.attr_crosswalking import cip_crosswalk_join, geo_crosswalk_join
 from datausa.core.exceptions import DataUSAException
+from datausa.core import get_columns
 
 def use_attr_names(qry, cols):
     '''This method will return a query object with outer joins to include
@@ -114,8 +115,8 @@ def parse_entities(tables, api_obj):
 def find_overlap(tbl1, tbl2):
     '''Given two table objects, determine the set of intersecting columns by
     column name'''
-    cols1 = [c.key for c in tbl1.__table__.columns]
-    cols2 = [c.key for c in tbl2.__table__.columns]
+    cols1 = [col.key for col in get_columns(tbl1)]
+    cols2 = [col.key for col in get_columns(tbl2)]
     myset = set(cols1).intersection(cols2)
     return myset
 
@@ -305,7 +306,9 @@ def joinable_query(tables, api_obj, tbl_years, csv_format=False):
     qry = qry.select_from(tables[0])
 
     my_joins, filts = make_joins(tables, api_obj, tbl_years)
-
+    for table in tables:
+        if hasattr(table, "crosswalk_join"):
+            qry = table.crosswalk_join(qry)
     if my_joins:
         for join_info, kwargs in my_joins:
             qry = qry.join(*join_info, **kwargs)

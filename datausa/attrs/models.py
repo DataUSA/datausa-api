@@ -3,7 +3,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy import or_, asc
 from sqlalchemy.sql import text
-
+from datausa.attrs.consts import ALL
+from datausa.core.models import BaseModel
 
 class BaseAttr(db.Model):
     __abstract__ = True
@@ -482,8 +483,15 @@ class ProductCrosswalk(db.Model):
     sctg = db.Column(db.String,  db.ForeignKey(Sctg.id), primary_key=True)
     napcs = db.Column(db.String, db.ForeignKey(Napcs.id), primary_key=True)
 
-class UniversityCrosswalk(db.Model):
+class UniversityCrosswalk(db.Model, BaseModel):
     __tablename__ = 'unitid_to_opeid6'
     __table_args__ = {"schema": "attrs"}
     opeid6 = db.Column(db.String, primary_key=True)
     university = db.Column(db.String, db.ForeignKey(University.id), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "university": [ALL],
+            "opeid6": [ALL]
+        }

@@ -12,6 +12,7 @@ from datausa.acs.stats_models import *
 from datausa.dartmouth.models import *
 from datausa.freight.models import *
 from datausa.ed.models import DefaultsYu
+from datausa.attrs.models import UniversityCrosswalk
 
 registered_models = [
     # PUMS
@@ -85,7 +86,7 @@ registered_models = [
     FAFYodmp, FAFYodp, FAFYomp, FAFYodm, FAFYop, FAFYdp, FAFYdm, FAFYom, FAFYod,
 
     # Loans
-    DefaultsYu
+    DefaultsYu, UniversityCrosswalk
 ]
 
 
