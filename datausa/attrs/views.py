@@ -10,6 +10,7 @@ from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
 from datausa.attrs.models import AgeBucket, Insurance, Cohort, Sctg, Napcs
+from datausa.attrs.models import Opeid6, SchoolType, EthnicCode, ProgramLength
 from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
 
@@ -33,7 +34,9 @@ attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "language": AcsLanguage,
             "bls_soc": Soc, "bls_naics": Naics,
             "insurance": Insurance, "cohort": Cohort,
-            "sctg": Sctg, "napcs": Napcs}
+            "sctg": Sctg, "napcs": Napcs, "opeid6": Opeid6,
+            "ethnic_code": EthnicCode, "program_length": ProgramLength,
+            "school_type": SchoolType}
 
 def show_attrs(attr_obj, sumlevels=None):
     if sumlevels is not None:

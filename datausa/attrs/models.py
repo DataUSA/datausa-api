@@ -495,3 +495,21 @@ class UniversityCrosswalk(db.Model, BaseModel):
             "university": [ALL],
             "opeid6": [ALL]
         }
+
+
+class Opeid6(BaseAttr):
+    __tablename__ = 'opeid6'
+    school_type = db.Column(db.Integer)
+    ethnic_code = db.Column(db.Integer)
+
+
+class SchoolType(BaseAttr):
+    __tablename__ = 'school_type'
+
+
+class ProgramLength(BaseAttr):
+    __tablename__ = 'program_length'
+
+
+class EthnicCode(BaseAttr):
+    __tablename__ = 'ethnic_code'
