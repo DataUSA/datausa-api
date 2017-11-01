@@ -198,7 +198,7 @@ class TestJoinAPI(unittest.TestCase):
         assert first_row[pums_index] == "Texas"
 
     def test_ed_crosswalk_join(self):
-        url = '/api/join/?show=university&sumlevel=all&required=grads_total,default_rate&limit=1'
+        url = '/api/join/?show=university&sumlevel=all&required=grads_total,default_rate&limit=1&university=100654'
         data, headers = self.get_data(url)
         ed_id = headers.index('ed.yu_defaults.university')
         ipeds_id = headers.index('ipeds.grads_yu.university')
