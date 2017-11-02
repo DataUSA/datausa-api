@@ -243,3 +243,13 @@ def crosswalk_acs(attr_kind, attr_id):
         results = attr_obj.query.filter(getattr(attr_obj, attr_kind) == attr_id).with_entities(col_name).all()
         results = [[getattr(item, col_name), header_name] for item in results]
     return jsonify(data=results, headers=["attr_id", "attr_kind"])
+
+@mod.route("/nearby/university/<university_id>")
+def nearby_university(university_id):
+    univ = University.query.get(university_id)
+    distance_m = 3000 # max distance in meters
+    query = University.query.filter("ST_Distance(ST_SetSrid(ST_MakePoint(lat, lng), 4326)::geography, ST_SetSrid(ST_MakePoint(:lat, :lng), 4326)::geography) < :distance").params(lat=univ.lat, lng=univ.lng, distance=distance_m)
+    query = query.filter(University.status != 'D').filter(University.id != university_id) # exclude inactive and self
+    data = [[x.name, x.id] for x in query]
+    headers = ["name", "id"]
+    return jsonify(data=data, headers=headers)

@@ -55,6 +55,7 @@ class University(BaseAttr, ImageAttr):
     msa = db.Column(db.String)
     sector = db.Column(db.String)
     opeid8 = db.Column(db.String)
+    status = db.Column(db.String)
 
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
