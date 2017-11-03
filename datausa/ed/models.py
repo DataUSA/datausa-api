@@ -2,9 +2,9 @@ from datausa.database import db
 from datausa.core.models import BaseModel
 from sqlalchemy.ext.declarative import declared_attr
 from datausa.attrs.consts import ALL
-from datausa.attrs.models import Geo, University, UniversityCrosswalk
+from datausa.attrs.models import UniversityCrosswalk
 from sqlalchemy.orm import column_property
-from sqlalchemy import func
+
 
 class BaseEd(db.Model, BaseModel):
     __abstract__ = True
@@ -15,7 +15,7 @@ class BaseEd(db.Model, BaseModel):
     source_org = 'Department of Education'
 
 
-class University(object):
+class UniversityCols(object):
     @declared_attr
     def opeid6(cls):
         return db.Column(db.String(), primary_key=True)
@@ -30,7 +30,7 @@ class University(object):
         return qry.join(UniversityCrosswalk, cond)
 
 
-class DefaultsYu(BaseEd, University):
+class DefaultsYu(BaseEd, UniversityCols):
     __tablename__ = "yu_defaults"
     median_moe = 1
 
