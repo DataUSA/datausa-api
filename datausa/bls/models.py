@@ -3,6 +3,8 @@ from datausa.attrs.models import Geo, Soc, Naics
 from datausa.attrs.models import PumsSoc, PumsNaics
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, MSA, ALL
+from sqlalchemy.orm import column_property
+from sqlalchemy.ext.declarative import declared_attr
 
 
 class Bls(BaseModel):
@@ -13,12 +15,32 @@ class Bls(BaseModel):
     source_link = 'http://bls.gov'
 
 
-class GrowthO(db.Model, Bls):
+class SocCrosswalk(db.Model, Bls):
+    __tablename__ = 'soc_crosswalk'
+    soc = db.Column("pums_soc", db.String(), db.ForeignKey(PumsSoc.id), primary_key=True)
+    bls_soc = db.Column(db.String(), db.ForeignKey(Soc.id), primary_key=True)
+
+
+class BlsSoc(object):
+    @declared_attr
+    def bls_soc(cls):
+        return db.Column(db.String(), primary_key=True)
+
+    @declared_attr
+    def soc(cls):
+        return column_property(SocCrosswalk.soc)
+
+    @classmethod
+    def crosswalk_join(cls, qry):
+        cond = SocCrosswalk.bls_soc == cls.bls_soc
+        return qry.join(SocCrosswalk, cond, full=True)
+
+
+class GrowthO(db.Model, Bls, BlsSoc):
     source_title = 'Employment Projections'
     __tablename__ = 'growth_o'
     median_moe = 1
 
-    soc = db.Column(db.String, primary_key=True)
     emp_2014_thousands = db.Column(db.Float)
     emp_2024_thousands = db.Column(db.Float)
     emp_pct_2014 = db.Column(db.Float)
@@ -30,8 +52,10 @@ class GrowthO(db.Model, Bls):
     @classmethod
     def get_supported_levels(cls):
         return {
-            "soc": [ALL, "0", "1", "2", "3"]
+            "soc": [ALL, "0", "1", "2", "3"],
+            "bls_soc": [ALL, "0", "1", "2", "3"]
         }
+
 
 class GrowthI(db.Model, Bls):
     source_title = 'Industry Projections'
@@ -73,20 +97,14 @@ class GrowthILookup(db.Model, Bls):
     bls_naics = db.Column(db.String, primary_key=True)
 
 
-class SocCrosswalk(db.Model, Bls):
-    __tablename__ = 'soc_crosswalk'
-    pums_soc = db.Column(db.String, primary_key=True)
-    bls_soc = db.Column(db.String, primary_key=True)
-
-
-class OesYgo(db.Model, Bls):
+class OesYgo(db.Model, Bls, BlsSoc):
     __tablename__ = 'oes_ygo'
 
     median_moe = 2
 
     year = db.Column(db.Integer, primary_key=True)
     geo = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
-    soc = db.Column(db.String, db.ForeignKey(Soc.id), primary_key=True)
+    # soc = db.Column(db.String, db.ForeignKey(Soc.id), primary_key=True)
 
     tot_emp = db.Column(db.Integer)
     tot_emp_prse = db.Column(db.Float)
@@ -98,6 +116,7 @@ class OesYgo(db.Model, Bls):
     def get_supported_levels(cls):
         return {
             "geo": [ALL, NATION, STATE, MSA],
+            "bls_soc": [ALL, "0", "1", "2", "3"],
             "soc": [ALL, "0", "1", "2", "3"]
         }
 
@@ -116,10 +135,9 @@ class CesYi(db.Model, Bls):
     median_moe = 1.5
 
     JOINED_FILTER = {"naics": {
-                            "table": Naics,
-                            "column": Naics.level,
-                            "id": Naics.id,
-    }}
+                     "table": Naics,
+                     "column": Naics.level,
+                     "id": Naics.id}}
 
     year = db.Column(db.Integer, primary_key=True)
     naics = db.Column(db.String, db.ForeignKey(Naics.id), primary_key=True)
@@ -127,7 +145,6 @@ class CesYi(db.Model, Bls):
     avg_hrly_earnings = db.Column(db.Float)
     avg_wkly_hrs = db.Column(db.Float)
     employees_thousands = db.Column(db.Float)
-
 
     @classmethod
     def get_supported_levels(cls):
