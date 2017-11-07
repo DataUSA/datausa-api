@@ -35,6 +35,7 @@ registered_models = [
     GradsYg, GradsYgc, GradsYgu, GradsYgs, GradsYgcd,
     GradsPctYcu,
     UnivGeo,
+    AdmissionsY, AdmissionsYu,
 
     # ONET
     SkillByCip, SkillBySoc,

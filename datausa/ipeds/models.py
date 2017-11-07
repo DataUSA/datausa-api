@@ -1,7 +1,7 @@
 from datausa.database import db
 from datausa.ipeds.abstract_models import Enrollment, CipId, UniversityId
 from datausa.ipeds.abstract_models import Tuition, GeoId, SectorId, BaseIpeds
-from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct
+from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct, Admissions
 from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
 from datausa.attrs.consts import PLACE, ALL
 
@@ -240,3 +240,24 @@ class UnivGeo(BaseIpeds, UniversityId, GeoId):
     def get_supported_levels(cls):
         return {"university": [ALL],
                 GEO: [STATE, COUNTY, MSA, PLACE, ALL]}
+
+
+class AdmissionsYu(Admissions, UniversityId):
+    __tablename__ = "adm_undergrad_yu"
+    median_moe = 1
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"university": [ALL]}
+
+
+class AdmissionsY(Admissions):
+    __tablename__ = "adm_undergrad_y"
+    year = db.Column(db.Integer(), primary_key=True)
+    median_moe = 0
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL]}

@@ -146,3 +146,40 @@ class SectorId(object):
     @classmethod
     def get_supported_levels(cls):
         return {"sector": ["all"]}
+
+
+class Admissions(BaseIpeds):
+    __abstract__ = True
+    applicants_total = db.Column(db.Float)
+    applicants_men = db.Column(db.Float)
+    applicants_women = db.Column(db.Float)
+    admissions_total = db.Column(db.Float)
+    admissions_men = db.Column(db.Float)
+    admissions_women = db.Column(db.Float)
+    admissions_enrolled_total = db.Column(db.Float)
+    admissions_enrolled_men = db.Column(db.Float)
+    admissions_enrolled_women = db.Column(db.Float)
+    admissions_enrolled_ft_total = db.Column(db.Float)
+    admissions_enrolled_ft_men = db.Column(db.Float)
+    admissions_enrolled_ft_women = db.Column(db.Float)
+    admissions_enrolled_pt_total = db.Column(db.Float)
+    admissions_enrolled_pt_men = db.Column(db.Float)
+    admissions_enrolled_pt_women = db.Column(db.Float)
+    sub_sat_scores_num = db.Column(db.Float)
+    sub_act_scores_num = db.Column(db.Float)
+    sub_sat_scores_pct = db.Column(db.Float)
+    sub_act_scores_pct = db.Column(db.Float)
+    sat_cr_25 = db.Column(db.Float)
+    sat_cr_75 = db.Column(db.Float)
+    sat_math_25 = db.Column(db.Float)
+    sat_math_75 = db.Column(db.Float)
+    sat_writing_25 = db.Column(db.Float)
+    sat_writing_75 = db.Column(db.Float)
+    act_composite_25 = db.Column(db.Float)
+    act_composite_75 = db.Column(db.Float)
+    act_english_25 = db.Column(db.Float)
+    act_english_75 = db.Column(db.Float)
+    act_math_25 = db.Column(db.Float)
+    act_math_75 = db.Column(db.Float)
+    act_writing_25 = db.Column(db.Float)
+    act_writing_75 = db.Column(db.Float)
