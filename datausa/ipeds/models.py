@@ -1,7 +1,9 @@
-from datausa.ipeds.abstract_models import *
-from datausa.attrs.consts import NATION, STATE, COUNTY, MSA, GEO
+from datausa.database import db
+from datausa.ipeds.abstract_models import Enrollment, CipId, UniversityId
+from datausa.ipeds.abstract_models import Tuition, GeoId, SectorId, BaseIpeds
+from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct
+from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
 from datausa.attrs.consts import PLACE, ALL
-from sqlalchemy.orm import relationship
 
 
 class EnrollmentYcu(Enrollment, CipId, UniversityId):
@@ -21,9 +23,11 @@ class TuitionYgs(Tuition, GeoId, SectorId):
     median_moe = 2
 
     year = db.Column(db.Integer(), primary_key=True)
+
     @classmethod
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS, "sector": [ALL]}
+
 
 class TuitionYc(Tuition, CipId):
     __tablename__ = "tuition_yc"
@@ -44,6 +48,7 @@ class TuitionYu(Tuition, UniversityId):
     def get_supported_levels(cls):
         return {"university": [ALL]}
 
+
 class TuitionYcu(Tuition, CipId, UniversityId):
     __tablename__ = "tuition_ycu"
     median_moe = 2
@@ -54,6 +59,7 @@ class TuitionYcu(Tuition, CipId, UniversityId):
     @classmethod
     def get_supported_levels(cls):
         return {"cip": CipId.LEVELS, "university": [ALL]}
+
 
 class TuitionYcs(Tuition, CipId, SectorId):
     __tablename__ = "tuition_ycs"
@@ -66,6 +72,7 @@ class TuitionYcs(Tuition, CipId, SectorId):
     def get_supported_levels(cls):
         return {"cip": CipId.LEVELS, "sector": [ALL]}
 
+
 class GradsYc(Grads, CipId):
     __tablename__ = "grads_yc"
     median_moe = 0
@@ -76,6 +83,7 @@ class GradsYc(Grads, CipId):
     @classmethod
     def get_supported_levels(cls):
         return {"cip": CipId.LEVELS}
+
 
 class GradsYcd(Grads, CipId, DegreeId):
     __tablename__ = "grads_ycd"
@@ -210,6 +218,7 @@ class GradsYgcd(Grads, GeoId, CipId, DegreeId):
     @classmethod
     def get_supported_levels(cls):
         return {"cip": CipId.LEVELS, GEO: GeoId.LEVELS, "degree": [ALL]}
+
 
 class GradsPctYcu(GradsPct, CipId, UniversityId):
     __tablename__ = "gradspct_ycu"

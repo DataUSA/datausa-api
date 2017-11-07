@@ -1,13 +1,13 @@
 from datausa.database import db
-from datausa.attrs import consts
 from datausa.attrs.models import University, Cip, Geo
 from datausa.attrs.models import Degree, Sector
-from sqlalchemy.orm import column_property
 from datausa.core.models import BaseModel
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.sql import func
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
 from datausa.attrs.consts import PUMA, PLACE, ALL, GEO
+
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.sql import func
+
 
 class BaseIpeds(db.Model, BaseModel):
     __abstract__ = True
@@ -17,16 +17,18 @@ class BaseIpeds(db.Model, BaseModel):
     source_link = 'http://nces.ed.gov/ipeds/'
     source_org = 'Department of Education'
 
+
 class Enrollment(BaseIpeds):
     __abstract__ = True
 
     enrolled_total = db.Column(db.Integer())
-    enrolled_men =  db.Column(db.Integer())
-    enrolled_women =  db.Column(db.Integer())
-    enrolled_black =  db.Column(db.Integer())
-    enrolled_asian =  db.Column(db.Integer())
-    enrolled_native =  db.Column(db.Integer())
-    enrolled_unknown =  db.Column(db.Integer())
+    enrolled_men = db.Column(db.Integer())
+    enrolled_women = db.Column(db.Integer())
+    enrolled_black = db.Column(db.Integer())
+    enrolled_asian = db.Column(db.Integer())
+    enrolled_native = db.Column(db.Integer())
+    enrolled_unknown = db.Column(db.Integer())
+
 
 class Tuition(BaseIpeds):
     __abstract__ = True
@@ -39,16 +41,18 @@ class Tuition(BaseIpeds):
     state_fee = db.Column(db.Integer())
     district_fee = db.Column(db.Integer())
 
+
 class GradsPct(BaseIpeds):
     __abstract__ = True
     pct_total = db.Column(db.Float())
     pct_men = db.Column(db.Float())
     pct_women = db.Column(db.Float())
 
+
 class Grads(BaseIpeds):
     __abstract__ = True
     grads_total = db.Column(db.Integer())
-    grads_men =  db.Column(db.Integer())
+    grads_men = db.Column(db.Integer())
     grads_women = db.Column(db.Integer())
     grads_native = db.Column(db.Integer())
     grads_native_men = db.Column(db.Integer())
@@ -78,15 +82,17 @@ class Grads(BaseIpeds):
     grads_nonresident_men = db.Column(db.Integer())
     grads_nonresident_women = db.Column(db.Integer())
 
+
 class GeoId(object):
     LEVELS = [NATION, STATE, COUNTY, PLACE, MSA, PUMA, ALL]
+
     @declared_attr
     def geo(cls):
         return db.Column(db.String(), db.ForeignKey(Geo.id), primary_key=True)
 
     @classmethod
     def get_supported_levels(cls):
-        return {GEO: LEVELS}
+        return {GEO: GeoId.LEVELS}
 
     @classmethod
     def geo_filter(cls, level):
@@ -97,8 +103,10 @@ class GeoId(object):
         level_code = level_map[level]
         return cls.geo.startswith(level_code)
 
+
 class CipId(object):
     LEVELS = ["2", "4", "6", "all"]
+
     @declared_attr
     def cip(cls):
         return db.Column(db.String(), db.ForeignKey(Cip.id), primary_key=True)
@@ -113,6 +121,7 @@ class CipId(object):
             return True
         return func.length(cls.cip) == level
 
+
 class UniversityId(object):
     @declared_attr
     def university(cls):
@@ -122,10 +131,12 @@ class UniversityId(object):
     def get_supported_levels(cls):
         return {"university": ["all"]}
 
+
 class DegreeId(object):
     @declared_attr
     def degree(cls):
         return db.Column(db.String(), db.ForeignKey(Degree.id), primary_key=True)
+
 
 class SectorId(object):
     @declared_attr
