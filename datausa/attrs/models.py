@@ -57,7 +57,7 @@ class University(BaseAttr, ImageAttr):
     sector = db.Column(db.String)
     opeid8 = db.Column(db.String)
     status = db.Column(db.String)
-
+    carnegie = db.Column(db.String)
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
 
