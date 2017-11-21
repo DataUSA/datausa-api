@@ -1,4 +1,4 @@
-from datausa import app
+import re
 from flask import Blueprint, request, jsonify, abort
 
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
@@ -10,20 +10,18 @@ from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import LStudy, EnrollmentStatus
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
-from datausa.attrs.models import AgeBucket, Insurance, Cohort, Sctg, Napcs
+from datausa.attrs.models import Insurance, Cohort, Sctg, Napcs
 from datausa.attrs.models import Opeid6, SchoolType, EthnicCode, ProgramLength
-from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
+from datausa.attrs.consts import GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
 from datausa.database import db
-import re
+
 
 def to_bool(x):
     return x and x.lower() == "true"
 
 
-
-
-attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
+attr_map = {"soc": PumsSoc, "naics": PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
             "skill": Skill, "sector": Sector,
             "pums_degree": PumsDegree,
@@ -39,6 +37,7 @@ attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "ethnic_code": EthnicCode, "program_length": ProgramLength,
             "school_type": SchoolType,
             "lstudy": LStudy, "enrollment_status": EnrollmentStatus}
+
 
 def show_attrs(attr_obj, sumlevels=None):
     if sumlevels is not None:
@@ -62,13 +61,16 @@ def show_attrs(attr_obj, sumlevels=None):
             headers = obj.keys()
     return jsonify(data=data, headers=headers)
 
+
 @mod.route("/pums/<kind>/")
 def pums_attrs(kind):
     return attrs("pums_{}".format(kind))
 
+
 @mod.route("/pums/<kind>/<pums_attr_id>/")
 def pums_attr_id(kind, pums_attr_id):
     return attrs_by_id("pums_{}".format(kind), pums_attr_id)
+
 
 @mod.route("/<kind>/")
 def attrs(kind):
@@ -79,6 +81,7 @@ def attrs(kind):
         sumlevels = sumlevel.split(",") if sumlevel else None
         return show_attrs(attr_obj, sumlevels=sumlevels)
     raise Exception("Invalid attribute type.")
+
 
 @mod.route("/<kind>/<attr_id>/")
 def attrs_by_id(kind, attr_id):
@@ -93,9 +96,11 @@ def attrs_by_id(kind, attr_id):
         return jsonify(data=[tmp.values()], headers=tmp.keys())
     raise Exception("Invalid attribute type.")
 
+
 @mod.route("/list/")
 def attrs_list():
     return jsonify(data=attr_map.keys())
+
 
 @mod.route("/<kind>/<attr_id>/parents/")
 def get_parents(kind, attr_id):
@@ -135,6 +140,7 @@ def search():
     autocorrected = tries > 0
     suggs = [x for x in suggs if x != txt]
     return jsonify(data=data, headers=headers, suggestions=suggs, autocorrected=autocorrected, related_vars=my_vars)
+
 
 @mod.route("/search_old/")
 def search_old():
@@ -227,6 +233,7 @@ def has_ipeds_data(attr_id):
         geo_id = row[id_idx]
         if geo_id in ipeds_places:
             return jsonify(data=[geo_id], headers=[GEO])
+
 
 @mod.route("/crosswalk/<attr_kind>/<attr_id>/")
 def crosswalk_acs(attr_kind, attr_id):
