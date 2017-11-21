@@ -2,6 +2,7 @@ from datausa.database import db
 from datausa.ipeds.abstract_models import Enrollment, CipId, UniversityId
 from datausa.ipeds.abstract_models import Tuition, GeoId, SectorId, BaseIpeds
 from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct, Admissions
+from datausa.ipeds.abstract_models import EnrollmentEfa, LStudyId, EnrollmentStatusId
 from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
 from datausa.attrs.consts import PLACE, ALL
 
@@ -261,3 +262,43 @@ class AdmissionsY(Admissions):
     @classmethod
     def get_supported_levels(cls):
         return {"year": [ALL]}
+
+
+class EnrollmentEfaYule(EnrollmentEfa, UniversityId, LStudyId, EnrollmentStatusId):
+    __tablename__ = "enrollment_efa_yule"
+    year = db.Column(db.Integer(), primary_key=True)
+    median_moe = 3
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL], "university": UniversityId.LEVELS, "enrollment_status": [ALL], "lstudy": [ALL]}
+
+
+class EnrollmentEfaYul(EnrollmentEfa, UniversityId, LStudyId):
+    __tablename__ = "enrollment_efa_yul"
+    year = db.Column(db.Integer(), primary_key=True)
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL], "university": UniversityId.LEVELS, "lstudy": [ALL]}
+
+
+class EnrollmentEfaYue(EnrollmentEfa, UniversityId, EnrollmentStatusId):
+    __tablename__ = "enrollment_efa_yue"
+    year = db.Column(db.Integer(), primary_key=True)
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL], "university": UniversityId.LEVELS, "enrollment_status": [ALL]}
+
+
+class EnrollmentEfaYu(EnrollmentEfa, UniversityId):
+    __tablename__ = "enrollment_efa_yu"
+    year = db.Column(db.Integer(), primary_key=True)
+    median_moe = 1
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL], "university": UniversityId.LEVELS}

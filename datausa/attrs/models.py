@@ -6,6 +6,7 @@ from sqlalchemy.sql import text
 from datausa.attrs.consts import ALL
 from datausa.core.models import BaseModel
 
+
 class BaseAttr(db.Model):
     __abstract__ = True
     __table_args__ = {"schema": "attrs"}
@@ -481,8 +482,9 @@ class IndCrosswalk(db.Model):
 class ProductCrosswalk(db.Model):
     __tablename__ = 'napcs_sctg_xwalk'
     __table_args__ = {"schema": "attrs"}
-    sctg = db.Column(db.String,  db.ForeignKey(Sctg.id), primary_key=True)
+    sctg = db.Column(db.String, db.ForeignKey(Sctg.id), primary_key=True)
     napcs = db.Column(db.String, db.ForeignKey(Napcs.id), primary_key=True)
+
 
 class UniversityCrosswalk(db.Model, BaseModel):
     __tablename__ = 'unitid_to_opeid6'
@@ -514,3 +516,11 @@ class ProgramLength(BaseAttr):
 
 class EthnicCode(BaseAttr):
     __tablename__ = 'ethnic_code'
+
+
+class LStudy(BaseAttr):
+    __tablename__ = 'lstudy'
+
+
+class EnrollmentStatus(BaseAttr):
+    __tablename__ = 'enrollment_status'

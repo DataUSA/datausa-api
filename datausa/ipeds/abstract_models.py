@@ -1,6 +1,6 @@
 from datausa.database import db
-from datausa.attrs.models import University, Cip, Geo
-from datausa.attrs.models import Degree, Sector
+from datausa.attrs.models import University, Cip, Geo, EnrollmentStatus
+from datausa.attrs.models import Degree, Sector, LStudy
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
 from datausa.attrs.consts import PUMA, PLACE, ALL, GEO
@@ -123,6 +123,9 @@ class CipId(object):
 
 
 class UniversityId(object):
+    LEVELS = ["all", "0", "1", "2"]
+    # TODO add university level filter ...
+
     @declared_attr
     def university(cls):
         return db.Column(db.String(), db.ForeignKey(University.id), primary_key=True)
@@ -130,6 +133,18 @@ class UniversityId(object):
     @classmethod
     def get_supported_levels(cls):
         return {"university": ["all"]}
+
+
+class LStudyId(object):
+    @declared_attr
+    def lstudy(cls):
+        return db.Column(db.String(), db.ForeignKey(LStudy.id), primary_key=True)
+
+
+class EnrollmentStatusId(object):
+    @declared_attr
+    def enrollment_status(cls):
+        return db.Column(db.String(), db.ForeignKey(EnrollmentStatus.id), primary_key=True)
 
 
 class DegreeId(object):
@@ -183,3 +198,37 @@ class Admissions(BaseIpeds):
     act_math_75 = db.Column(db.Float)
     act_writing_25 = db.Column(db.Float)
     act_writing_75 = db.Column(db.Float)
+
+
+class EnrollmentEfa(BaseIpeds):
+    __abstract__ = True
+    enrolled_total = db.Column(db.Float)
+    enrolled_men = db.Column(db.Float)
+    enrolled_women = db.Column(db.Float)
+    enrolled_native = db.Column(db.Float)
+    enrolled_native_men = db.Column(db.Float)
+    enrolled_native_women = db.Column(db.Float)
+    enrolled_asian = db.Column(db.Float)
+    enrolled_asian_men = db.Column(db.Float)
+    enrolled_asian_women = db.Column(db.Float)
+    enrolled_black = db.Column(db.Float)
+    enrolled_black_men = db.Column(db.Float)
+    enrolled_black_women = db.Column(db.Float)
+    enrolled_hispanic = db.Column(db.Float)
+    enrolled_hispanic_men = db.Column(db.Float)
+    enrolled_hispanic_women = db.Column(db.Float)
+    enrolled_hawaiian = db.Column(db.Float)
+    enrolled_hawaiian_men = db.Column(db.Float)
+    enrolled_enrolled_hawaiian_women = db.Column(db.Float)
+    enrolled_white = db.Column(db.Float)
+    enrolled_white_men = db.Column(db.Float)
+    enrolled_white_women = db.Column(db.Float)
+    enrolled_multiracial = db.Column(db.Float)
+    enrolled_multiracial_men = db.Column(db.Float)
+    enrolled_multiracial_women = db.Column(db.Float)
+    enrolled_unknown = db.Column(db.Float)
+    enrolled_unknown_men = db.Column(db.Float)
+    enrolled_unknown_women = db.Column(db.Float)
+    enrolled_nonresident = db.Column(db.Float)
+    enrolled_nonresident_men = db.Column(db.Float)
+    enrolled_nonresident_women = db.Column(db.Float)
