@@ -14,7 +14,7 @@ from datausa.attrs.models import AgeBucket, Insurance, Cohort, Sctg, Napcs
 from datausa.attrs.models import Opeid6, SchoolType, EthnicCode, ProgramLength
 from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
-
+from datausa.database import db
 import re
 
 def to_bool(x):
@@ -246,12 +246,18 @@ def crosswalk_acs(attr_kind, attr_id):
         results = [[getattr(item, col_name), header_name] for item in results]
     return jsonify(data=results, headers=["attr_id", "attr_kind"])
 
+
 @mod.route("/nearby/university/<university_id>")
 def nearby_university(university_id):
+    limit = 5
     univ = University.query.get(university_id)
-    distance_m = 3000 # max distance in meters
-    query = University.query.filter("ST_Distance(ST_SetSrid(ST_MakePoint(lat, lng), 4326)::geography, ST_SetSrid(ST_MakePoint(:lat, :lng), 4326)::geography) < :distance").params(lat=univ.lat, lng=univ.lng, distance=distance_m)
-    query = query.filter(University.status != 'D').filter(University.id != university_id) # exclude inactive and self
-    data = [[x.name, x.id] for x in query]
-    headers = ["name", "id"]
+    query_str = """SELECT id, name
+        FROM attrs.university
+        where carnegie = :carnegie AND status != 'D'
+        ORDER BY ST_MakePoint(:lat, :lng) <-> st_makepoint(lat, lng)
+        LIMIT :limit;
+    """
+    res = db.session.execute(query_str, {"lat": univ.lat, "lng": univ.lng, "carnegie": univ.carnegie, "limit": limit})
+    data = [map(unicode, x) for x in res]
+    headers = ["id", "name"]
     return jsonify(data=data, headers=headers)
