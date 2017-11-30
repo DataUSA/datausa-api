@@ -208,6 +208,9 @@ class Admissions(BaseIpeds):
     act_math_75 = db.Column(db.Float)
     act_writing_25 = db.Column(db.Float)
     act_writing_75 = db.Column(db.Float)
+    yield_total = db.Column(db.Float)
+    yield_men = db.Column(db.Float)
+    yield_women = db.Column(db.Float)
 
 
 class EnrollmentEfa(BaseIpeds):
