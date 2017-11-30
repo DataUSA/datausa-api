@@ -1,5 +1,5 @@
 from datausa.database import db
-from datausa.ipeds.abstract_models import Enrollment, CipId, UniversityId
+from datausa.ipeds.abstract_models import CipId, UniversityId
 from datausa.ipeds.abstract_models import Tuition, GeoId, SectorId, BaseIpeds
 from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct, Admissions
 from datausa.ipeds.abstract_models import EnrollmentEfa, LStudyId, EnrollmentStatusId
@@ -7,16 +7,16 @@ from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
 from datausa.attrs.consts import PLACE, ALL
 
 
-class EnrollmentYcu(Enrollment, CipId, UniversityId):
-    __tablename__ = "enrollment_ycu"
-    median_moe = 2.1
-
-    year = db.Column(db.Integer(), primary_key=True)
-    grads_total = db.Column(db.Integer())
-
-    @classmethod
-    def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "university": [ALL]}
+# class EnrollmentYcu(Enrollment, CipId, UniversityId):
+#     __tablename__ = "enrollment_ycu"
+#     median_moe = 2.1
+#
+#     year = db.Column(db.Integer(), primary_key=True)
+#     grads_total = db.Column(db.Integer())
+#
+#     @classmethod
+#     def get_supported_levels(cls):
+#         return {"cip": CipId.LEVELS, "university": [ALL]}
 
 
 class TuitionYgs(Tuition, GeoId, SectorId):
