@@ -130,9 +130,19 @@ class UniversityId(object):
     def university(cls):
         return db.Column(db.String(), db.ForeignKey(University.id), primary_key=True)
 
+    @declared_attr
+    def university_level(cls):
+        return db.Column(db.Integer())
+
     @classmethod
     def get_supported_levels(cls):
-        return {"university": ["all"]}
+        return {"university": UniversityId.LEVELS}
+
+    @classmethod
+    def university_filter(cls, level):
+        if level == 'all':
+            return True
+        return cls.university_level == level
 
 
 class LStudyId(object):

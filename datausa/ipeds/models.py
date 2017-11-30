@@ -251,7 +251,7 @@ class AdmissionsYu(Admissions, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"university": [ALL]}
+        return {"university": UniversityId.LEVELS}
 
 
 class AdmissionsY(Admissions):
