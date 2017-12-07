@@ -1,6 +1,6 @@
 from datausa.database import db
 from datausa.attrs.models import University, Cip, Geo, EnrollmentStatus
-from datausa.attrs.models import Degree, Sector, LStudy
+from datausa.attrs.models import Degree, Sector, LStudy, IPedsRace
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
 from datausa.attrs.consts import PUMA, PLACE, ALL, GEO
@@ -213,35 +213,12 @@ class Admissions(BaseIpeds):
     yield_women = db.Column(db.Float)
 
 
+class IPedsRaceId(object):
+    @declared_attr
+    def ipeds_race(cls):
+        return db.Column(db.String(), db.ForeignKey(IPedsRace.id), primary_key=True)
+
+
 class EnrollmentEfa(BaseIpeds):
     __abstract__ = True
-    enrolled_total = db.Column(db.Float)
-    enrolled_men = db.Column(db.Float)
-    enrolled_women = db.Column(db.Float)
-    enrolled_native = db.Column(db.Float)
-    enrolled_native_men = db.Column(db.Float)
-    enrolled_native_women = db.Column(db.Float)
-    enrolled_asian = db.Column(db.Float)
-    enrolled_asian_men = db.Column(db.Float)
-    enrolled_asian_women = db.Column(db.Float)
-    enrolled_black = db.Column(db.Float)
-    enrolled_black_men = db.Column(db.Float)
-    enrolled_black_women = db.Column(db.Float)
-    enrolled_hispanic = db.Column(db.Float)
-    enrolled_hispanic_men = db.Column(db.Float)
-    enrolled_hispanic_women = db.Column(db.Float)
-    enrolled_hawaiian = db.Column(db.Float)
-    enrolled_hawaiian_men = db.Column(db.Float)
-    enrolled_enrolled_hawaiian_women = db.Column(db.Float)
-    enrolled_white = db.Column(db.Float)
-    enrolled_white_men = db.Column(db.Float)
-    enrolled_white_women = db.Column(db.Float)
-    enrolled_multiracial = db.Column(db.Float)
-    enrolled_multiracial_men = db.Column(db.Float)
-    enrolled_multiracial_women = db.Column(db.Float)
-    enrolled_unknown = db.Column(db.Float)
-    enrolled_unknown_men = db.Column(db.Float)
-    enrolled_unknown_women = db.Column(db.Float)
-    enrolled_nonresident = db.Column(db.Float)
-    enrolled_nonresident_men = db.Column(db.Float)
-    enrolled_nonresident_women = db.Column(db.Float)
+    num_enrolled = db.Column(db.Float)
