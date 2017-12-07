@@ -524,3 +524,7 @@ class LStudy(BaseAttr):
 
 class EnrollmentStatus(BaseAttr):
     __tablename__ = 'enrollment_status'
+
+
+class IPedsRace(BaseAttr):
+    __tablename__ = 'ipeds_race'

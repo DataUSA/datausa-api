@@ -10,7 +10,7 @@ from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
 from datausa.attrs.models import LStudy, EnrollmentStatus
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
-from datausa.attrs.models import Insurance, Cohort, Sctg, Napcs
+from datausa.attrs.models import Insurance, Cohort, Sctg, Napcs, IPedsRace
 from datausa.attrs.models import Opeid6, SchoolType, EthnicCode, ProgramLength
 from datausa.attrs.consts import GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
@@ -36,7 +36,8 @@ attr_map = {"soc": PumsSoc, "naics": PumsNaics, "cip": Cip,
             "sctg": Sctg, "napcs": Napcs, "opeid6": Opeid6,
             "ethnic_code": EthnicCode, "program_length": ProgramLength,
             "school_type": SchoolType,
-            "lstudy": LStudy, "enrollment_status": EnrollmentStatus}
+            "lstudy": LStudy, "enrollment_status": EnrollmentStatus,
+            "ipeds_race": IPedsRace}
 
 
 def show_attrs(attr_obj, sumlevels=None):
