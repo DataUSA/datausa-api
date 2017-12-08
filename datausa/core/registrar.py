@@ -42,7 +42,7 @@ registered_models = [
     EnrollmentEfaYue,
     EnrollmentEfaYul,
     EnrollmentEfaYur,
-    LivingArrangementSfaYa, LivingArrangementSfaYua,
+    LivingArrangementSfaYa, LivingArrangementSfaYu, LivingArrangementSfaYua,
 
     # ONET
     SkillByCip, SkillBySoc,

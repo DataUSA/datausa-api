@@ -344,6 +344,18 @@ class EnrollmentEfaYusrle(EnrollmentEfa, UniversityId, SexId, IPedsRaceId, LStud
                 "enrollment_status": [ALL]}
 
 
+class LivingArrangementSfaYu(SfaLivingBase, UniversityId):
+    __tablename__ = "living_sfa_yu"
+    year = db.Column(db.Integer(), primary_key=True)
+
+    median_moe = 1
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": [ALL]}
+
+
 class LivingArrangementSfaYa(SfaLivingBase, LivingArrangementId):
     __tablename__ = "living_sfa_ya"
     year = db.Column(db.Integer(), primary_key=True)
