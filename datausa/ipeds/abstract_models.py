@@ -1,6 +1,7 @@
 from datausa.database import db
 from datausa.attrs.models import University, Cip, Geo, EnrollmentStatus
 from datausa.attrs.models import Degree, Sector, LStudy, IPedsRace
+from datausa.attrs.models import LivingArrangement
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
 from datausa.attrs.consts import PUMA, PLACE, ALL, GEO
@@ -222,3 +223,14 @@ class IPedsRaceId(object):
 class EnrollmentEfa(BaseIpeds):
     __abstract__ = True
     num_enrolled = db.Column(db.Float)
+
+
+class LivingArrangementId(object):
+    @declared_attr
+    def living_arrangement(cls):
+        return db.Column(db.String(), db.ForeignKey(LivingArrangement.id), primary_key=True)
+
+
+class SfaLivingBase(BaseIpeds):
+    __abstract__ = True
+    num_in_living_arrangement = db.Column(db.Float)

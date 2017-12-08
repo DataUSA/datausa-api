@@ -3,6 +3,7 @@ from datausa.ipeds.abstract_models import CipId, UniversityId
 from datausa.ipeds.abstract_models import Tuition, GeoId, SectorId, BaseIpeds
 from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct, Admissions
 from datausa.ipeds.abstract_models import EnrollmentEfa, LStudyId, EnrollmentStatusId, IPedsRaceId
+from datausa.ipeds.abstract_models import SfaLivingBase, LivingArrangementId
 from datausa.pums.abstract_models import SexId
 
 from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
@@ -341,3 +342,28 @@ class EnrollmentEfaYusrle(EnrollmentEfa, UniversityId, SexId, IPedsRaceId, LStud
                 "ipeds_race": [ALL],
                 "lstudy": [ALL],
                 "enrollment_status": [ALL]}
+
+
+class LivingArrangementSfaYa(SfaLivingBase, LivingArrangementId):
+    __tablename__ = "living_sfa_ya"
+    year = db.Column(db.Integer(), primary_key=True)
+
+    median_moe = 1
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "living_arrangement": [ALL]}
+
+
+class LivingArrangementSfaYua(SfaLivingBase, UniversityId, LivingArrangementId):
+    __tablename__ = "living_sfa_yua"
+    year = db.Column(db.Integer(), primary_key=True)
+
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS,
+                "living_arrangement": [ALL]}
