@@ -528,3 +528,8 @@ class EnrollmentStatus(BaseAttr):
 
 class IPedsRace(BaseAttr):
     __tablename__ = 'ipeds_race'
+
+
+class LivingArrangement(BaseAttr):
+    __tablename__ = 'living_arrangement'
+    group = db.Column(db.String)
