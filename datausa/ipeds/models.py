@@ -3,7 +3,7 @@ from datausa.ipeds.abstract_models import CipId, UniversityId
 from datausa.ipeds.abstract_models import Tuition, GeoId, SectorId, BaseIpeds
 from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct, Admissions
 from datausa.ipeds.abstract_models import EnrollmentEfa, LStudyId, EnrollmentStatusId, IPedsRaceId
-from datausa.ipeds.abstract_models import SfaLivingBase, LivingArrangementId
+from datausa.ipeds.abstract_models import SfaLivingBase, GradRateBase, LivingArrangementId
 from datausa.pums.abstract_models import SexId
 
 from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
@@ -19,7 +19,7 @@ from datausa.attrs.consts import PLACE, ALL
 #
 #     @classmethod
 #     def get_supported_levels(cls):
-#         return {"cip": CipId.LEVELS, "university": [ALL]}
+#         return {"cip": CipId.LEVELS, "university": UniversityId.LEVELS}
 
 
 class TuitionYgs(Tuition, GeoId, SectorId):
@@ -50,7 +50,7 @@ class TuitionYu(Tuition, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"university": [ALL]}
+        return {"university": UniversityId.LEVELS}
 
 
 class TuitionYcu(Tuition, CipId, UniversityId):
@@ -62,7 +62,7 @@ class TuitionYcu(Tuition, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "university": [ALL]}
+        return {"cip": CipId.LEVELS, "university": UniversityId.LEVELS}
 
 
 class TuitionYcs(Tuition, CipId, SectorId):
@@ -108,7 +108,7 @@ class GradsYu(Grads, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"university": [ALL]}
+        return {"university": UniversityId.LEVELS}
 
 
 class GradsYcu(Grads, CipId, UniversityId):
@@ -121,7 +121,7 @@ class GradsYcu(Grads, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "university": [ALL],
+        return {"cip": CipId.LEVELS, "university": UniversityId.LEVELS,
                 GEO: [STATE, COUNTY, MSA, PLACE, ALL]}
 
 
@@ -159,7 +159,7 @@ class GradsYgu(Grads, GeoId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"university": [ALL], GEO: GeoId.LEVELS}
+        return {"university": UniversityId.LEVELS, GEO: GeoId.LEVELS}
 
 
 class GradsYgs(Grads, GeoId, SectorId):
@@ -183,7 +183,7 @@ class GradsYud(Grads, UniversityId, DegreeId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"university": [ALL], "degree": [ALL]}
+        return {"university": UniversityId.LEVELS, "degree": [ALL]}
 
 
 class GradsYucd(Grads, UniversityId, CipId, DegreeId):
@@ -195,7 +195,7 @@ class GradsYucd(Grads, UniversityId, CipId, DegreeId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"university": [ALL], "degree": [ALL], "cip": CipId.LEVELS}
+        return {"university": UniversityId.LEVELS, "degree": [ALL], "cip": CipId.LEVELS}
 
 
 class GradsYgd(Grads, GeoId, DegreeId):
@@ -233,7 +233,7 @@ class GradsPctYcu(GradsPct, CipId, UniversityId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"cip": CipId.LEVELS, "university": [ALL]}
+        return {"cip": CipId.LEVELS, "university": UniversityId.LEVELS}
 
 
 class UnivGeo(BaseIpeds, UniversityId, GeoId):
@@ -242,7 +242,7 @@ class UnivGeo(BaseIpeds, UniversityId, GeoId):
 
     @classmethod
     def get_supported_levels(cls):
-        return {"university": [ALL],
+        return {"university": UniversityId.LEVELS,
                 GEO: [STATE, COUNTY, MSA, PLACE, ALL]}
 
 
@@ -353,7 +353,7 @@ class LivingArrangementSfaYu(SfaLivingBase, UniversityId):
     @classmethod
     def get_supported_levels(cls):
         return {"year": [ALL],
-                "university": [ALL]}
+                "university": UniversityId.LEVELS}
 
 
 class LivingArrangementSfaYa(SfaLivingBase, LivingArrangementId):
@@ -379,3 +379,59 @@ class LivingArrangementSfaYua(SfaLivingBase, UniversityId, LivingArrangementId):
         return {"year": [ALL],
                 "university": UniversityId.LEVELS,
                 "living_arrangement": [ALL]}
+
+
+class GradRateGrYu(GradRateBase, UniversityId):
+    __tablename__ = "gradrate_gr_yu"
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    median_moe = 1
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS}
+
+
+class GradRateGrYur(GradRateBase, UniversityId, IPedsRaceId):
+    __tablename__ = "gradrate_gr_yur"
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS,
+                "ipeds_race": [ALL]}
+
+
+class GradRateGrYus(GradRateBase, UniversityId, SexId):
+    __tablename__ = "gradrate_gr_yus"
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    median_moe = 2
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS,
+                "sex": [ALL]}
+
+
+class GradRateGrYusr(GradRateBase, UniversityId, SexId, IPedsRaceId):
+    __tablename__ = "gradrate_gr_yusr"
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    median_moe = 3
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS,
+                "sex": [ALL],
+                "ipeds_race": [ALL]}

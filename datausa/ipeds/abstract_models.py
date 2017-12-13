@@ -234,3 +234,10 @@ class LivingArrangementId(object):
 class SfaLivingBase(BaseIpeds):
     __abstract__ = True
     num_in_living_arrangement = db.Column(db.Float)
+
+
+class GradRateBase(BaseIpeds):
+    __abstract__ = True
+    grad_rate = db.Column(db.Float)
+    cohort_size = db.Column(db.Float)
+    num_finishers = db.Column(db.Float)
