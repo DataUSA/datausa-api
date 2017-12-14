@@ -4,6 +4,7 @@ from datausa.ipeds.abstract_models import Tuition, GeoId, SectorId, BaseIpeds
 from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct, Admissions
 from datausa.ipeds.abstract_models import EnrollmentEfa, LStudyId, EnrollmentStatusId, IPedsRaceId
 from datausa.ipeds.abstract_models import SfaLivingBase, GradRateBase, LivingArrangementId
+from datausa.ipeds.abstract_models import FinancialsBase
 from datausa.pums.abstract_models import SexId
 
 from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
@@ -435,3 +436,16 @@ class GradRateGrYusr(GradRateBase, UniversityId, SexId, IPedsRaceId):
                 "university": UniversityId.LEVELS,
                 "sex": [ALL],
                 "ipeds_race": [ALL]}
+
+
+class FinancialsYu(FinancialsBase, UniversityId):
+    __tablename__ = "financials_yu"
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    median_moe = 1
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS}

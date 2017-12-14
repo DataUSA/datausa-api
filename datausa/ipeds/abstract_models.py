@@ -241,3 +241,20 @@ class GradRateBase(BaseIpeds):
     grad_rate = db.Column(db.Float)
     cohort_size = db.Column(db.Float)
     num_finishers = db.Column(db.Float)
+
+
+class FinancialsBase(BaseIpeds):
+    __abstract__ = True
+    research_total = db.Column(db.Float)
+    state_grants = db.Column(db.Float)
+    endowment_value_fiscal_year_end = db.Column(db.Float)
+    investment_income = db.Column(db.Float)
+    state_grants_and_contracts = db.Column(db.Float)
+    private_grants = db.Column(db.Float)
+    other_federal_grants = db.Column(db.Float)
+    federal_grants_and_contracts = db.Column(db.Float)
+    total_expenses = db.Column(db.Float)
+    tuition_and_fees = db.Column(db.Float)
+    local_grants = db.Column(db.Float)
+    pell_grants = db.Column(db.Float)
+    local_grants_and_contracts = db.Column(db.Float)
