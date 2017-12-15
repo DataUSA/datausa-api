@@ -537,3 +537,7 @@ class LivingArrangement(BaseAttr):
 
 class IncomeRange(BaseAttr):
     __tablename__ = 'income_range'
+
+
+class Carnegie(BaseAttr):
+    __tablename__ = 'carnegie'
