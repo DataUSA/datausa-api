@@ -46,6 +46,7 @@ registered_models = [
     GradRateGrYu, GradRateGrYur, GradRateGrYus, GradRateGrYusr,
     FinancialsYu,
     AidSfaYui, UniversitySfaYu,
+    FinancialsEndowmentQuintilesYu,
     # ONET
     SkillByCip, SkillBySoc,
 

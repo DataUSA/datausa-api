@@ -1,5 +1,6 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
 from datausa.attrs.models import GeoContainment, Soc, GeoCrosswalker
+from datausa.attrs.models import Carnegie, University
 from datausa.bls.models import BlsCrosswalk, GrowthI, GrowthILookup, CesYi
 from datausa.pums.abstract_models import BasePums, BasePums5
 from datausa.acs.models import Acs1_Ygi_Health
@@ -199,7 +200,9 @@ def crosswalk(table, api_obj):
         {"column": "geo", "schema": "chr", "mapping": chr_parents},
         {"column": "geo", "schema": "dartmouth", "mapping": chr_parents},
         {"column": "origin_geo", "schema": "freight", "mapping": freight_parents},
-        {"column": "destination_geo", "schema": "freight", "mapping": freight_parents}
+        {"column": "destination_geo", "schema": "freight", "mapping": freight_parents},
+        {"column": "university", "schema": "ipeds", "mapping": university_to_carnegie, "__virtual_schema__": "carnegie_level_data"},
+
     ]
 
     exclusives = {r["table"]: True for r in registered_crosswalks if "table" in r}
@@ -261,6 +264,15 @@ def onet_cip_parents(attr_id, **kwargs):
             if attr_id in onet_data:
                 return attr_id
     return orig_id
+
+
+def university_to_carnegie(attr_id, **kwargs):
+    qry = Carnegie.query.all()
+    carnegie_ids = [x.id for x in qry]
+    if attr_id in carnegie_ids:
+        return attr_id
+    result = University.query.get(attr_id)
+    return result.carnegie
 
 
 naics_map = pums_naics_mapping()

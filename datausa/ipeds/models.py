@@ -483,3 +483,20 @@ class FinancialsYu(FinancialsBase, UniversityId):
     def get_supported_levels(cls):
         return {"year": [ALL],
                 "university": UniversityId.LEVELS}
+
+
+class FinancialsEndowmentQuintilesYu(BaseIpeds, UniversityId):
+    __tablename__ = "financials_endowmentquintiles_yu"
+    __virtual_schema__ = "carnegie_level_data"
+
+    year = db.Column(db.Integer(), primary_key=True)
+    endowment_quintile_value = db.Column(db.Float)
+    endowment_quintile = db.Column(db.Float)
+
+    median_moe = 1
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "endowment_quintile": [ALL],
+                "university": [ALL, "0", "1"]}  # no quintiles for individual universities
