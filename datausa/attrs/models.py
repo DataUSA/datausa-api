@@ -533,3 +533,7 @@ class IPedsRace(BaseAttr):
 class LivingArrangement(BaseAttr):
     __tablename__ = 'living_arrangement'
     group = db.Column(db.String)
+
+
+class IncomeRange(BaseAttr):
+    __tablename__ = 'income_range'
