@@ -47,6 +47,7 @@ registered_models = [
     FinancialsYu,
     AidSfaYui, UniversitySfaYu,
     FinancialsEndowmentQuintilesYu,
+    RetentionEfdYu,
     # ONET
     SkillByCip, SkillBySoc,
 

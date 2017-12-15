@@ -500,3 +500,21 @@ class FinancialsEndowmentQuintilesYu(BaseIpeds, UniversityId):
         return {"year": [ALL],
                 "endowment_quintile": [ALL],
                 "university": [ALL, "0", "1"]}  # no quintiles for individual universities
+
+
+class RetentionEfdYu(BaseIpeds, UniversityId):
+    __tablename__ = "retention_efd_yu"
+
+    year = db.Column(db.Integer(), primary_key=True)
+
+    retention_rate_ft = db.Column(db.Float)
+    retention_rate_pt = db.Column(db.Float)
+
+    student_faculty_ratio = db.Column(db.Float)
+
+    median_moe = 1
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS}
