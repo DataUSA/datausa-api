@@ -4,7 +4,7 @@ from datausa.ipeds.abstract_models import Tuition, GeoId, SectorId, BaseIpeds
 from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct, Admissions
 from datausa.ipeds.abstract_models import EnrollmentEfa, LStudyId, EnrollmentStatusId, IPedsRaceId
 from datausa.ipeds.abstract_models import SfaLivingBase, GradRateBase, LivingArrangementId
-from datausa.ipeds.abstract_models import FinancialsBase
+from datausa.ipeds.abstract_models import FinancialsBase, IncomeRangeId
 from datausa.pums.abstract_models import SexId
 
 from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
@@ -436,6 +436,40 @@ class GradRateGrYusr(GradRateBase, UniversityId, SexId, IPedsRaceId):
                 "university": UniversityId.LEVELS,
                 "sex": [ALL],
                 "ipeds_race": [ALL]}
+
+
+class UniversitySfaYu(BaseIpeds, UniversityId):
+    __tablename__ = "university_sfa_yu"
+    median_moe = 1
+
+    year = db.Column(db.Integer(), primary_key=True)
+    num_fed_loans = db.Column(db.Float)
+    pct_fed_loans = db.Column(db.Float)
+    pct_with_aid = db.Column(db.Float)
+    total_fed_loans = db.Column(db.Float)
+    avg_netprice_gos_aid = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS}
+
+
+class AidSfaYui(BaseIpeds, UniversityId, IncomeRangeId):
+    __tablename__ = "aid_sfa_yui"
+    median_moe = 2
+
+    year = db.Column(db.Integer(), primary_key=True)
+    num_income = db.Column(db.Float)
+    num_gos_award = db.Column(db.Float)
+    avg_gos_award = db.Column(db.Float)
+    avg_netprice_fedaid = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS,
+                "income_range": [ALL]}
 
 
 class FinancialsYu(FinancialsBase, UniversityId):

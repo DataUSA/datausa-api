@@ -45,6 +45,7 @@ registered_models = [
     LivingArrangementSfaYa, LivingArrangementSfaYu, LivingArrangementSfaYua,
     GradRateGrYu, GradRateGrYur, GradRateGrYus, GradRateGrYusr,
     FinancialsYu,
+    AidSfaYui, UniversitySfaYu,
     # ONET
     SkillByCip, SkillBySoc,
 

@@ -1,7 +1,7 @@
 from datausa.database import db
 from datausa.attrs.models import University, Cip, Geo, EnrollmentStatus
 from datausa.attrs.models import Degree, Sector, LStudy, IPedsRace
-from datausa.attrs.models import LivingArrangement
+from datausa.attrs.models import LivingArrangement, IncomeRange
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
 from datausa.attrs.consts import PUMA, PLACE, ALL, GEO
@@ -229,6 +229,12 @@ class LivingArrangementId(object):
     @declared_attr
     def living_arrangement(cls):
         return db.Column(db.String(), db.ForeignKey(LivingArrangement.id), primary_key=True)
+
+
+class IncomeRangeId(object):
+    @declared_attr
+    def income_range(cls):
+        return db.Column(db.String(), db.ForeignKey(IncomeRange.id), primary_key=True)
 
 
 class SfaLivingBase(BaseIpeds):
