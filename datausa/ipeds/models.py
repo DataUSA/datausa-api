@@ -5,6 +5,7 @@ from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct, Admissions
 from datausa.ipeds.abstract_models import EnrollmentEfa, LStudyId, EnrollmentStatusId, IPedsRaceId
 from datausa.ipeds.abstract_models import SfaLivingBase, GradRateBase, LivingArrangementId
 from datausa.ipeds.abstract_models import FinancialsBase, IncomeRangeId
+from datausa.ipeds.abstract_models import NISSalariesBase, IPedsOccId
 from datausa.pums.abstract_models import SexId
 
 from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
@@ -517,4 +518,28 @@ class RetentionEfdYu(BaseIpeds, UniversityId):
     @classmethod
     def get_supported_levels(cls):
         return {"year": [ALL],
+                "university": UniversityId.LEVELS}
+
+
+class NISSalariesYu(NISSalariesBase, UniversityId):
+    __tablename__ = "noninstructional_salaries_yu"
+    median_moe = 1
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS}
+
+
+class NISSalariesYuo(NISSalariesBase, UniversityId, IPedsOccId):
+    __tablename__ = "noninstructional_salaries_yuo"
+    median_moe = 2
+    year = db.Column(db.Integer(), primary_key=True)
+    num_noninstructional_staff_rca = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "ipeds_occ": [ALL],
                 "university": UniversityId.LEVELS}

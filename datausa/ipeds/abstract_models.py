@@ -1,6 +1,6 @@
 from datausa.database import db
 from datausa.attrs.models import University, Cip, Geo, EnrollmentStatus
-from datausa.attrs.models import Degree, Sector, LStudy, IPedsRace
+from datausa.attrs.models import Degree, Sector, LStudy, IPedsRace, IPedsOcc
 from datausa.attrs.models import LivingArrangement, IncomeRange
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
@@ -264,3 +264,15 @@ class FinancialsBase(BaseIpeds):
     local_grants = db.Column(db.Float)
     pell_grants = db.Column(db.Float)
     local_grants_and_contracts = db.Column(db.Float)
+
+
+class NISSalariesBase(BaseIpeds):
+    __abstract__ = True
+    num_noninstructional_staff = db.Column(db.Float)
+    outlays_noninstructional_staff = db.Column(db.Float)
+
+
+class IPedsOccId(object):
+    @declared_attr
+    def ipeds_occ(cls):
+        return db.Column(db.String(), db.ForeignKey(IPedsOcc.id), primary_key=True)
