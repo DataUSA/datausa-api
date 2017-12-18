@@ -541,3 +541,7 @@ class IncomeRange(BaseAttr):
 
 class Carnegie(BaseAttr):
     __tablename__ = 'carnegie'
+
+
+class IPedsOcc(BaseAttr):
+    __tablename__ = 'ipeds_occ'
