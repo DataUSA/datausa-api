@@ -12,6 +12,7 @@ from datausa.attrs.models import LStudy, EnrollmentStatus, LivingArrangement
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
 from datausa.attrs.models import Insurance, Cohort, Sctg, Napcs, IPedsRace
 from datausa.attrs.models import IncomeRange, IPedsOcc, AcademicRank
+from datausa.attrs.models import IPedsToPumsCrosswalk
 from datausa.attrs.models import Opeid6, SchoolType, EthnicCode, ProgramLength
 from datausa.attrs.consts import GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
@@ -243,11 +244,14 @@ def has_ipeds_data(attr_id):
 
 @mod.route("/crosswalk/<attr_kind>/<attr_id>/")
 def crosswalk_acs(attr_kind, attr_id):
-    if attr_kind not in ["acs_occ", "acs_ind", "iocode", "sctg"]:
+    if attr_kind not in ["acs_occ", "acs_ind", "iocode", "sctg", "ipeds_occ"]:
         return abort(404)
     if attr_kind == "sctg":
         results = ProductCrosswalk.query.filter(ProductCrosswalk.sctg == attr_id)
         results = [[item.napcs, "napcs"] for item in results]
+    elif attr_kind == "ipeds_occ":
+        results = IPedsToPumsCrosswalk.query.filter(IPedsToPumsCrosswalk.ipeds_occ == attr_id).all()
+        results = [[item.pums_soc, "soc"] for item in results]
     elif attr_kind == "iocode":
         results = PumsIoCrosswalk.query.filter(PumsIoCrosswalk.iocode == attr_id).all()
         results = [[item.pums_naics, "naics"] for item in results]

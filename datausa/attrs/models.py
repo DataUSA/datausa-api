@@ -334,6 +334,14 @@ class Skill(BaseAttr):
     parent = db.Column(db.String)
 
 
+class IPedsToPumsCrosswalk(db.Model):
+    __tablename__ = 'ipeds_to_pums_soc'
+    __table_args__ = {"schema": "attrs"}
+
+    ipeds_occ = db.Column(db.String, primary_key=True)
+    pums_soc = db.Column(db.String, primary_key=True)
+
+
 class PumsNaicsCrosswalk(db.Model):
     __tablename__ = 'naics_crosswalk'
     __table_args__ = {"schema": "pums_attrs"}
