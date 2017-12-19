@@ -1,7 +1,7 @@
 from datausa.database import db
 from datausa.attrs.models import University, Cip, Geo, EnrollmentStatus
 from datausa.attrs.models import Degree, Sector, LStudy, IPedsRace, IPedsOcc
-from datausa.attrs.models import LivingArrangement, IncomeRange
+from datausa.attrs.models import LivingArrangement, IncomeRange, AcademicRank
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
 from datausa.attrs.consts import PUMA, PLACE, ALL, GEO
@@ -272,7 +272,20 @@ class NISSalariesBase(BaseIpeds):
     outlays_noninstructional_staff = db.Column(db.Float)
 
 
+class ISSalariesBase(BaseIpeds):
+    __abstract__ = True
+    num_instructional_staff = db.Column(db.Float)
+    outlays_instructional_staff = db.Column(db.Float)
+    months_covered_instructional_staff = db.Column(db.Float)
+
+
 class IPedsOccId(object):
     @declared_attr
     def ipeds_occ(cls):
         return db.Column(db.String(), db.ForeignKey(IPedsOcc.id), primary_key=True)
+
+
+class AcademicRankId(object):
+    @declared_attr
+    def academic_rank(cls):
+        return db.Column(db.String(), db.ForeignKey(AcademicRank.id), primary_key=True)

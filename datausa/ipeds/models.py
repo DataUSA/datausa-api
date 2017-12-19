@@ -4,8 +4,8 @@ from datausa.ipeds.abstract_models import Tuition, GeoId, SectorId, BaseIpeds
 from datausa.ipeds.abstract_models import Grads, DegreeId, GradsPct, Admissions
 from datausa.ipeds.abstract_models import EnrollmentEfa, LStudyId, EnrollmentStatusId, IPedsRaceId
 from datausa.ipeds.abstract_models import SfaLivingBase, GradRateBase, LivingArrangementId
-from datausa.ipeds.abstract_models import FinancialsBase, IncomeRangeId
-from datausa.ipeds.abstract_models import NISSalariesBase, IPedsOccId
+from datausa.ipeds.abstract_models import FinancialsBase, IncomeRangeId, AcademicRankId
+from datausa.ipeds.abstract_models import NISSalariesBase, ISSalariesBase, IPedsOccId
 from datausa.pums.abstract_models import SexId
 
 from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
@@ -542,4 +542,52 @@ class NISSalariesYuo(NISSalariesBase, UniversityId, IPedsOccId):
     def get_supported_levels(cls):
         return {"year": [ALL],
                 "ipeds_occ": [ALL],
+                "university": UniversityId.LEVELS}
+
+
+class ISSalariesYu(ISSalariesBase, UniversityId):
+    __tablename__ = "instructional_salaries_yu"
+    median_moe = 1
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "university": UniversityId.LEVELS}
+
+
+class ISSalariesYus(ISSalariesBase, UniversityId, SexId):
+    __tablename__ = "instructional_salaries_yus"
+    median_moe = 2
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "sex": [ALL],
+                "university": UniversityId.LEVELS}
+
+
+class ISSalariesYua(ISSalariesBase, UniversityId, AcademicRankId):
+    __tablename__ = "instructional_salaries_yua"
+    median_moe = 2
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "academic_rank": [ALL],
+                "university": UniversityId.LEVELS}
+
+
+class ISSalariesYuas(ISSalariesBase, UniversityId, AcademicRankId, SexId):
+    __tablename__ = "instructional_salaries_yuas"
+    median_moe = 3
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "academic_rank": [ALL],
+                "sex": [ALL],
                 "university": UniversityId.LEVELS}

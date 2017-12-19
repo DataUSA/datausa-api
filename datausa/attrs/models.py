@@ -545,3 +545,7 @@ class Carnegie(BaseAttr):
 
 class IPedsOcc(BaseAttr):
     __tablename__ = 'ipeds_occ'
+
+
+class AcademicRank(BaseAttr):
+    __tablename__ = 'academic_rank'

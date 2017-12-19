@@ -50,6 +50,10 @@ registered_models = [
     RetentionEfdYu,
     NISSalariesYu,
     NISSalariesYuo,
+    ISSalariesYu,
+    ISSalariesYua,
+    ISSalariesYus,
+    ISSalariesYuas,
     # ONET
     SkillByCip, SkillBySoc,
 
