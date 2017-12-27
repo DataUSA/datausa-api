@@ -270,11 +270,11 @@ def nearby_university(university_id):
     univ = University.query.get(university_id)
     query_str = """SELECT id, name
         FROM attrs.university
-        where carnegie = :carnegie AND status != 'D'
+        where carnegie = :carnegie AND status != 'D' and id != :uid
         ORDER BY ST_MakePoint(:lat, :lng) <-> st_makepoint(lat, lng)
         LIMIT :limit;
     """
-    res = db.session.execute(query_str, {"lat": univ.lat, "lng": univ.lng, "carnegie": univ.carnegie, "limit": limit})
+    res = db.session.execute(query_str, {"lat": univ.lat, "lng": univ.lng, "carnegie": univ.carnegie, "limit": limit, "uid": university_id})
     data = [map(unicode, x) for x in res]
     headers = ["id", "name"]
     return jsonify(data=data, headers=headers)
