@@ -558,5 +558,9 @@ class IPedsOcc(BaseAttr):
     __tablename__ = 'ipeds_occ'
 
 
+class IPedsExpense(BaseAttr):
+    __tablename__ = 'ipeds_expense'
+
+
 class AcademicRank(BaseAttr):
     __tablename__ = 'academic_rank'

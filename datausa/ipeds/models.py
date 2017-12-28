@@ -6,6 +6,7 @@ from datausa.ipeds.abstract_models import EnrollmentEfa, LStudyId, EnrollmentSta
 from datausa.ipeds.abstract_models import SfaLivingBase, GradRateBase, LivingArrangementId
 from datausa.ipeds.abstract_models import FinancialsBase, IncomeRangeId, AcademicRankId
 from datausa.ipeds.abstract_models import NISSalariesBase, ISSalariesBase, IPedsOccId
+from datausa.ipeds.abstract_models import ExpensesBase, IPedsExpenseId
 from datausa.pums.abstract_models import SexId
 
 from datausa.attrs.consts import STATE, COUNTY, MSA, GEO
@@ -590,4 +591,26 @@ class ISSalariesYuas(ISSalariesBase, UniversityId, AcademicRankId, SexId):
         return {"year": [ALL],
                 "academic_rank": [ALL],
                 "sex": [ALL],
+                "university": UniversityId.LEVELS}
+
+
+class ExpensesYu(ExpensesBase, UniversityId):
+    __tablename__ = "expenses_yu"
+    median_moe = 1
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL], "university": UniversityId.LEVELS}
+
+
+class ExpensesYue(ExpensesBase, UniversityId, IPedsExpenseId):
+    __tablename__ = "expenses_yue"
+    median_moe = 2
+    year = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "ipeds_expense": [ALL],
                 "university": UniversityId.LEVELS}

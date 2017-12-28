@@ -12,7 +12,7 @@ from datausa.attrs.models import LStudy, EnrollmentStatus, LivingArrangement
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
 from datausa.attrs.models import Insurance, Cohort, Sctg, Napcs, IPedsRace
 from datausa.attrs.models import IncomeRange, IPedsOcc, AcademicRank
-from datausa.attrs.models import IPedsToPumsCrosswalk, Carnegie
+from datausa.attrs.models import IPedsToPumsCrosswalk, Carnegie, IPedsExpense
 from datausa.attrs.models import Opeid6, SchoolType, EthnicCode, ProgramLength
 from datausa.attrs.consts import GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
@@ -44,6 +44,7 @@ attr_map = {"soc": PumsSoc, "naics": PumsNaics, "cip": Cip,
             "income_range": IncomeRange,
             "academic_rank": AcademicRank,
             "ipeds_occ": IPedsOcc,
+            "ipeds_expense": IPedsExpense,
             "carnegie": Carnegie}
 
 

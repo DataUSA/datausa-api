@@ -2,6 +2,7 @@ from datausa.database import db
 from datausa.attrs.models import University, Cip, Geo, EnrollmentStatus
 from datausa.attrs.models import Degree, Sector, LStudy, IPedsRace, IPedsOcc
 from datausa.attrs.models import LivingArrangement, IncomeRange, AcademicRank
+from datausa.attrs.models import IPedsExpense
 from datausa.core.models import BaseModel
 from datausa.attrs.consts import NATION, STATE, COUNTY, MSA
 from datausa.attrs.consts import PUMA, PLACE, ALL, GEO
@@ -251,19 +252,33 @@ class GradRateBase(BaseIpeds):
 
 class FinancialsBase(BaseIpeds):
     __abstract__ = True
+    endowment_value_fiscal_year_end = db.Column(db.Float)
+    federal_grants_and_contracts = db.Column(db.Float)
+    investment_income = db.Column(db.Float)
+    local_grants = db.Column(db.Float)
+    local_grants_and_contracts = db.Column(db.Float)
+    other_federal_grants = db.Column(db.Float)
+    pell_grants = db.Column(db.Float)
+    private_grants = db.Column(db.Float)
+    research_rank = db.Column(db.Float)
+    research_rank_carnegie = db.Column(db.Float)
+    research_rank_carnegie_pct = db.Column(db.Float)
+    research_rank_pct = db.Column(db.Float)
     research_total = db.Column(db.Float)
     state_grants = db.Column(db.Float)
-    endowment_value_fiscal_year_end = db.Column(db.Float)
-    investment_income = db.Column(db.Float)
     state_grants_and_contracts = db.Column(db.Float)
-    private_grants = db.Column(db.Float)
-    other_federal_grants = db.Column(db.Float)
-    federal_grants_and_contracts = db.Column(db.Float)
     total_expenses = db.Column(db.Float)
     tuition_and_fees = db.Column(db.Float)
-    local_grants = db.Column(db.Float)
-    pell_grants = db.Column(db.Float)
-    local_grants_and_contracts = db.Column(db.Float)
+
+
+class ExpensesBase(BaseIpeds):
+    __abstract__ = True
+    benefits_expense = db.Column(db.Float)
+    dep_expense = db.Column(db.Float)
+    interest_expense = db.Column(db.Float)
+    ops_expense = db.Column(db.Float)
+    other_expense = db.Column(db.Float)
+    salaries_expense = db.Column(db.Float)
 
 
 class NISSalariesBase(BaseIpeds):
@@ -289,3 +304,9 @@ class AcademicRankId(object):
     @declared_attr
     def academic_rank(cls):
         return db.Column(db.String(), db.ForeignKey(AcademicRank.id), primary_key=True)
+
+
+class IPedsExpenseId(object):
+    @declared_attr
+    def ipeds_expense(cls):
+        return db.Column(db.String(), db.ForeignKey(IPedsExpense.id), primary_key=True)

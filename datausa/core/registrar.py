@@ -54,6 +54,8 @@ registered_models = [
     ISSalariesYua,
     ISSalariesYus,
     ISSalariesYuas,
+    ExpensesYu,
+    ExpensesYue,
     # ONET
     SkillByCip, SkillBySoc,
 
