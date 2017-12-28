@@ -12,7 +12,7 @@ except OSError:
 print("Step 2. Refresh Materialized View")
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
 with engine.begin() as connection:
-    result = connection.execute("REFRESH MATERIALIZED VIEW attrs.search_v7")
+    result = connection.execute("REFRESH MATERIALIZED VIEW attrs.search_v8")
     print("Result", result)
 
 print("Step 3. Rebuild Index")

@@ -53,7 +53,7 @@ queries.append("SELECT '01000US', 150, 'geo', 'united states', 'United States', 
 
 
 # UNIVERSITIES
-university_qry = '''SELECT g.{0},  (g.{2} - stats.average) / stats.st AS zvalue, '{0}' as kind , lower(a.name) as name, a.display_name as display, NULL as sumlevel, a.is_stem as is_stem, a.url_name as url_name, a.keywords as keywords
+university_qry = '''SELECT g.{0},  (g.{2} - stats.average) / stats.st AS zvalue, '{0}' as kind , lower(a.name) as name, a.display_name as display, a.university_level::text as sumlevel, a.is_stem as is_stem, a.url_name as url_name, a.keywords as keywords
                     FROM {1} g
                     LEFT JOIN attrs.university a ON (a.id = g.{0})
                     CROSS JOIN

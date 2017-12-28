@@ -31,7 +31,7 @@ class SimpleWeighter(scoring.BM25F):
         elif self.fullterm.startswith(name[:5]):
             return score_me * 1.5 + abs(zscore)
             # return (score_me * 1.75) + (10 * zvalue)
-        return (score_me * 0.75) + (zscore * 0.25)
+        return (score_me * 0.75) + (zscore * 0.31)
 
 
 vars_ix = index.open_dir(VAR_INDEX_DIR)
