@@ -549,6 +549,9 @@ class IncomeRange(BaseAttr):
 
 class Carnegie(BaseAttr):
     __tablename__ = 'carnegie'
+    depth = db.Column(db.Integer)
+    parent = db.Column(db.String)
+    children = db.Column(db.ARRAY(db.String))
 
 
 class IPedsOcc(BaseAttr):
