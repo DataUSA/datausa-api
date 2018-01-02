@@ -58,6 +58,7 @@ class University(BaseAttr, ImageAttr):
     opeid8 = db.Column(db.String)
     status = db.Column(db.String)
     carnegie = db.Column(db.String)
+    carnegie_parent = db.Column(db.String)
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
 
