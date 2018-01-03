@@ -565,3 +565,4 @@ class IPedsExpense(BaseAttr):
 
 class AcademicRank(BaseAttr):
     __tablename__ = 'academic_rank'
+    academic_group = db.Column(db.String)
