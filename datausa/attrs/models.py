@@ -557,6 +557,7 @@ class Carnegie(BaseAttr):
 
 class IPedsOcc(BaseAttr):
     __tablename__ = 'ipeds_occ'
+    ipeds_occ_group = db.Column(db.String)
 
 
 class IPedsExpense(BaseAttr):
