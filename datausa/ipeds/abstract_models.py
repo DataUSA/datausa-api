@@ -269,6 +269,7 @@ class FinancialsBase(BaseIpeds):
     state_grants_and_contracts = db.Column(db.Float)
     total_expenses = db.Column(db.Float)
     tuition_and_fees = db.Column(db.Float)
+    total_salaries = db.Column(db.Float)
 
 
 class ExpensesBase(BaseIpeds):
