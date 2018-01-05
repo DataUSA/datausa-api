@@ -14,6 +14,7 @@ from datausa.attrs.models import Insurance, Cohort, Sctg, Napcs, IPedsRace
 from datausa.attrs.models import IncomeRange, IPedsOcc, AcademicRank
 from datausa.attrs.models import IPedsToPumsCrosswalk, Carnegie, IPedsExpense
 from datausa.attrs.models import Opeid6, SchoolType, EthnicCode, ProgramLength
+from datausa.attrs.models import SimilarUniversities
 from datausa.attrs.consts import GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
 from datausa.database import db
@@ -268,7 +269,7 @@ def crosswalk_acs(attr_kind, attr_id):
 
 @mod.route("/nearby/university/<university_id>")
 def nearby_university(university_id):
-    limit = 5
+    limit = int(request.args.get("limit", 5))
     univ = University.query.get(university_id)
     query_str = """SELECT id, name
         FROM attrs.university
@@ -277,6 +278,23 @@ def nearby_university(university_id):
         LIMIT :limit;
     """
     res = db.session.execute(query_str, {"lat": univ.lat, "lng": univ.lng, "carnegie": univ.carnegie, "limit": limit, "uid": university_id})
+    data = [map(unicode, x) for x in res]
+    headers = ["id", "name"]
+    return jsonify(data=data, headers=headers)
+
+
+@mod.route("/similar/university/<university_id>")
+def similar_universities(university_id):
+    limit = int(request.args.get("limit", 5))
+    univ = SimilarUniversities.query.get(university_id)
+    query_str = """SELECT id, name
+        FROM attrs.similar_universities
+        where id != :uid
+        AND carnegie_parent = :carnegie_parent
+        ORDER BY ST_MakePoint(:x, :y) <-> st_makepoint(x, y)
+        LIMIT :limit;
+    """
+    res = db.session.execute(query_str, {"x": univ.x, "y": univ.y, "carnegie_parent": univ.carnegie_parent, "limit": limit, "uid": university_id})
     data = [map(unicode, x) for x in res]
     headers = ["id", "name"]
     return jsonify(data=data, headers=headers)

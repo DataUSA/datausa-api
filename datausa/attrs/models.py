@@ -567,3 +567,14 @@ class IPedsExpense(BaseAttr):
 class AcademicRank(BaseAttr):
     __tablename__ = 'academic_rank'
     academic_group = db.Column(db.String)
+
+
+class SimilarUniversities(db.Model):
+    __tablename__ = 'similar_universities'
+    __table_args__ = {"schema": "attrs"}
+    university = db.Column(db.String, db.ForeignKey(University.id), primary_key=True)
+    name = db.Column(db.String)
+    x = db.Column(db.Float)
+    y = db.Column(db.Float)
+    carnegie = db.Column(db.String)
+    carnegie_parent = db.Column(db.String)
