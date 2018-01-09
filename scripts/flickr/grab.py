@@ -4,9 +4,11 @@ from datausa.database import db
 from datausa.attrs.views import attr_map
 from PIL import Image as pillow
 
+MAX_SIDE = 1400
+LICENSES = ["4", "5", "7", "8", "9", "10"]
+
 def read_csv():
 
-    max_side = 1600
     thumb_side = 425
     quality = 90
 
@@ -27,13 +29,16 @@ def read_csv():
     else:
         table = attr_map[attr_type]
 
-    input_file = csv.DictReader(open(sys.argv[2]))
+    csvFilename = sys.argv[2]
+    csvReader = csv.DictReader(open(csvFilename))
+    input_file = list(csvReader)
     imgdir = os.path.join(FLICKR_DIR, attr_type)
     thumbdir = imgdir.replace("splash", "thumb")
     badImages = []
     smallImages = []
     goodImages = []
     removedImages = []
+    deletedImages = []
 
     # skip = True
 
@@ -44,117 +49,137 @@ def read_csv():
         os.makedirs(thumbdir)
 
     for row in input_file:
-        update = False
-        uid = row["id"]
 
-        # if uid == "31000US12700":
-        #     skip = False
-        #
-        # if skip:
-        #     continue
+        update = False
+
+        uid = row["id"]
+        imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
+        thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
 
         image_only = attr_type == "geo"
 
-        if not image_only or (image_only and "image_link" in row and row["image_link"] != ""):
+        if "level" in row:
+            attr = table.query.filter_by(id=uid,level=row["level"]).first()
+        else:
+            attr = table.query.get(uid)
 
-            if "level" in row:
-                attr = table.query.filter_by(id=uid,level=row["level"]).first()
-            else:
-                attr = table.query.get(uid)
+        if attr and "image_link" in row:
+            image = row["image_link"]
 
-            if attr and "image_link" in row:
-                image = row["image_link"]
-                # if image: # Use this if statement instead of the next line to force an update on all images.
-                if image and attr.image_link != image:
+            if not image and attr.image_link:
 
-                    if "photolist" in image:
-                        image = image.split("/in/photolist")[0]
+                attr.image_meta = None
+                attr.image_link = None
+                attr.image_author = None
+                update = True
+                deletedImages.append(uid)
+                row["error"] = ""
+                os.remove(imgpath)
+                os.remove(thumbpath)
 
-                    pid = image.split("/")[-1]
-                    if "flic.kr" not in image:
-                        image = "http://flic.kr/p/{}".format(short.encode(pid))
+            elif image and attr.image_link != image:
 
-                    photo = flickr.Photo(pid)
-                    try:
-                        photo._load_properties()
-                    except:
-                        removedImages.append(uid)
-                        continue
+                if "photolist" in image:
+                    image = image.split("/in/photolist")[0]
 
-                    image = {"id": uid, "url": image, "license": photo._Photo__license}
+                pid = image.split("/")[-1]
+                if "flic.kr" not in image:
+                    image = "http://flic.kr/p/{}".format(short.encode(pid))
 
-                    if image["license"] in ["0"]:
-                        badImages.append(image)
+                photo = flickr.Photo(pid)
+                try:
+                    photo._load_properties()
+                except:
+                    row["error"] = "removed"
+                    removedImages.append(uid)
+                    continue
+
+                image = {"id": uid, "url": image, "license": photo._Photo__license}
+
+                if image["license"] not in LICENSES:
+                    badImages.append(image)
+                    row["error"] = "license-{}".format(image["license"])
+                else:
+                    sizes = [p for p in photo.getSizes() if p["width"] >= MAX_SIDE]
+                    if len(sizes) == 0:
+                        smallImages.append(image)
+                        row["error"] = "resolution"
                     else:
-                        sizes = [p for p in photo.getSizes() if p["width"] >= max_side]
-                        if len(sizes) == 0:
-                            smallImages.append(image)
-                        else:
-                            download_url = min(sizes, key=lambda item: item["width"])["source"]
+                        download_url = min(sizes, key=lambda item: item["width"])["source"]
 
-                            imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
-                            thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
+                        urllib.urlretrieve(download_url, imgpath)
 
-                            urllib.urlretrieve(download_url, imgpath)
+                        img = pillow.open(imgpath).convert("RGB")
 
-                            img = pillow.open(imgpath).convert("RGB")
+                        img.thumbnail((MAX_SIDE, MAX_SIDE), pillow.ANTIALIAS)
+                        img.save(imgpath, "JPEG", quality=quality)
 
-                            img.thumbnail((max_side, max_side), pillow.ANTIALIAS)
-                            img.save(imgpath, "JPEG", quality=quality)
+                        img.thumbnail((thumb_side, thumb_side), pillow.ANTIALIAS)
+                        img.save(thumbpath, "JPEG", quality=quality)
 
-                            img.thumbnail((thumb_side, thumb_side), pillow.ANTIALIAS)
-                            img.save(thumbpath, "JPEG", quality=quality)
+                        author = photo._Photo__owner
+                        author = author.realname if author.realname else author.username
+                        image["author"] = author.replace("'", "\\'")
+                        goodImages.append(image)
 
-                            author = photo._Photo__owner
-                            author = author.realname if author.realname else author.username
-                            image["author"] = author.replace("'", "\\'")
-                            goodImages.append(image)
+                        attr.image_link = image["url"]
+                        attr.image_author = image["author"]
+                        update = True
 
-                            attr.image_link = image["url"]
-                            attr.image_author = image["author"]
-                            update = True
+            # set False to True to force thumbnails
+            elif False and image:
 
-                # set False to True to force thumbnails
-                elif False and image:
+                imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
+                thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
 
-                    imgpath = os.path.join(imgdir, "{}.jpg".format(uid))
-                    thumbpath = os.path.join(thumbdir, "{}.jpg".format(uid))
+                img = pillow.open(imgpath).convert("RGB")
 
-                    img = pillow.open(imgpath).convert("RGB")
+                img.thumbnail((thumb_side, thumb_side), pillow.ANTIALIAS)
+                img.save(thumbpath, "JPEG", quality=quality)
 
-                    img.thumbnail((thumb_side, thumb_side), pillow.ANTIALIAS)
-                    img.save(thumbpath, "JPEG", quality=quality)
+        if not image_only:
+            name = row["name"]
+            if attr and name and attr.name != name:
+                attr.name = name
+                update = True
 
-            if not image_only:
-                name = row["name"]
-                if attr and name and attr.name != name:
-                    attr.name = name
-                    update = True
+        if "image_meta" in row:
+            meta = row["image_meta"]
+            if attr and meta and attr.image_meta != meta:
+                attr.image_meta = meta
+                update = True
 
-            if "image_meta" in row:
-                meta = row["image_meta"]
-                if attr and meta and attr.image_meta != meta:
-                    attr.image_meta = meta
-                    update = True
+        if update:
+            db.session.add(attr)
+            db.session.commit()
 
-            if update:
-                db.session.add(attr)
-                db.session.commit()
+        # break
 
-            # break
 
+
+    print "\n"
+    print "Outputing to CSV..."
+    with open(csvFilename.replace(".csv", "-update.csv"), 'wb') as f:
+        w = csv.DictWriter(f, None)
+
+        w.fieldnames = csvReader.fieldnames
+        w.writerow(dict((h, h) for h in csvReader.fieldnames))
+
+        for row in input_file:
+            w.writerow(row)
+
+    print "\n"
     print "{} new images have been processed.".format(len(goodImages))
     if len(badImages) > 0:
         print "The following images have bad licenses: {}".format(", ".join([i["id"] for i in badImages]))
     if len(smallImages) > 0:
         print "The following images are too small: {}".format(", ".join([i["id"] for i in smallImages]))
     if len(removedImages) > 0:
-        print "The following images have been removed: {}".format(", ".join([i for i in removedImages]))
+        print "The following images have been removed from Flickr: {}".format(", ".join([i for i in removedImages]))
+    if len(deletedImages) > 0:
+        print "The following images have been deleted: {}".format(", ".join([i for i in deletedImages]))
 
 
 
 if __name__ == '__main__':
-    # img = pillow.open("04000US17-orig.jpg").convert("RGB")
-    # img.thumbnail((max_side, max_side), pillow.ANTIALIAS)
-    # img.save("04000US17-new.jpg", "JPEG", quality=quality)
     read_csv()
