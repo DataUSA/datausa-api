@@ -447,7 +447,11 @@ class UniversitySfaYu(BaseIpeds, UniversityId):
     year = db.Column(db.Integer(), primary_key=True)
     num_fed_loans = db.Column(db.Float)
     pct_fed_loans = db.Column(db.Float)
-    pct_with_aid = db.Column(db.Float)
+    pct_with_grant_aid = db.Column(db.Float)
+    num_any_aid = db.Column(db.Float)
+    pct_any_aid = db.Column(db.Float)
+    aidfsin = db.Column(db.Float)
+    aidfsip = db.Column(db.Float)
     total_fed_loans = db.Column(db.Float)
     avg_netprice_gos_aid = db.Column(db.Float)
 
