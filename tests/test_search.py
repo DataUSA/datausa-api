@@ -190,7 +190,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(data[0][0], "164988")
 
   def test_neu(self):
-        data, suggs, tries, my_vars = do_search("huskies")
+        data, suggs, tries, my_vars = do_search("neu")
         self.assertEqual(data[0][0], "167358")
 
 
