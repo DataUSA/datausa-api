@@ -202,10 +202,10 @@ class TestJoinAPI(unittest.TestCase):
         data, headers = self.get_data(url)
         ed_id = headers.index('ed.yu_defaults.university')
         ipeds_id = headers.index('ipeds.grads_yu.university')
-        opeid6 = headers.index('ed.yu_defaults.opeid6')
+        opeid = headers.index('ed.yu_defaults.opeid')
 
         first_row = data[0]
-        assert first_row[ed_id] == first_row[ipeds_id] and first_row[opeid6] == "001002"
+        assert first_row[ed_id] == first_row[ipeds_id] and first_row[opeid] == "001002"
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from datausa.attrs.consts import ALL
 from datausa.attrs.models import UniversityCrosswalk
 from sqlalchemy.orm import column_property
+from sqlalchemy.sql import func
 
 
 class BaseEd(db.Model, BaseModel):
@@ -17,7 +18,7 @@ class BaseEd(db.Model, BaseModel):
 
 class UniversityCols(object):
     @declared_attr
-    def opeid6(cls):
+    def opeid(cls):
         return db.Column(db.String(), primary_key=True)
 
     @declared_attr
@@ -26,7 +27,7 @@ class UniversityCols(object):
 
     @classmethod
     def crosswalk_join(cls, qry):
-        cond = UniversityCrosswalk.opeid6 == cls.opeid6
+        cond = UniversityCrosswalk.opeid6 == cls.opeid
         return qry.join(UniversityCrosswalk, cond)
 
 
@@ -44,5 +45,5 @@ class DefaultsYu(BaseEd, UniversityCols):
         return {
             "year": [ALL],
             "university": [ALL],
-            "opeid6": [ALL]
+            "opeid": [ALL]
         }

@@ -505,11 +505,11 @@ class UniversityCrosswalk(db.Model, BaseModel):
     def get_supported_levels(cls):
         return {
             "university": [ALL],
-            "opeid6": [ALL]
+            "opeid": [ALL]
         }
 
 
-class Opeid6(BaseAttr):
+class Opeid(BaseAttr):
     __tablename__ = 'opeid6'
     school_type = db.Column(db.Integer)
     ethnic_code = db.Column(db.Integer)

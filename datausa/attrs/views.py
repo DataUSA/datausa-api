@@ -13,7 +13,7 @@ from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
 from datausa.attrs.models import Insurance, Cohort, Sctg, Napcs, IPedsRace
 from datausa.attrs.models import IncomeRange, IPedsOcc, AcademicRank
 from datausa.attrs.models import IPedsToPumsCrosswalk, Carnegie, IPedsExpense
-from datausa.attrs.models import Opeid6, SchoolType, EthnicCode, ProgramLength
+from datausa.attrs.models import Opeid, SchoolType, EthnicCode, ProgramLength
 from datausa.attrs.models import SimilarUniversities
 from datausa.attrs.consts import GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
@@ -36,7 +36,7 @@ attr_map = {"soc": PumsSoc, "naics": PumsNaics, "cip": Cip,
             "language": AcsLanguage,
             "bls_soc": Soc, "bls_naics": Naics,
             "insurance": Insurance, "cohort": Cohort,
-            "sctg": Sctg, "napcs": Napcs, "opeid6": Opeid6,
+            "sctg": Sctg, "napcs": Napcs, "opeid": Opeid,
             "ethnic_code": EthnicCode, "program_length": ProgramLength,
             "school_type": SchoolType,
             "lstudy": LStudy, "enrollment_status": EnrollmentStatus,
