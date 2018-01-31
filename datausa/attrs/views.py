@@ -14,7 +14,7 @@ from datausa.attrs.models import Insurance, Cohort, Sctg, Napcs, IPedsRace
 from datausa.attrs.models import IncomeRange, IPedsOcc, AcademicRank
 from datausa.attrs.models import IPedsToPumsCrosswalk, Carnegie, IPedsExpense
 from datausa.attrs.models import Opeid, SchoolType, EthnicCode, ProgramLength
-from datausa.attrs.models import SimilarUniversities
+from datausa.attrs.models import SimilarUniversities, RateType
 from datausa.attrs.consts import GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
 from datausa.database import db
@@ -46,7 +46,8 @@ attr_map = {"soc": PumsSoc, "naics": PumsNaics, "cip": Cip,
             "academic_rank": AcademicRank,
             "ipeds_occ": IPedsOcc,
             "ipeds_expense": IPedsExpense,
-            "carnegie": Carnegie}
+            "carnegie": Carnegie,
+            "rate_type": RateType}
 
 
 def show_attrs(attr_obj, sumlevels=None):

@@ -4,7 +4,6 @@ from sqlalchemy.ext.declarative import declared_attr
 from datausa.attrs.consts import ALL
 from datausa.attrs.models import UniversityCrosswalk
 from sqlalchemy.orm import column_property
-from sqlalchemy.sql import func
 
 
 class BaseEd(db.Model, BaseModel):
@@ -14,6 +13,10 @@ class BaseEd(db.Model, BaseModel):
     source_title = 'Official Cohort Default Rates for Schools'
     source_link = 'https://www2.ed.gov/offices/OSFAP/defaultmanagement/cdr.html'
     source_org = 'Department of Education'
+
+    default_rate = db.Column(db.Float)
+    num_defaults = db.Column(db.Integer)
+    num_borrowers = db.Column(db.Integer)
 
 
 class UniversityCols(object):
@@ -31,11 +34,12 @@ class UniversityCols(object):
         return qry.join(UniversityCrosswalk, cond)
 
 
-class DefaultsYu(BaseEd, UniversityCols):
-    __tablename__ = "yu_defaults"
-    median_moe = 1
+class DefaultsYur(BaseEd, UniversityCols):
+    __tablename__ = "yur_defaults"
+    median_moe = 2
 
     year = db.Column(db.Integer(), primary_key=True)
+    rate_type = db.Column(db.String(), primary_key=True)
     default_rate = db.Column(db.Float)
     num_defaults = db.Column(db.Integer)
     num_borrowers = db.Column(db.Integer)
@@ -45,5 +49,25 @@ class DefaultsYu(BaseEd, UniversityCols):
         return {
             "year": [ALL],
             "university": [ALL],
-            "opeid": [ALL]
+            "opeid": [ALL],
+            "rate_type": [ALL]
+        }
+
+
+class DefaultsYure(BaseEd, UniversityCols):
+    __tablename__ = "yure_defaults"
+    median_moe = 3
+
+    year = db.Column(db.Integer(), primary_key=True)
+    rate_type = db.Column(db.String(), primary_key=True)
+    ethnic_code = db.Column(db.Integer(), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "year": [ALL],
+            "university": [ALL],
+            "opeid": [ALL],
+            "rate_type": [ALL],
+            "ethnic_code": [ALL],
         }

@@ -578,3 +578,7 @@ class SimilarUniversities(db.Model):
     y = db.Column(db.Float)
     carnegie = db.Column(db.String)
     carnegie_parent = db.Column(db.String)
+
+
+class RateType(BaseAttr):
+    __tablename__ = 'rate_type'
