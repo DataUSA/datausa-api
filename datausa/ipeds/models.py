@@ -619,3 +619,17 @@ class ExpensesYue(ExpensesBase, UniversityId, IPedsExpenseId):
         return {"year": [ALL],
                 "ipeds_expense": [ALL],
                 "university": UniversityId.LEVELS}
+
+
+class ICLivingExpensesYua(BaseIpeds, UniversityId, LivingArrangementId):
+    __tablename__ = "ic_living_expenses_yua"
+    median_moe = 2
+    year = db.Column(db.Integer(), primary_key=True)
+    other_expenses = db.Column(db.Float())
+    room_and_board = db.Column(db.Float())
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "living_arrangement": [ALL],
+                "university": UniversityId.LEVELS}
