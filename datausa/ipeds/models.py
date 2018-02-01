@@ -50,6 +50,7 @@ class TuitionYu(Tuition, UniversityId):
     median_moe = 1
 
     year = db.Column(db.Integer(), primary_key=True)
+    books_and_supplies = db.Column(db.Float())
 
     @classmethod
     def get_supported_levels(cls):
