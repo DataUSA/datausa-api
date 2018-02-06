@@ -16,7 +16,7 @@ class BasePums(db.Model, BaseModel):
     source_link = 'http://census.gov/programs-surveys/acs/technical-documentation/pums.html'
     source_org = 'Census Bureau'
     num_records =  db.Column(db.Integer)
-    CACHED_YEARS = [2014, 2015]
+    CACHED_YEARS = [2014, 2015, 2016]
 
 
     def __repr__(self):
@@ -29,7 +29,7 @@ class BasePums5(BasePums):
     source_title = 'ACS PUMS 5-year Estimate'
     source_link = 'http://census.gov/programs-surveys/acs/technical-documentation/pums.html'
     source_org = 'Census Bureau'
-    CACHED_YEARS = [2014, 2015]
+    CACHED_YEARS = [2014, 2015, 2016]
 
 class PersonalOver5(object):
     avg_age = db.Column(db.Float)
