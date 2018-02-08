@@ -385,6 +385,23 @@ class LivingArrangementSfaYua(SfaLivingBase, UniversityId, LivingArrangementId):
                 "living_arrangement": [ALL]}
 
 
+class GradRateTimeframeYut(BaseIpeds, UniversityId):
+    __tablename__ = "gradrate_timeframe_yut"
+
+    year = db.Column(db.Integer(), primary_key=True)
+    timeframe = db.Column(db.String(), primary_key=True)
+    num_completed_ba = db.Column(db.Float)
+    pct_completed_ba = db.Column(db.Float)
+
+    median_moe = 1.5
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
+                "timeframe": [ALL],
+                "university": UniversityId.LEVELS}
+
+
 class GradRateGrYu(GradRateBase, UniversityId):
     __tablename__ = "gradrate_gr_yu"
 
@@ -632,4 +649,17 @@ class ICLivingExpensesYua(BaseIpeds, UniversityId, LivingArrangementId):
     def get_supported_levels(cls):
         return {"year": [ALL],
                 "living_arrangement": [ALL],
+                "university": UniversityId.LEVELS}
+
+
+class ICMaxLivingExpensesYua(BaseIpeds, UniversityId):
+    __tablename__ = "ic_max_living_expenses_yu"
+    median_moe = 1
+    year = db.Column(db.Integer(), primary_key=True)
+    max_other_expenses = db.Column(db.Float())
+    max_room_and_board = db.Column(db.Float())
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {"year": [ALL],
                 "university": UniversityId.LEVELS}
