@@ -68,7 +68,7 @@ registered_models = [
     HealthYg,
 
     # Bureau of Labor Statistics
-    OesYgo, QcewYgi, GrowthI, GrowthO, CesYi,
+    OesYgo, QcewYgi, GrowthI16, GrowthI, GrowthO16, GrowthO, CesYi,
 
     # County Business Patterns
     CbpYgi, CbpYg,

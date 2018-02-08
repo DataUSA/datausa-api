@@ -57,6 +57,27 @@ class GrowthO(db.Model, Bls, BlsSoc):
         }
 
 
+class GrowthO16(db.Model, Bls, BlsSoc):
+    source_title = 'Employment Projections'
+    __tablename__ = 'growth_o_2016'
+    median_moe = 1
+
+    emp_2016_thousands = db.Column(db.Float)
+    emp_2026_thousands = db.Column(db.Float)
+    emp_pct_2016 = db.Column(db.Float)
+    emp_pct_2026 = db.Column(db.Float)
+    change_thousands = db.Column(db.Float)
+    pct_change = db.Column(db.Float)
+    openings_thousands = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "soc": [ALL, "0", "1", "2", "3"],
+            "bls_soc": [ALL, "0", "1", "2", "3"]
+        }
+
+
 class GrowthI(db.Model, Bls):
     source_title = 'Industry Projections'
     __tablename__ = 'growth_i'
@@ -76,6 +97,33 @@ class GrowthI(db.Model, Bls):
     output_carc_2014_2024 = db.Column(db.Float)
     emp_carc_2004_2014 = db.Column(db.Float)
     emp_carc_2014_2024 = db.Column(db.Float)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "naics": [ALL, "0", "1", "2", "3", "4"]
+        }
+
+
+class GrowthI16(db.Model, Bls):
+    source_title = 'Industry Projections'
+    __tablename__ = 'growth_i_2016'
+    median_moe = 2
+
+    naics = db.Column(db.String, primary_key=True)
+    title = db.Column(db.String)
+    emp_2006_thousands = db.Column(db.Float)
+    emp_2016_thousands = db.Column(db.Float)
+    emp_2026_thousands = db.Column(db.Float)
+    emp_change_2006_2016 = db.Column(db.Float)
+    emp_change_2016_2026 = db.Column(db.Float)
+    output_2006 = db.Column(db.Float)
+    output_2016 = db.Column(db.Float)
+    output_2026 = db.Column(db.Float)
+    output_carc_2006_2016 = db.Column(db.Float)
+    output_carc_2016_2026 = db.Column(db.Float)
+    emp_carc_2006_2016 = db.Column(db.Float)
+    emp_carc_2016_2026 = db.Column(db.Float)
 
     @classmethod
     def get_supported_levels(cls):
