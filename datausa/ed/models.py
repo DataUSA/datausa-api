@@ -34,6 +34,25 @@ class UniversityCols(object):
         return qry.join(UniversityCrosswalk, cond)
 
 
+class DefaultsYu(BaseEd, UniversityCols):
+    __tablename__ = "yu_defaults"
+    median_moe = 1
+
+    year = db.Column(db.Integer(), primary_key=True)
+    rate_type = db.Column(db.String())
+    default_rate = db.Column(db.Float)
+    num_defaults = db.Column(db.Integer)
+    num_borrowers = db.Column(db.Integer)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "year": [ALL],
+            "university": [ALL],
+            "opeid": [ALL],
+        }
+
+
 class DefaultsYur(BaseEd, UniversityCols):
     __tablename__ = "yur_defaults"
     median_moe = 2

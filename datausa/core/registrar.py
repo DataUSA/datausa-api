@@ -11,7 +11,7 @@ from datausa.acs.automap_models import *
 from datausa.acs.stats_models import *
 from datausa.dartmouth.models import *
 from datausa.freight.models import *
-from datausa.ed.models import DefaultsYur, DefaultsYure
+from datausa.ed.models import DefaultsYu, DefaultsYur, DefaultsYure
 from datausa.attrs.models import UniversityCrosswalk
 
 registered_models = [
@@ -108,7 +108,7 @@ registered_models = [
     FAFYodmp, FAFYodp, FAFYomp, FAFYodm, FAFYop, FAFYdp, FAFYdm, FAFYom, FAFYod,
 
     # Loans
-    DefaultsYur, DefaultsYure, UniversityCrosswalk
+    DefaultsYu, DefaultsYur, DefaultsYure, UniversityCrosswalk
 ]
 
 
