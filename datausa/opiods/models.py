@@ -9,9 +9,9 @@ class BaseOpiods(db.Model, BaseModel):
     __abstract__ = True
     __table_args__ = {"schema": "opiods"}
     supported_levels = {"year": [ALL]}
-    source_title = 'Drug Overdose Data'
-    source_link = 'https://www.cdc.gov/drugoverdose/'
-    source_org = 'Centers for Disease Control and Prevention'
+    source_title = 'Opioid Overdose Death Rates and All Drug Overdose Death Rates'
+    source_link = 'https://www.kff.org/other/state-indicator/opioid-overdose-death-rates/'
+    source_org = 'Kaiser Family Foundation State Health Facts'
 
     default_rate = db.Column(db.Float)
     num_defaults = db.Column(db.Integer)
@@ -40,7 +40,7 @@ class BaseOpiods(db.Model, BaseModel):
 class DrugOverdoseDeathRate(BaseOpiods):
     __tablename__ = "drug_overdose_deathrate"
     median_moe = 1
-
+    source_link = 'https://www.kff.org/other/state-indicator/opioid-overdose-death-rates/?currentTimeframe=0&sortModel=%7B%22colId%22:%22Location%22,%22sort%22:%22asc%22%7D'
     year = db.Column(db.Integer(), primary_key=True)
     drug_overdose_ageadjusted = db.Column(db.String())
 
@@ -48,7 +48,7 @@ class DrugOverdoseDeathRate(BaseOpiods):
 class OpiodOverdoseDeathRate(BaseOpiods):
     __tablename__ = "opioid_overdose_deathrate"
     median_moe = 1
-
+    source_link = 'https://www.kff.org/other/state-indicator/opioid-overdose-death-rates/?currentTimeframe=0&sortModel=%7B%22colId%22:%22Location%22,%22sort%22:%22asc%22%7D'
     year = db.Column(db.Integer(), primary_key=True)
     opioid_overdose_deathrate_ageadjusted = db.Column(db.String())
 
@@ -56,7 +56,9 @@ class OpiodOverdoseDeathRate(BaseOpiods):
 class NonMedUsePainMeds(BaseOpiods):
     __tablename__ = "non_medical_use_of_pain_releivers"
     median_moe = 1
-
+    source_title = 'National Survey on Drug Use and Health'
+    source_org = 'SAMHSA, Center for Behavioral Health Statistics and Quality'
+    source_link = 'https://nsduhweb.rti.org/respweb/homepage.cfm'
     start_year = db.Column(db.Integer(), primary_key=True)
     year = db.Column(db.Integer(), primary_key=True)
 
