@@ -13,6 +13,7 @@ from datausa.dartmouth.models import *
 from datausa.freight.models import *
 from datausa.ed.models import DefaultsYu, DefaultsYur, DefaultsYure
 from datausa.attrs.models import UniversityCrosswalk
+from datausa.opiods.models import DrugOverdoseDeathRate
 
 registered_models = [
     # PUMS
@@ -108,7 +109,10 @@ registered_models = [
     FAFYodmp, FAFYodp, FAFYomp, FAFYodm, FAFYop, FAFYdp, FAFYdm, FAFYom, FAFYod,
 
     # Loans
-    DefaultsYu, DefaultsYur, DefaultsYure, UniversityCrosswalk
+    DefaultsYu, DefaultsYur, DefaultsYure, UniversityCrosswalk,
+
+    # Opiods
+    DrugOverdoseDeathRate
 ]
 
 

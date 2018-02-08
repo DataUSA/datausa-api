@@ -582,3 +582,16 @@ class SimilarUniversities(db.Model):
 
 class RateType(BaseAttr):
     __tablename__ = 'rate_type'
+
+
+class CrosswalkGeoContainment(db.Model):
+    __tablename__ = 'crosswalk_geo_containment'
+    __table_args__ = {"schema": "attrs"}
+    child_geoid = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
+    parent_geoid = db.Column(db.String, db.ForeignKey(Geo.id),
+                             primary_key=True)
+    area_covered = db.Column(db.Float)
+    percent_covered = db.Column(db.Float)
+    parent = relationship('Geo', foreign_keys='CrosswalkGeoContainment.parent_geoid')
+    child = relationship('Geo', foreign_keys='CrosswalkGeoContainment.child_geoid',
+                         lazy='subquery')

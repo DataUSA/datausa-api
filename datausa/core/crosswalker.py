@@ -1,5 +1,5 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
-from datausa.attrs.models import GeoContainment, Soc, GeoCrosswalker
+from datausa.attrs.models import GeoContainment, Soc, GeoCrosswalker, CrosswalkGeoContainment
 from datausa.attrs.models import Carnegie, University
 from datausa.bls.models import BlsCrosswalk, GrowthI, GrowthILookup, CesYi
 from datausa.pums.abstract_models import BasePums, BasePums5
@@ -164,6 +164,27 @@ def chr_parents(geo_id, api_obj=None):
     return geo_id
 
 
+def opiod_parents(geo_id, api_obj=None):
+    '''CHR data'''
+    needs_crosswalk = ["050", "160", "310", "795"]
+    prefix = geo_id[:3]
+    if prefix in needs_crosswalk:
+        if prefix == "050":
+            # with a county ID, we can simply identify the state without a DB query
+            return "040" + geo_id[3:][:-3]
+        filters = [
+            CrosswalkGeoContainment.child_geoid == geo_id,
+            or_(CrosswalkGeoContainment.parent_geoid.startswith("040"),
+                CrosswalkGeoContainment.parent_geoid.startswith("010"))
+        ]
+        qry = CrosswalkGeoContainment.query.filter(*filters)
+        qry = qry.order_by(CrosswalkGeoContainment.percent_covered.desc())
+        geo_contain = qry.first()
+        if geo_contain:
+            return geo_contain.parent_geoid
+    return geo_id
+
+
 def industry_iocode_func(naics, api_obj=None):
     my_obj = PumsIoCrosswalk.query.filter(PumsIoCrosswalk.pums_naics == naics).first()
     if hasattr(api_obj, "vars_and_vals"):
@@ -198,6 +219,8 @@ def crosswalk(table, api_obj):
         {"column": "cip", "schema": pums5_schema_name, "mapping": truncate_cip},
         {"column": "geo", "schema": pums5_schema_name, "mapping": pums_parent_puma},
         {"column": "geo", "schema": "chr", "mapping": chr_parents},
+        {"column": "geo", "schema": "opiods", "mapping": opiod_parents},
+
         {"column": "geo", "schema": "dartmouth", "mapping": chr_parents},
         {"column": "origin_geo", "schema": "freight", "mapping": freight_parents},
         {"column": "destination_geo", "schema": "freight", "mapping": freight_parents},
