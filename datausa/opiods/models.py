@@ -9,9 +9,9 @@ class BaseOpiods(db.Model, BaseModel):
     __abstract__ = True
     __table_args__ = {"schema": "opiods"}
     supported_levels = {"year": [ALL]}
-    source_title = 'Opiods Data'
-    source_link = 'https://datausa.io'
-    source_org = 'Deloitte'
+    source_title = 'Drug Overdose Data'
+    source_link = 'https://www.cdc.gov/drugoverdose/'
+    source_org = 'Centers for Disease Control and Prevention'
 
     default_rate = db.Column(db.Float)
     num_defaults = db.Column(db.Integer)
@@ -44,9 +44,30 @@ class DrugOverdoseDeathRate(BaseOpiods):
     year = db.Column(db.Integer(), primary_key=True)
     drug_overdose_ageadjusted = db.Column(db.String())
 
-    # @classmethod
-    # def get_supported_levels(cls):
-    #     return {
-    #         "university": [ALL],
-    #         "opeid": [ALL],
-    #     }
+
+class OpiodOverdoseDeathRate(BaseOpiods):
+    __tablename__ = "opioid_overdose_deathrate"
+    median_moe = 1
+
+    year = db.Column(db.Integer(), primary_key=True)
+    opioid_overdose_deathrate_ageadjusted = db.Column(db.String())
+
+
+class NonMedUsePainMeds(BaseOpiods):
+    __tablename__ = "non_medical_use_of_pain_releivers"
+    median_moe = 1
+
+    start_year = db.Column(db.Integer(), primary_key=True)
+    year = db.Column(db.Integer(), primary_key=True)
+
+    non_medical_use_of_pain_relievers = db.Column(db.String())
+    non_medical_use_of_pain_relievers_lci = db.Column(db.String())
+    non_medical_use_of_pain_relievers_uci = db.Column(db.String())
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "year": [ALL],
+            "start_year": [ALL],
+            "geo": [ALL, NATION, STATE]
+        }
