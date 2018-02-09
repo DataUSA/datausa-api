@@ -13,10 +13,6 @@ class BaseOpiods(db.Model, BaseModel):
     source_link = 'https://www.kff.org/other/state-indicator/opioid-overdose-death-rates/'
     source_org = 'Kaiser Family Foundation State Health Facts'
 
-    default_rate = db.Column(db.Float)
-    num_defaults = db.Column(db.Integer)
-    num_borrowers = db.Column(db.Integer)
-
     @classmethod
     def get_supported_levels(cls):
         return {
