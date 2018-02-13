@@ -120,6 +120,7 @@ class GradsYcu(Grads, CipId, UniversityId):
     median_moe = 2
 
     year = db.Column(db.Integer(), primary_key=True)
+    grads_total_rca = db.Column(db.Float(), primary_key=True)
 
     # parent = relationship('Geo', foreign_keys='GeoContainment.parent_geoid')
 
