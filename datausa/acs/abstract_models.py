@@ -104,7 +104,7 @@ class BaseAcs5(db.Model, BaseModel):
     source_title = 'ACS 5-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
     source_org = 'Census Bureau'
-    CACHED_YEARS = [2013, 2014, 2015]
+    CACHED_YEARS = [2013, 2014, 2015, 2016]
 
     @declared_attr
     def year(cls):
@@ -133,7 +133,7 @@ class BaseAcs1(db.Model, BaseModel):
     source_title = 'ACS 1-year Estimate'
     source_link = 'http://www.census.gov/programs-surveys/acs/'
     source_org = 'Census Bureau'
-    CACHED_YEARS = [2013, 2014, 2015]
+    CACHED_YEARS = [2013, 2014, 2015, 2016]
 
     @declared_attr
     def year(cls):
