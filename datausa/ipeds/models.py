@@ -120,7 +120,7 @@ class GradsYcu(Grads, CipId, UniversityId):
     median_moe = 2
 
     year = db.Column(db.Integer(), primary_key=True)
-    grads_total_rca = db.Column(db.Float(), primary_key=True)
+    grads_total_rca = db.Column(db.Float())
 
     # parent = relationship('Geo', foreign_keys='GeoContainment.parent_geoid')
 
@@ -197,6 +197,7 @@ class GradsYucd(Grads, UniversityId, CipId, DegreeId):
 
     year = db.Column(db.Integer(), primary_key=True)
     grads_total = db.Column(db.Integer())
+    grads_total_rca = db.Column(db.Float())
 
     @classmethod
     def get_supported_levels(cls):
