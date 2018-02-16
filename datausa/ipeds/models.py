@@ -483,6 +483,7 @@ class UniversitySfaYu(BaseIpeds, UniversityId):
 
 class AidSfaYui(BaseIpeds, UniversityId, IncomeRangeId):
     __tablename__ = "aid_sfa_yui"
+    CACHED_YEARS = [2013, 2014, 2015, 2016]
     median_moe = 2
 
     year = db.Column(db.Integer(), primary_key=True)
