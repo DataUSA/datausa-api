@@ -9,7 +9,7 @@ class BaseOpiods(db.Model, BaseModel):
     __abstract__ = True
     __table_args__ = {"schema": "opiods"}
     supported_levels = {"year": [ALL]}
-    source_title = 'Opioid Overdose Death Rates and All Drug Overdose Death Rates'
+    source_title = 'Kaiser Family Foundation analysis of Centers for Disease Control and Prevention (CDC), National Center for Health Statistics'
     source_link = 'https://www.kff.org/other/state-indicator/opioid-overdose-death-rates/'
     source_org = 'Kaiser Family Foundation State Health Facts'
 
