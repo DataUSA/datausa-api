@@ -468,3 +468,16 @@ class ProductCrosswalk(db.Model):
     __table_args__ = {"schema": "attrs"}
     sctg = db.Column(db.String,  db.ForeignKey(Sctg.id), primary_key=True)
     napcs = db.Column(db.String, db.ForeignKey(Napcs.id), primary_key=True)
+
+
+class CrosswalkGeoContainment(db.Model):
+    __tablename__ = 'crosswalk_geo_containment'
+    __table_args__ = {"schema": "attrs"}
+    child_geoid = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
+    parent_geoid = db.Column(db.String, db.ForeignKey(Geo.id),
+                             primary_key=True)
+    area_covered = db.Column(db.Float)
+    percent_covered = db.Column(db.Float)
+    parent = relationship('Geo', foreign_keys='CrosswalkGeoContainment.parent_geoid')
+    child = relationship('Geo', foreign_keys='CrosswalkGeoContainment.child_geoid',
+                         lazy='subquery')
