@@ -43,6 +43,13 @@ class Tuition(BaseIpeds):
     state_fee = db.Column(db.Integer())
     district_fee = db.Column(db.Integer())
 
+    oos_tuition_grads = db.Column(db.Integer())
+    state_tuition_grads = db.Column(db.Integer())
+    district_tuition_grads = db.Column(db.Integer())
+
+    oos_fee_grads = db.Column(db.Integer())
+    state_fee_grads = db.Column(db.Integer())
+    district_fee_grads = db.Column(db.Integer())
 
 class GradsPct(BaseIpeds):
     __abstract__ = True
