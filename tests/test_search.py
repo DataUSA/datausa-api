@@ -173,13 +173,13 @@ class TestStringMethods(unittest.TestCase):
         data,suggs,tries,my_vars = do_search("healthcare")
         self.assertEqual(data[0][0], "01000US")
         self.assertEqual(my_vars[0]["name"], "healthcare")
-        self.assertEqual(my_vars[0]["section"], "category_health_risks")
+        self.assertEqual(my_vars[0]["section"], "conditions_diseases")
 
   def test_obesity(self):
         data,suggs,tries,my_vars = do_search("obesity")
         self.assertEqual(data[0][0], "01000US")
         self.assertEqual(my_vars[0]["name"], "obesity")
-        self.assertEqual(my_vars[0]["section"], "category_health_risks")
+        self.assertEqual(my_vars[0]["section"], "conditions_diseases")
 
   def test_umd(self):
         data, suggs, tries, my_vars = do_search("umd")
