@@ -1,4 +1,4 @@
-from datausa import app
+import re
 from flask import Blueprint, request, jsonify, abort
 
 mod = Blueprint('attrs', __name__, url_prefix='/attrs')
@@ -8,20 +8,23 @@ from datausa.attrs.models import OccCrosswalk, IndCrosswalk, ProductCrosswalk
 from datausa.attrs.models import Skill, Sector, Geo, AcsInd, PumsIoCrosswalk
 from datausa.attrs.models import PumsDegree, PumsNaics, PumsRace, PumsSoc
 from datausa.attrs.models import PumsWage, PumsSex, PumsBirthplace
+from datausa.attrs.models import LStudy, EnrollmentStatus, LivingArrangement
 from datausa.attrs.models import IoCode, AcsOcc, AcsRace, AcsLanguage, Conflict
-from datausa.attrs.models import AgeBucket, Insurance, Cohort, Sctg, Napcs
-from datausa.attrs.consts import ALL, GEO, GEO_LEVEL_MAP
+from datausa.attrs.models import Insurance, Cohort, Sctg, Napcs, IPedsRace
+from datausa.attrs.models import IncomeRange, IPedsOcc, AcademicRank
+from datausa.attrs.models import IPedsToPumsCrosswalk, Carnegie, IPedsExpense
+from datausa.attrs.models import Opeid, SchoolType, EthnicCode, ProgramLength
+from datausa.attrs.models import SimilarUniversities, RateType
+from datausa.attrs.consts import GEO, GEO_LEVEL_MAP
 from datausa.attrs.search import do_search
+from datausa.database import db
 
-import re
 
 def to_bool(x):
     return x and x.lower() == "true"
 
 
-
-
-attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
+attr_map = {"soc": PumsSoc, "naics": PumsNaics, "cip": Cip,
             "geo": Geo, "university": University, "degree": Degree,
             "skill": Skill, "sector": Sector,
             "pums_degree": PumsDegree,
@@ -33,7 +36,19 @@ attr_map = {"soc": PumsSoc, "naics" : PumsNaics, "cip": Cip,
             "language": AcsLanguage,
             "bls_soc": Soc, "bls_naics": Naics,
             "insurance": Insurance, "cohort": Cohort,
-            "sctg": Sctg, "napcs": Napcs}
+            "sctg": Sctg, "napcs": Napcs, "opeid": Opeid,
+            "ethnic_code": EthnicCode, "program_length": ProgramLength,
+            "school_type": SchoolType,
+            "lstudy": LStudy, "enrollment_status": EnrollmentStatus,
+            "ipeds_race": IPedsRace,
+            "living_arrangement": LivingArrangement,
+            "income_range": IncomeRange,
+            "academic_rank": AcademicRank,
+            "ipeds_occ": IPedsOcc,
+            "ipeds_expense": IPedsExpense,
+            "carnegie": Carnegie,
+            "rate_type": RateType}
+
 
 def show_attrs(attr_obj, sumlevels=None):
     if sumlevels is not None:
@@ -57,13 +72,16 @@ def show_attrs(attr_obj, sumlevels=None):
             headers = obj.keys()
     return jsonify(data=data, headers=headers)
 
+
 @mod.route("/pums/<kind>/")
 def pums_attrs(kind):
     return attrs("pums_{}".format(kind))
 
+
 @mod.route("/pums/<kind>/<pums_attr_id>/")
 def pums_attr_id(kind, pums_attr_id):
     return attrs_by_id("pums_{}".format(kind), pums_attr_id)
+
 
 @mod.route("/<kind>/")
 def attrs(kind):
@@ -74,6 +92,7 @@ def attrs(kind):
         sumlevels = sumlevel.split(",") if sumlevel else None
         return show_attrs(attr_obj, sumlevels=sumlevels)
     raise Exception("Invalid attribute type.")
+
 
 @mod.route("/<kind>/<attr_id>/")
 def attrs_by_id(kind, attr_id):
@@ -88,9 +107,11 @@ def attrs_by_id(kind, attr_id):
         return jsonify(data=[tmp.values()], headers=tmp.keys())
     raise Exception("Invalid attribute type.")
 
+
 @mod.route("/list/")
 def attrs_list():
     return jsonify(data=attr_map.keys())
+
 
 @mod.route("/<kind>/<attr_id>/parents/")
 def get_parents(kind, attr_id):
@@ -130,6 +151,7 @@ def search():
     autocorrected = tries > 0
     suggs = [x for x in suggs if x != txt]
     return jsonify(data=data, headers=headers, suggestions=suggs, autocorrected=autocorrected, related_vars=my_vars)
+
 
 @mod.route("/search_old/")
 def search_old():
@@ -223,13 +245,17 @@ def has_ipeds_data(attr_id):
         if geo_id in ipeds_places:
             return jsonify(data=[geo_id], headers=[GEO])
 
+
 @mod.route("/crosswalk/<attr_kind>/<attr_id>/")
 def crosswalk_acs(attr_kind, attr_id):
-    if attr_kind not in ["acs_occ", "acs_ind", "iocode", "sctg"]:
+    if attr_kind not in ["acs_occ", "acs_ind", "iocode", "sctg", "ipeds_occ"]:
         return abort(404)
     if attr_kind == "sctg":
         results = ProductCrosswalk.query.filter(ProductCrosswalk.sctg == attr_id)
         results = [[item.napcs, "napcs"] for item in results]
+    elif attr_kind == "ipeds_occ":
+        results = IPedsToPumsCrosswalk.query.filter(IPedsToPumsCrosswalk.ipeds_occ == attr_id).all()
+        results = [[item.pums_soc, "soc"] for item in results]
     elif attr_kind == "iocode":
         results = PumsIoCrosswalk.query.filter(PumsIoCrosswalk.iocode == attr_id).all()
         results = [[item.pums_naics, "naics"] for item in results]
@@ -240,3 +266,36 @@ def crosswalk_acs(attr_kind, attr_id):
         results = attr_obj.query.filter(getattr(attr_obj, attr_kind) == attr_id).with_entities(col_name).all()
         results = [[getattr(item, col_name), header_name] for item in results]
     return jsonify(data=results, headers=["attr_id", "attr_kind"])
+
+
+@mod.route("/nearby/university/<university_id>")
+def nearby_university(university_id):
+    limit = int(request.args.get("limit", 5))
+    univ = University.query.get(university_id)
+    query_str = """SELECT id, name
+        FROM attrs.university
+        where carnegie = :carnegie AND status != 'D' and id != :uid
+        ORDER BY ST_MakePoint(:lat, :lng) <-> st_makepoint(lat, lng)
+        LIMIT :limit;
+    """
+    res = db.session.execute(query_str, {"lat": univ.lat, "lng": univ.lng, "carnegie": univ.carnegie, "limit": limit, "uid": university_id})
+    data = [map(unicode, x) for x in res]
+    headers = ["id", "name"]
+    return jsonify(data=data, headers=headers)
+
+
+@mod.route("/similar/university/<university_id>")
+def similar_universities(university_id):
+    limit = int(request.args.get("limit", 5))
+    univ = SimilarUniversities.query.get(university_id)
+    query_str = """SELECT id, name
+        FROM attrs.similar_universities
+        where id != :uid
+        AND carnegie_parent = :carnegie_parent
+        ORDER BY ST_MakePoint(:x, :y) <-> st_makepoint(x, y)
+        LIMIT :limit;
+    """
+    res = db.session.execute(query_str, {"x": univ.x, "y": univ.y, "carnegie_parent": univ.carnegie_parent, "limit": limit, "uid": university_id})
+    data = [map(unicode, x) for x in res]
+    headers = ["id", "name"]
+    return jsonify(data=data, headers=headers)

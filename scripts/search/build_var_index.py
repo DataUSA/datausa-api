@@ -27,14 +27,14 @@ if __name__ == '__main__':
     writer = ix.writer()
 
     all_vars = [
-        [u'adult_obesity,diabetes', u'obesity', u'Obesity Prevalence,Diabetes Prevalence', u'category_health_risks', u'Healthcare', u'geo', None],
-        [u'adult_obesity,diabetes', u'diabetes', u'Obesity Prevalence,Diabetes Prevalence', u'category_health_risks', u'Healthcare',  u'geo', None],
-        [u'adult_obesity,diabetes', u'healthcare', u'Obesity Prevalence,Diabetes Prevalence', u'category_health_risks', u'Healthcare', u'geo', None],
-        [u'motor_vehicle_crash_deaths', u'car crashes', u'Motor Vehicle Crash Deaths', u'crime', u'Crime', u'geo', None],
-        [u'motor_vehicle_crash_deaths', u'accidents', u'Motor Vehicle Crash Deaths', u'crime', u'Crime', u'geo', None],
+        [u'adult_obesity,diabetes', u'obesity', u'Obesity Prevalence,Diabetes Prevalence', u'conditions_diseases', u'Healthcare', u'geo', None],
+        [u'adult_obesity,diabetes', u'diabetes', u'Obesity Prevalence,Diabetes Prevalence', u'conditions_diseases', u'Healthcare',  u'geo', None],
+        [u'adult_obesity,diabetes', u'healthcare', u'Obesity Prevalence,Diabetes Prevalence', u'conditions_diseases', u'Healthcare', u'geo', None],
+        [u'motor_vehicle_crash_deaths', u'car crashes', u'Motor Vehicle Crash Deaths', u'risky', u'Crime', u'geo', None],
+        [u'motor_vehicle_crash_deaths', u'accidents', u'Motor Vehicle Crash Deaths', u'risky', u'Crime', u'geo', None],
 
-        [u'adult_smoking', u'smokers', u'Adult Smoking Prevalence', u'substance_abuse', u'Healthcare', u'geo', None],
-        [u'adult_smoking', u'cigarettes', u'Adult Smoking Prevalence', u'substance_abuse', u'Healthcare', u'geo', None],
+        [u'adult_smoking', u'smokers', u'Adult Smoking Prevalence', u'risky', u'Healthcare', u'geo', None],
+        [u'adult_smoking', u'cigarettes', u'Adult Smoking Prevalence', u'risky', u'Healthcare', u'geo', None],
 
         # [u'infant_mortality', u'infant mortality', u'Infant mortality', u'health', u'geo'],
         # [u'teen_births', u'teen births', u'Teen births', u'health', u'geo'],

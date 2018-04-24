@@ -16,7 +16,7 @@ class BeaUse(db.Model, BaseModel):
     to_filter = ["TOTCOMOUT", "HS", "ORE", "GFGD", "G", "TOTII", "GFGN", "GSLE",
                  "GFE", "GSLG", "Other", "Used", "TOTFU", "TOTVA", "TOTINDOUT"]
     no_value_added = to_filter + ["V001", "V002", "V003", "F010", "F020", "F030",
-                                  "F040", "F050" "F100"]
+                                  "F040", "F050", "F100"]
     year = db.Column(db.Integer, primary_key=True)
     industry_iocode = db.Column(db.String, db.ForeignKey(IoCode.id), primary_key=True)
     commodity_iocode = db.Column(db.String, db.ForeignKey(IoCode.id), primary_key=True)

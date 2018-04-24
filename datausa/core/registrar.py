@@ -11,6 +11,8 @@ from datausa.acs.automap_models import *
 from datausa.acs.stats_models import *
 from datausa.dartmouth.models import *
 from datausa.freight.models import *
+from datausa.ed.models import DefaultsYg, DefaultsYu, DefaultsYur, DefaultsYure
+from datausa.attrs.models import UniversityCrosswalk
 from datausa.opiods.models import DrugOverdoseDeathRate, OpiodOverdoseDeathRate, NonMedUsePainMeds
 
 registered_models = [
@@ -28,13 +30,35 @@ registered_models = [
     Ygo5, Ygi5, Yoas5, Ygor5, Ygos5, Ygb5,
 
     # IPEDS
-    TuitionYc, TuitionYcu, TuitionYcs, TuitionYgs,
-    EnrollmentYcu,
-    GradsYcu, GradsYc, GradsYcd, GradsYgd,
+    TuitionYu, TuitionYc, TuitionYcu, TuitionYcs, TuitionYgs,
+    GradsYu, GradsYcu, GradsYc, GradsYcd, GradsYgd, GradsYud, GradsYucd,
     GradsYg, GradsYgc, GradsYgu, GradsYgs, GradsYgcd,
     GradsPctYcu,
     UnivGeo,
-
+    AdmissionsY,
+    AdmissionsYu,
+    EnrollmentEfaYusrle,
+    EnrollmentEfaYusrle,
+    EnrollmentEfaYus,
+    EnrollmentEfaYue,
+    EnrollmentEfaYul,
+    EnrollmentEfaYur,
+    LivingArrangementSfaYa, LivingArrangementSfaYu, LivingArrangementSfaYua,
+    GradRateGrYu, GradRateGrYur, GradRateGrYus, GradRateGrYusr,
+    FinancialsYu,
+    AidSfaYui, UniversitySfaYu,
+    FinancialsEndowmentQuintilesYu,
+    RetentionEfdYu,
+    NISSalariesYu,
+    NISSalariesYuo,
+    ISSalariesYu,
+    ISSalariesYua,
+    ISSalariesYus,
+    ISSalariesYuas,
+    ExpensesYu,
+    ExpensesYue,
+    ICLivingExpensesYua, ICMaxLivingExpensesYua,
+    GradRateTimeframeYut,
     # ONET
     SkillByCip, SkillBySoc,
 
@@ -45,7 +69,7 @@ registered_models = [
     HealthYg,
 
     # Bureau of Labor Statistics
-    OesYgo, QcewYgi, GrowthI, GrowthO, CesYi,
+    OesYgo, QcewYgi, GrowthI16, GrowthI, GrowthO16, GrowthO, CesYi,
 
     # County Business Patterns
     CbpYgi, CbpYg,
@@ -84,9 +108,11 @@ registered_models = [
     # Freight
     FAFYodmp, FAFYodp, FAFYomp, FAFYodm, FAFYop, FAFYdp, FAFYdm, FAFYom, FAFYod,
 
+    # Loans
+    DefaultsYu, DefaultsYg, DefaultsYur, DefaultsYure, UniversityCrosswalk,
+
     # Opiods
     DrugOverdoseDeathRate, OpiodOverdoseDeathRate, NonMedUsePainMeds
-
 ]
 
 

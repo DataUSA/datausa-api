@@ -110,18 +110,20 @@ class Acs1_Ygais_Health(BaseAcs1, GeoId1, BaseHealth):
         }
 
 
-
 class Acs1_Ygl_Speakers(BaseAcs1, GeoId1, Ygl_Speakers):
     __tablename__ = "ygl_speakers"
     median_moe = 2.2
+    CACHED_YEARS = [2013, 2014, 2015]
 
     @classmethod
     def get_supported_levels(cls):
         return {"geo": GeoId.LEVELS_1YR, "language": [consts.ALL]}
 
+
 class Acs5_Ygl_Speakers(BaseAcs5, GeoId5, Ygl_Speakers):
     __tablename__ = "ygl_speakers"
     median_moe = 2
+    CACHED_YEARS = [2013, 2014, 2015]
 
     @classmethod
     def get_supported_levels(cls):

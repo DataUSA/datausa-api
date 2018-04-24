@@ -1,6 +1,7 @@
 from datausa.attrs.models import PumsNaicsCrosswalk, PumsIoCrosswalk
 from datausa.attrs.models import GeoContainment, Soc, GeoCrosswalker, CrosswalkGeoContainment
-from datausa.bls.models import BlsCrosswalk, SocCrosswalk, GrowthI, GrowthILookup, CesYi
+from datausa.attrs.models import Carnegie, University
+from datausa.bls.models import BlsCrosswalk, GrowthI, GrowthILookup, CesYi
 from datausa.pums.abstract_models import BasePums, BasePums5
 from datausa.acs.models import Acs1_Ygi_Health
 from datausa.freight.models import FAFYom
@@ -9,13 +10,9 @@ from datausa import cache
 from sqlalchemy import or_, and_
 from datausa.util.inmem import onet_socs, onet_cips, splitter
 
-def truncate_cip(x, api_obj=None):
-     return x[:2]
 
-@cache.memoize()
-def pums_to_bls_soc():
-    all_objs = SocCrosswalk.query.all()
-    return {obj.pums_soc: obj.bls_soc for obj in all_objs}
+def truncate_cip(x, api_obj=None):
+    return x[:2]
 
 
 @cache.memoize()
@@ -51,6 +48,7 @@ def freight_geos():
     qry = FAFYom.query.with_entities(FAFYom.origin_geo.distinct()).all()
     return {item: True for item, in qry}
 
+
 def acs_parent(geo_id, api_obj=None):
     '''Some data is only accessible at the PUMA level
     so we crosswalk codes to the nearest PUMA'''
@@ -60,7 +58,7 @@ def acs_parent(geo_id, api_obj=None):
         puma_cond = and_(GeoContainment.parent_geoid.startswith("795"),
                          GeoContainment.percent_covered >= 90)
         cty_cond = and_(GeoContainment.parent_geoid.startswith("050"),
-                                  GeoContainment.percent_covered >= 75)
+                        GeoContainment.percent_covered >= 75)
         state_cond = and_(GeoContainment.parent_geoid.startswith("040"),
                           GeoContainment.percent_covered >= 10)
         puma_cty_or_state = or_(puma_cond, state_cond, cty_cond)
@@ -74,6 +72,7 @@ def acs_parent(geo_id, api_obj=None):
         if geo:
             return geo.parent_geoid
     return geo_id
+
 
 def pums_parent_puma(geo_id, api_obj=None):
     '''Some data is only accessible at the PUMA level
@@ -118,6 +117,7 @@ def pums_parent_puma(geo_id, api_obj=None):
             raise Exception("Not yet implemented")
     return geo_id
 
+
 def freight_parents(geo_id, api_obj=None):
     '''freight data'''
     needs_crosswalk = ["160", "050", "310", "795"]
@@ -136,7 +136,7 @@ def freight_parents(geo_id, api_obj=None):
             qry = GeoCrosswalker.query.with_entities(GeoCrosswalker.geo_b)
             qry = qry.filter(*filters).order_by(GeoCrosswalker.geo_b.desc())
 
-            for geo_result, in qry: # -- note the comma to unpack the tuple
+            for geo_result, in qry:  # -- note the comma to unpack the tuple
                 if geo_result in freight_geo_list:
                     return geo_result
             # if we get to this point and no match is found, fall back to the state
@@ -144,6 +144,7 @@ def freight_parents(geo_id, api_obj=None):
                 return "04000US" + geo_id[7:9]
 
     return geo_id
+
 
 def chr_parents(geo_id, api_obj=None):
     '''CHR data'''
@@ -183,6 +184,7 @@ def opiod_parents(geo_id, api_obj=None):
             return geo_contain.parent_geoid
     return geo_id
 
+
 def industry_iocode_func(naics, api_obj=None):
     my_obj = PumsIoCrosswalk.query.filter(PumsIoCrosswalk.pums_naics == naics).first()
     if hasattr(api_obj, "vars_and_vals"):
@@ -191,6 +193,7 @@ def industry_iocode_func(naics, api_obj=None):
         else:
             return my_obj.iocode if my_obj else naics
     return naics
+
 
 def crosswalk(table, api_obj):
     '''Given a table and an API object, determine if any crosswalks need
@@ -204,7 +207,6 @@ def crosswalk(table, api_obj):
         {"column": "commodity_iocode", "schema": "bea", "mapping": iocode_map},
         {"column": "naics", "schema": "bls", "mapping": pums_to_bls_naics_map},
         {"column": "naics", "schema": "bls", "mapping": pums_to_growth_map, "table": GrowthI, "avoid": CesYi},
-        {"column": "soc", "schema": "bls", "mapping": pums_to_bls_soc_map},
         {"column": "soc", "schema": "onet", "mapping": onet_parents},
         {"column": "cip", "schema": "onet", "mapping": onet_cip_parents},
 
@@ -217,10 +219,14 @@ def crosswalk(table, api_obj):
         {"column": "cip", "schema": pums5_schema_name, "mapping": truncate_cip},
         {"column": "geo", "schema": pums5_schema_name, "mapping": pums_parent_puma},
         {"column": "geo", "schema": "chr", "mapping": chr_parents},
+        {"column": "geo", "schema": "opiods", "mapping": opiod_parents},
+
         {"column": "geo", "schema": "dartmouth", "mapping": chr_parents},
         {"column": "geo", "schema": "opiods", "mapping": opiod_parents},
         {"column": "origin_geo", "schema": "freight", "mapping": freight_parents},
-        {"column": "destination_geo", "schema": "freight", "mapping": freight_parents}
+        {"column": "destination_geo", "schema": "freight", "mapping": freight_parents},
+        {"column": "university", "schema": "ipeds", "mapping": university_to_carnegie, "__virtual_schema__": "carnegie_level_data"},
+
     ]
 
     exclusives = {r["table"]: True for r in registered_crosswalks if "table" in r}
@@ -258,6 +264,7 @@ def crosswalk(table, api_obj):
                 api_obj.subs[column] = new_val_str
     return api_obj
 
+
 def onet_parents(attr_id, **kwargs):
     data, headers = Soc.parents(attr_id)
     id_idx = headers.index("id")
@@ -271,6 +278,7 @@ def onet_parents(attr_id, **kwargs):
             return parent_soc
     return attr_id
 
+
 def onet_cip_parents(attr_id, **kwargs):
     onet_data = onet_cips()
     orig_id = attr_id
@@ -282,9 +290,16 @@ def onet_cip_parents(attr_id, **kwargs):
     return orig_id
 
 
+def university_to_carnegie(attr_id, **kwargs):
+    qry = Carnegie.query.all()
+    carnegie_ids = [x.id for x in qry]
+    if attr_id in carnegie_ids:
+        return attr_id
+    result = University.query.get(attr_id)
+    return result.carnegie
+
 
 naics_map = pums_naics_mapping()
 iocode_map = iocode_mapping()
 pums_to_bls_naics_map = pums_to_bls_naics()
-pums_to_bls_soc_map = pums_to_bls_soc()
 pums_to_growth_map = pums_to_bls_growth()

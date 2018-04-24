@@ -2,8 +2,10 @@ from datausa.database import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy import or_, asc
-from datausa.attrs.consts import OR
 from sqlalchemy.sql import text
+from datausa.attrs.consts import ALL
+from datausa.core.models import BaseModel
+
 
 class BaseAttr(db.Model):
     __abstract__ = True
@@ -31,27 +33,32 @@ class BaseAttr(db.Model):
         return '<{}, id: {}, name: {}>'.format(self.__class__,
                                                self.id, self.name)
 
+
 class ImageAttr(db.Model):
     __abstract__ = True
     image_link = db.Column(db.String)
     image_author = db.Column(db.String)
     url_name = db.Column(db.String)
     image_meta = db.Column(db.String)
+    keywords = db.Column(db.ARRAY(db.String))
 
-    HEADERS = ["id", "name", "image_link", "image_author", "url_name", "image_meta"]
+    HEADERS = ["id", "name", "image_link", "image_author", "url_name", "image_meta", "keywords"]
 
     def data_serialize(self):
         return [self.id, self.name, self.image_link, self.image_author, self.url_name, self.image_meta]
 
 
-class University(BaseAttr):
+class University(BaseAttr, ImageAttr):
     __tablename__ = 'university'
 
     state = db.Column(db.String)
     county = db.Column(db.String)
     msa = db.Column(db.String)
     sector = db.Column(db.String)
-
+    opeid8 = db.Column(db.String)
+    status = db.Column(db.String)
+    carnegie = db.Column(db.String)
+    carnegie_parent = db.Column(db.String)
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
 
@@ -184,7 +191,7 @@ class Geo(BaseAttr, ImageAttr):
     @classmethod
     def parents(cls, geo):
         mysumlevel = geo[:3]
-        filters =[GeoContainment.child_geoid == geo]
+        filters = [GeoContainment.child_geoid == geo]
         geos = GeoContainment.query.filter(*filters).order_by(text("percent_covered asc")).all()
         geos2 = []
         for g in geos:
@@ -288,6 +295,7 @@ class PumsSoc(BaseAttr, ImageAttr):
         data = [[obj.soc_obj.id, obj.soc_obj.name] for obj in objs]
         return data, PumsSoc.HEADERS
 
+
 class PumsSex(BaseAttr):
     __tablename__ = 'sex'
     __table_args__ = {"schema": "pums_attrs"}
@@ -327,6 +335,14 @@ class Skill(BaseAttr):
     parent = db.Column(db.String)
 
 
+class IPedsToPumsCrosswalk(db.Model):
+    __tablename__ = 'ipeds_to_pums_soc'
+    __table_args__ = {"schema": "attrs"}
+
+    ipeds_occ = db.Column(db.String, primary_key=True)
+    pums_soc = db.Column(db.String, primary_key=True)
+
+
 class PumsNaicsCrosswalk(db.Model):
     __tablename__ = 'naics_crosswalk'
     __table_args__ = {"schema": "pums_attrs"}
@@ -357,7 +373,7 @@ class GeoCrosswalker(db.Model):
     __table_args__ = {"schema": "attrs"}
     geo_a = db.Column(db.String, db.ForeignKey(Geo.id), primary_key=True)
     geo_b = db.Column(db.String, db.ForeignKey(Geo.id),
-                             primary_key=True)
+                      primary_key=True)
     a = relationship('Geo', foreign_keys='GeoCrosswalker.geo_a')
     b = relationship('Geo', foreign_keys='GeoCrosswalker.geo_b', lazy='subquery')
 
@@ -374,6 +390,7 @@ class GeoContainment(db.Model):
     child = relationship('Geo', foreign_keys='GeoContainment.child_geoid',
                          lazy='subquery')
 
+
 class GeoNeighbors(db.Model):
     __tablename__ = 'geo_neighbors'
     __table_args__ = {"schema": "attrs"}
@@ -384,6 +401,7 @@ class GeoNeighbors(db.Model):
 class AcsOcc(BaseAttr):
     __tablename__ = 'acs_occ'
     level = db.Column(db.Integer)
+
 
 class AcsInd(BaseAttr):
     __tablename__ = 'acs_ind'
@@ -402,11 +420,14 @@ class SocHierarchy(db.Model):
     great_grandparent_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.great_grandparent', lazy='subquery')
     soc_obj = relationship('PumsSoc', foreign_keys='SocHierarchy.soc', lazy='subquery')
 
+
 class AgeBucket(BaseAttr):
     __tablename__ = 'age_bucket'
 
+
 class Insurance(BaseAttr):
     __tablename__ = 'insurance'
+
 
 class AcsLanguage(BaseAttr):
     __tablename__ = 'language'
@@ -419,6 +440,7 @@ class AcsRace(BaseAttr):
 class Conflict(BaseAttr):
     __tablename__ = 'conflict'
 
+
 class Sctg(BaseAttr):
     __tablename__ = 'sctg'
     parent = db.Column(db.String)
@@ -429,7 +451,7 @@ class Napcs(BaseAttr):
 
 
 class Search(BaseAttr):
-    __tablename__ = 'search_v5'
+    __tablename__ = 'search_v8'
     id = db.Column(db.String, primary_key=True)
     zvalue = db.Column(db.Float)
     kind = db.Column(db.String, primary_key=True)
@@ -437,6 +459,8 @@ class Search(BaseAttr):
     sumlevel = db.Column(db.String, primary_key=True)
     is_stem = db.Column(db.Boolean)
     url_name = db.Column(db.String)
+    keywords = db.Column(db.ARRAY(db.String))
+
 
 class ZipLookup(db.Model):
     __tablename__ = 'zip_lookup'
@@ -463,11 +487,101 @@ class IndCrosswalk(db.Model):
     pums_naics = db.Column(db.String, db.ForeignKey(PumsNaics.id), primary_key=True)
     level = db.Column(db.Integer)
 
+
 class ProductCrosswalk(db.Model):
     __tablename__ = 'napcs_sctg_xwalk'
     __table_args__ = {"schema": "attrs"}
-    sctg = db.Column(db.String,  db.ForeignKey(Sctg.id), primary_key=True)
+    sctg = db.Column(db.String, db.ForeignKey(Sctg.id), primary_key=True)
     napcs = db.Column(db.String, db.ForeignKey(Napcs.id), primary_key=True)
+
+
+class UniversityCrosswalk(db.Model, BaseModel):
+    __tablename__ = 'unitid_to_opeid6'
+    __table_args__ = {"schema": "attrs"}
+    opeid6 = db.Column(db.String, primary_key=True)
+    university = db.Column(db.String, db.ForeignKey(University.id), primary_key=True)
+
+    @classmethod
+    def get_supported_levels(cls):
+        return {
+            "university": [ALL],
+            "opeid": [ALL]
+        }
+
+
+class Opeid(BaseAttr):
+    __tablename__ = 'opeid6'
+    school_type = db.Column(db.Integer)
+    ethnic_code = db.Column(db.Integer)
+
+
+class SchoolType(BaseAttr):
+    __tablename__ = 'school_type'
+
+
+class ProgramLength(BaseAttr):
+    __tablename__ = 'program_length'
+
+
+class EthnicCode(BaseAttr):
+    __tablename__ = 'ethnic_code'
+
+
+class LStudy(BaseAttr):
+    __tablename__ = 'lstudy'
+
+
+class EnrollmentStatus(BaseAttr):
+    __tablename__ = 'enrollment_status'
+
+
+class IPedsRace(BaseAttr):
+    __tablename__ = 'ipeds_race'
+
+
+class LivingArrangement(BaseAttr):
+    __tablename__ = 'living_arrangement'
+    group = db.Column(db.String)
+
+
+class IncomeRange(BaseAttr):
+    __tablename__ = 'income_range'
+
+
+class Carnegie(BaseAttr):
+    __tablename__ = 'carnegie'
+    depth = db.Column(db.Integer)
+    parent = db.Column(db.String)
+    children = db.Column(db.ARRAY(db.String))
+
+
+class IPedsOcc(BaseAttr):
+    __tablename__ = 'ipeds_occ'
+    ipeds_occ_group = db.Column(db.String)
+
+
+class IPedsExpense(BaseAttr):
+    __tablename__ = 'ipeds_expense'
+
+
+class AcademicRank(BaseAttr):
+    __tablename__ = 'academic_rank'
+    academic_group = db.Column(db.String)
+
+
+class SimilarUniversities(db.Model):
+    __tablename__ = 'similar_universities'
+    __table_args__ = {"schema": "attrs"}
+    university = db.Column(db.String, db.ForeignKey(University.id), primary_key=True)
+    name = db.Column(db.String)
+    x = db.Column(db.Float)
+    y = db.Column(db.Float)
+    carnegie = db.Column(db.String)
+    carnegie_parent = db.Column(db.String)
+
+
+class RateType(BaseAttr):
+    __tablename__ = 'rate_type'
 
 
 class CrosswalkGeoContainment(db.Model):

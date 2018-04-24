@@ -1,7 +1,4 @@
-import flask
-import sqlalchemy
-from sqlalchemy import and_, or_
-from sqlalchemy.sql import text
+from sqlalchemy import and_
 from flask import Response
 import simplejson
 
@@ -12,8 +9,10 @@ from datausa.attrs.views import attr_map
 from sqlalchemy.orm import aliased
 from datausa.util.inmem import splitter
 from datausa.core.exceptions import DataUSAException
+from sqlalchemy import desc, asc, func
 
 MAX_LIMIT = 4
+
 
 def use_attr_names(table, qry, cols):
     new_cols = []
@@ -233,15 +232,12 @@ def handle_join(qry, filters, table, api_obj):
                                 filters = remove_filters(filters, table, col, api_obj)
                                 filters.append(joined_filt[col]["id"] == getattr(table, col))
                                 filters.append(joined_filt[col]["column"] == api_obj.vars_and_vals[col])
-    qry=qry.join(*joins)
+    qry = qry.join(*joins)
     return qry, filters
-
-
 
 
 def query(table, api_obj, stream=False):
     vars_and_vals = api_obj.vars_and_vals
-    shows_and_levels = api_obj.shows_and_levels
     values = api_obj.values
     exclude = api_obj.exclude
 
@@ -251,14 +247,13 @@ def query(table, api_obj, stream=False):
 
     if values:
         pk = [col for col in table.__table__.columns if col.primary_key and col.key not in values]
-        cols = pk + values
+        cols = pk + [getattr(table, col_name) for col_name in values]
     else:
         cols = get_columns(table)
 
     if exclude:
         cols = [col for col in cols
-               if (isinstance(col, basestring) and col not in exclude) or col.key not in exclude]
-
+                if (isinstance(col, basestring) and col not in exclude) or col.key not in exclude]
 
     # qry = table.query.with_entities(*cols)
     qry = table.query
@@ -266,7 +261,7 @@ def query(table, api_obj, stream=False):
     if hasattr(table, "crosswalk_join"):
         qry = table.crosswalk_join(qry)
 
-    if stream:
+    if stream or api_obj.display_names:
         qry, cols = use_attr_names(table, qry, cols)
     qry = qry.with_entities(*cols)
 
@@ -276,14 +271,19 @@ def query(table, api_obj, stream=False):
     qry = qry.filter(*filters)
 
     if api_obj.order:
-        sort = "desc" if api_obj.sort == "desc" else "asc"
+        sort = desc if api_obj.sort == "desc" else asc
         if api_obj.order not in TableManager.possible_variables:
             if api_obj.order == 'abs(pct_change)':
-                pass # allow this
+                pass  # allow this
             else:
                 raise DataUSAException("Bad order parameter", api_obj.order)
-        sort_stmt = text("{} {} NULLS LAST".format(api_obj.order, sort))
-        qry = qry.order_by(sort_stmt)
+        # sort_stmt = text("{} {} NULLS LAST".format(api_obj.order, sort))
+        if api_obj.order == 'abs(pct_change)':
+            target_col = func.abs(table.pct_change)
+        else:
+            target_col = getattr(table, api_obj.order)
+
+        qry = qry.order_by(sort(target_col).nullslast())
     if api_obj.limit:
         qry = qry.limit(api_obj.limit)
 

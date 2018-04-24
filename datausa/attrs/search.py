@@ -31,7 +31,7 @@ class SimpleWeighter(scoring.BM25F):
         elif self.fullterm.startswith(name[:5]):
             return score_me * 1.5 + abs(zscore)
             # return (score_me * 1.75) + (10 * zvalue)
-        return (score_me * 0.75) + (zscore * 0.25)
+        return (score_me * 0.75) + (zscore * 0.31)
 
 
 vars_ix = index.open_dir(VAR_INDEX_DIR)
@@ -153,7 +153,7 @@ def do_search(txt, sumlevel=None, kind=None, tries=0, limit=10, is_stem=None, my
             elif q.text in keyword or keyword in q.text:
                 q.boost = -0.5
 
-    weighter = SimpleWeighter(txt, B=.45, content_B=1.0, K1=1.5)
+    weighter = SimpleWeighter(txt, B=.6, content_B=1.0, K1=2.75)
     with ix.searcher(weighting=weighter) as s:
         if len(txt) > 2:
             corrector = s.corrector("display")
