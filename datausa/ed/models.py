@@ -8,7 +8,7 @@ from datausa.attrs import consts
 
 
 class GeoId(object):
-    LEVELS = [consts.NATION, consts.STATE, consts.COUNTY, consts.MSA, consts.ALL]
+    LEVELS = [consts.NATION, consts.STATE, consts.COUNTY, consts.ALL]
 
     @declared_attr
     def geo(cls):
@@ -22,8 +22,12 @@ class GeoId(object):
     def geo_filter(cls, level):
         if level == ALL:
             return True
-        level_map = {consts.NATION: "010", consts.STATE: "040",
-                     consts.COUNTY: "050", consts.MSA: "310"}
+        level_map = {
+            consts.NATION: "010",
+            consts.STATE: "040",
+            consts.COUNTY: "050",
+            consts.MSA: "310"
+        }
         level_code = level_map[level]
         return cls.geo.startswith(level_code)
 
