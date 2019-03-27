@@ -14,6 +14,9 @@ SECRET_KEY = os.environ.get("DATAVIVA_SECRET_KEY", "default-datausa-secret")
 DEBUG = True
 SQLALCHEMY_ECHO = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_POOL_SIZE = 15
+SQLALCHEMY_POOL_TIMEOUT = 180
+SQLALCHEMY_POOL_RECYCLE = 150
 SQLALCHEMY_DATABASE_URI = "postgres://{0}:{1}@{2}:{3}/{4}".format(
     os.environ.get("DATAUSA_DB_USER", "postgres"),
     os.environ.get("DATAUSA_DB_PW", ""),
