@@ -9,6 +9,6 @@ Flask-Cache==0.13.1
 Pillow==3.1.1
 Whoosh==2.7.2
 Unidecode==0.4.19
-gunicorn==19.4.5
+gunicorn==19.5.0
 click==6.3
 pytest==3.0.3
