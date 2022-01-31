@@ -1,7 +1,10 @@
-# DataUSA API
+# DataUSA API (Python)
+
+**⚠️ Deprecated ⚠️: The API that this documentation refers to (api.datausa.io) went into legacy mode in November 2018, and was be replaced by a newer version of the API with access to new & expanded data: https://datausa.io/about/api/**
+
 To learn more about the API, visit the [DataUSA API Wiki page](https://github.com/DataUSA/datausa-api/wiki) or visit the [DataUSA Quick Start Guide](http://beta.datausa.io/about/api/).
 
-# Installation
+## Installation
 
 **DataUSA** is a web platform built using Flask, an open source Python library for interacting with HTTP. this installation guide is written assuming a Linux or Linux-like environment. The following software is required to be installed locally in order to get DataUSA running:
 
